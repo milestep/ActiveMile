@@ -1,0 +1,15 @@
+{
+  "name": "ActiveMile",
+  "version": "1.0.0",
+  "repository": "milestep/ActiveMile",
+  "license": "MIT",
+  "engines": {
+    "node": "7.7.4"
+  },
+  "scripts": {
+    "start": "NODE_ENV=production node ./client/server.js",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build"
+  },
+  "cacheDirectories": ["node_modules", "client/node_modules"]
+}

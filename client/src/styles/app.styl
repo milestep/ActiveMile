@@ -1,0 +1,30 @@
+$icon-font-path = "~bootstrap-styl/fonts/"
+$fa-font-path = "~font-awesome-stylus/fonts"
+@import "~font-awesome-stylus/stylus/index"
+@import 'bootstrap';
+
+html
+  font-size 16px
+  line-height 20px
+  
+a
+  cursor pointer
+
+p
+  font-size 1rem
+  &.sm
+    font-size .9rem
+
+img, 
+textarea
+  max-width 100%
+
+.spin-wrap
+  display flex
+  align-items center
+  justify-content center
+  div, span, .spin-text
+    &:first-child
+      margin-right 8px
+    &:only-child
+      margin 0

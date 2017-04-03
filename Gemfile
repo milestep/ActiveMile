@@ -22,13 +22,21 @@ group :development, :test do
   gem 'capybara'
   gem 'rspec-collection_matchers'
   gem 'pry-rails'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :development do
+  gem "capistrano", "~> 3.8"
+  gem 'capistrano-rvm'
+  gem 'capistrano-rails'
+  gem 'capistrano-bundler'
+  gem 'capistrano-passenger'
+  gem 'capistrano-npm'
+  gem 'capistrano3-puma'
+  # gem 'capistrano-resque', '~> 0.2.2', require: false
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :test do

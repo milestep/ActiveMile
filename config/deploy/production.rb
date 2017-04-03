@@ -1,7 +1,7 @@
 set :stage, :production
 set :node_env, 'production'
 
-server '138.68.130.97', user: 'root', password: 'ActiveMile2017', roles: %w(web app db)
+server '138.68.130.97', user: 'root', roles: %w(web app db)
 
 # server-based syntax
 # ======================

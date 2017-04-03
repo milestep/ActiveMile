@@ -6,7 +6,8 @@ branch = ENV['BRANCH'] || 'master'
 set :application, "ActiveMile"
 set :repo_url, "git@example.com:me/my_repo.git"
 set :repo_url, "git@github.com:milestep/ActiveMile.git"
-
+set :scm, :git
+set :branch, branch
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
@@ -50,12 +51,12 @@ set :puma_threads, [0, 16]
 set :puma_workers, 0
 set :puma_init_active_record, true
 set :puma_preload_app, true
-set :branch, branch
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
   task :make_dirs do
     on roles(:app) do
+      execute "mkdir #{shared_path}/tmp/sockets -p"
       execute "mkdir #{shared_path}/tmp/pids -p"
     end
   end

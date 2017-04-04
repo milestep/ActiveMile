@@ -5,6 +5,7 @@ branch = ENV['BRANCH'] || 'master'
 
 set :application, "ActiveMile"
 set :repo_url, "git@github.com:milestep/ActiveMile.git"
+set :passenger_restart_with_touch, true
 set :branch, branch
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp

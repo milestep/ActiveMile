@@ -8,7 +8,7 @@
 !/log/.keep
 !/tmp/.keep
 /coverage
-/client/node_modules
+/node_modules
 /client/dist
 /public/uploads
 /public/assets

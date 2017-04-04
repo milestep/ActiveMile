@@ -1,7 +1,6 @@
 set :stage, :production
 set :node_env, 'production'
 
-# server '138.68.130.97', user: 'midnight', roles: %w(web app db)
 server 'activemile.milestep.io', user: 'midnight', roles: %w(web app db)
 
 # server-based syntax

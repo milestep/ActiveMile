@@ -11,7 +11,7 @@ set :branch, branch
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, "/home/midnight/apps"
+set :deploy_to, "/home/midnight/apps/activemile"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -90,13 +90,6 @@ namespace :deploy do
     on roles(:app) do
       before 'deploy:restart', 'puma:start'
       invoke 'deploy'
-    end
-  end
-
-  desc 'Restart application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      invoke 'puma:restart'
     end
   end
 

@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production node ./server.js",
     "nodemon": "NODE_ENV=production nodemon ./server.js",
     "pm2": "NODE_ENV=production pm2 start ./server.js",
-    "build": "webpack -p --env=prod --progress --colors",
+    "build": "webpack -p --env=prod --progress --inline --colors",
     "dev": "NODE_ENV=development webpack-dev-server --env=dev --content-base src --inline --progress --colors"
   }
 }

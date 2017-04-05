@@ -1,17 +1,17 @@
-# config valid only for current version of Capistrano
 lock "3.8.0"
 
 branch = ENV['BRANCH'] || 'master'
 
-set :application, "ActiveMile"
+set :application, "activemile"
 set :repo_url, "git@github.com:milestep/ActiveMile.git"
 set :passenger_restart_with_touch, true
-set :branch, branch
-# Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
-
-# Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/home/midnight/apps/activemile"
+set :linked_files, %w(config/database.yml config/application.yml)
+set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
+
+# Default branch is :master
+set :branch, branch
+# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -23,20 +23,12 @@ set :deploy_to, "/home/midnight/apps/activemile"
 # Default value for :pty is false
 # set :pty, true
 
-# Default value for :linked_files is []
-set :linked_files, %w(config/database.yml config/application.yml)
-
-# Default value for linked_dirs is []
-set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
-
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-
-# Puma
 set :puma_rackup, -> { File.join(current_path, 'config.ru') }
 set :puma_state, "#{shared_path}/tmp/pids/puma.state"
 set :puma_pid, "#{shared_path}/tmp/pids/puma.pid"
@@ -47,7 +39,7 @@ set :puma_error_log, "#{shared_path}/log/puma_access.log"
 set :puma_role, :app
 set :puma_env, fetch(:rack_env, fetch(:rails_env, 'production'))
 set :puma_threads, [0, 16]
-set :puma_workers, 0
+set :puma_workers, default: 2
 set :puma_init_active_record, true
 set :puma_preload_app, true
 
@@ -63,7 +55,6 @@ namespace :puma do
   before :start, :make_dirs
 end
 
-# NPM
 namespace :npm do
   task :install do
     on roles :app do
@@ -97,10 +88,6 @@ namespace :deploy do
   after  :finishing,    :cleanup
   after  :finishing,    :restart
 end
-
-# ps aux | grep puma    # Get puma pid
-# kill -s SIGUSR2 pid   # Restart puma
-# kill -s SIGTERM pid   # Stop puma
 
 after 'deploy:updating', 'npm:install'
 after 'deploy:updating', 'npm:build'

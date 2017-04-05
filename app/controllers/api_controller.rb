@@ -1,6 +1,4 @@
 class ApiController < ApplicationController
-  include Verifiable
-  
   def perform_caching
     Rails.configuration.action_controller.perform_caching
   end

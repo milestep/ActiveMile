@@ -14,7 +14,7 @@ const {
 } = LoginActions;
 
 const baseUrl = config.baseUrl;
-const apiEndpoint = `${baseUrl}/api`;
+const apiEndpoint = `${baseUrl}/api/v1`;
 const headers = { 'Content-Type': 'application/json' }; 
 
 function saveAuthToken(token) {

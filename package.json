@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "repository": "milestep/ActiveMile",
   "license": "MIT",
-  "main": "server.js",
+  "main": "./client/server.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./client/server.js",
-    "build": "cd client && npm run build",
-    "nodemon": "NODE_ENV=production nodemon ./server.js",
-    "pm2": "NODE_ENV=production pm2 start ./server.js",
-    "dev": "NODE_ENV=development webpack-dev-server --env=dev --content-base src --inline --progress --colors"
+    "start": "NODE_ENV=production cd client && npm start",
+    "prod:hot": "NODE_ENV=development cd client && npm run prod:hot",
+    "prod:daemon": "NODE_ENV=production cd client && npm run prod:daemon",
+    "build": "NODE_ENV=production cd client && npm run build",
+    "dev": "NODE_ENV=development cd client && npm run dev",
+    "dev:hot": "NODE_ENV=development cd client && npm run dev:hot"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.6",
@@ -35,9 +36,11 @@
     "font-awesome-stylus": "^4.7.0",
     "formsy-react": "^0.19.2",
     "html-webpack-plugin": "^2.28.0",
+    "http-proxy-middleware": "0.17.3",
     "key-mirror": "^1.0.1",
     "moment": "^2.17.1",
     "node-sass": "^4.5.0",
+    "nodemon": "^1.11.0",
     "postcss-loader": "^1.2.2",
     "react": "^15.4.2",
     "react-datepicker": "^0.41.1",

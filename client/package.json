@@ -5,10 +5,11 @@
   "license": "MIT",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./server.js",
-    "nodemon": "NODE_ENV=production nodemon ./server.js",
-    "pm2": "NODE_ENV=production pm2 start ./server.js",
+    "start": "node ./server.js",
+    "prod:hot": "nodemon ./server.js",
+    "prod:daemon": "pm2 start ./server.js",
     "build": "webpack -p --env=prod --colors",
-    "dev": "NODE_ENV=development webpack-dev-server --env=dev --content-base src --inline --progress --colors"
+    "dev": "node ./server.dev.js",
+    "dev:hot": "nodemon ./server.dev.js"
   }
 }

@@ -10,7 +10,14 @@ module.exports = function() {
     },
     plugins: [
       new webpack.NamedModulesPlugin(),
-      new webpack.HotModuleReplacementPlugin()
+      new webpack.HotModuleReplacementPlugin({
+        reload: true
+      }),
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify('development')
+        }
+      })
     ],
     devServer: {
       historyApiFallback: {

@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "repository": "milestep/ActiveMile",
   "license": "MIT",
-  "main": "./client/server.js",
+  "main": "./server.js",
   "scripts": {
-    "start": "NODE_ENV=production cd client && npm start",
-    "prod:hot": "NODE_ENV=development cd client && npm run prod:hot",
-    "prod:daemon": "NODE_ENV=production cd client && npm run prod:daemon",
-    "build": "NODE_ENV=production cd client && npm run build",
-    "dev": "NODE_ENV=development cd client && npm run dev",
-    "dev:hot": "NODE_ENV=development cd client && npm run dev:hot"
+    "start": "NODE_ENV=production node ./server.js",
+    "prod:hot": "NODE_ENV=development nodemon ./server.js",
+    "prod:daemon": "pm2 start ./server.js",
+    "build": "webpack -p --env=prod --colors",
+    "dev": "NODE_ENV=development node ./server.dev.js",
+    "dev:hot": "NODE_ENV=development nodemon ./server.dev.js"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.6",

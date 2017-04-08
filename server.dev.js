@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const config = require('./config/webpack/dev.js')({ env: 'dev' });
+const config = require('./client/webpack/dev.js')({ env: 'dev' });
 const compiler = webpack(config);
 const webpackDevServer = require('webpack-dev-server');
 const API_URL = 'http://localhost:' + (process.env.API_PORT || 3000);
@@ -10,12 +10,14 @@ const server = new webpackDevServer(compiler, {
   hot: true,
   inline: true,
   port: port,
-  historyApiFallback: true,
   proxy: {
     '/api': {
       target: API_URL,
       secure: false
     }
+  },
+  historyApiFallback: {
+    index: '/index.html'
   },
   watchOptions: {
     aggregateTimeout: 300,
@@ -29,8 +31,7 @@ const server = new webpackDevServer(compiler, {
     chunkModules: false,
     modules: false
   }
-});
-
-server.listen(port, () => {
-  console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port);
+}).listen(port, 'localhost', (err, res) => {
+  if (err) return console.error(err);
+  console.info("==> 🌎 Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port);
 });

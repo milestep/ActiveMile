@@ -7,11 +7,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = function() {
   return {
-    context: path.join(__dirname, '/../../src'),
+    context: path.join(__dirname, '/../src'),
     entry: './client.js',
     output: {
       filename: '[name]-[hash].js',
-      path: path.join(__dirname, '/../../dist'),
+      path: path.join(__dirname, '/../dist'),
       publicPath: '/'
     },
     module: {

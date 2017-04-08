@@ -6,6 +6,7 @@
   ],
   "plugins": [
     "react-html-attrs",
+    "react-hot-loader/babel",
     "transform-decorators-legacy",
     "transform-class-properties"
   ]

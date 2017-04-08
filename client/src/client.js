@@ -18,11 +18,14 @@ import App               from './components/app';
 import NotFound          from './components/errors/err404';
 import Dashboard         from './components/dashboard';
 import Login             from './components/auth/login';
+import faviconUrl        from 'file-loader!./images/favicon.ico';
 import './styles/app.styl';
 
-const middleware = routerMiddleware(browserHistory)
-const store = configureStore(null, middleware)
-const history = syncHistoryWithStore(browserHistory, store)
+const middleware = routerMiddleware(browserHistory);
+const store = configureStore(null, middleware);
+const history = syncHistoryWithStore(browserHistory, store);
+
+document.querySelector('[rel="shortcut icon"]').href = faviconUrl;
 
 render(
   <Provider store={store}>

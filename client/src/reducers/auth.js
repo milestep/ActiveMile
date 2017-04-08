@@ -75,7 +75,7 @@ export default (state = initialState, action) => {
     }
 
     case LOGOUT: {
-      return { ...initialState };
+      return cookie.get('token') ? { ...initialState } : { ...state, token: null }
     }
 
     default: {

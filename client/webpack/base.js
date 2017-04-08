@@ -68,7 +68,7 @@ module.exports = function() {
       }),
       new HtmlWebpackPlugin({
         template: 'index.html',
-        title: 'React on Rails',
+        title: 'ActiveMile',
         chunksSortMode: 'dependency'
       }),
       new ExtractTextPlugin({ 

@@ -1,20 +1,29 @@
-import React               from 'react';
+import React, { 
+  Component, 
+  PropTypes, 
+  createClass }            from 'react';
 import { connect }         from 'react-redux';
 import { browserHistory }  from 'react-router'
 
-export default function (ComposedComponent, req=true) {
-  class Authentication extends React.Component {
+const ComposedComponent = createClass({
+  render: function() {
+    return this.props.children;
+  }
+});
+
+export default function (reqireAuth = true) {
+  class Authentication extends Component {
     static contextTypes = {
-      router: React.PropTypes.object
+      router: PropTypes.object
     };
 
     componentWillMount() {
       const { router } = this.context;
       const { authenticated } = this.props;
 
-      if (req && !authenticated) {
+      if (reqireAuth && !authenticated) {
         browserHistory.push('/login');
-      } else if (!req && authenticated) {
+      } else if (!reqireAuth && authenticated) {
         browserHistory.push('/admin');
       }
     }

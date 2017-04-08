@@ -5,6 +5,7 @@ const commonConfig = require('./base.js');
 
 module.exports = function() {
   return webpackMerge(commonConfig(), {
+    entry: './client.js',
     externals: {
       'app-config': JSON.stringify(require('./../config/prod.json'))
     },

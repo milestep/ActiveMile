@@ -1,25 +1,15 @@
 import 'babel-polyfill';
-import React             from 'react'
-import { render }        from 'react-dom';
-import { Provider }      from 'react-redux';
-import { 
-  Router, 
-  Route, 
-  IndexRedirect, 
-  browserHistory }       from 'react-router'
+import React               from 'react'
+import { render }          from 'react-dom';
+import { browserHistory }  from 'react-router';
 import { 
   syncHistoryWithStore, 
-  routerMiddleware }     from 'react-router-redux'
-import configureStore    from './store/configureStore'
-import RequireAuth       from './containers/requireAuth';
-import AdminScope        from './containers/adminScope';
-import GuestScope        from './containers/guestScope';
-import App               from './components/app';
-import NotFound          from './components/errors/err404';
-import Dashboard         from './components/dashboard';
-import Login             from './components/auth/login';
-import faviconUrl        from 'file-loader!./images/favicon.ico';
-import './styles/app.styl';
+  routerMiddleware }       from 'react-router-redux'
+import { AppContainer }    from 'react-hot-loader';
+import configureStore      from './store/configureStore'
+import Root                from './containers/root';
+import faviconUrl          from 'file-loader!./images/favicon.ico';
+import './styles/app.js';
 
 const middleware = routerMiddleware(browserHistory);
 const store = configureStore(null, middleware);
@@ -28,23 +18,21 @@ const history = syncHistoryWithStore(browserHistory, store);
 document.querySelector('[rel="shortcut icon"]').href = faviconUrl;
 
 render(
-  <Provider store={store}>
-    <Router history={history}>
-      <Route path="/" component={App}>
-        <IndexRedirect to="admin" />
-
-        <Route component={RequireAuth(GuestScope, false)}>
-          <Route path="login" component={Login} />
-        </Route>
-
-        <Route path="admin" component={RequireAuth(AdminScope)}>
-          <IndexRedirect to="dashboard" />
-          <Route path="dashboard" component={Dashboard} />
-        </Route>
-
-        <Route path='*' component={NotFound} />
-      </Route>
-    </Router>
-  </Provider>,
+  <AppContainer>
+    <Root store={store} history={history} />
+  </AppContainer>,
   document.getElementById('app')
 );
+
+if (module.hot) {
+  module.hot.accept('./containers/root', () => {
+    const NewRoot = require('./containers/root').default;
+
+    render(
+      <AppContainer>
+        <NewRoot store={store} history={history} />
+      </AppContainer>,
+      document.getElementById('app')
+    );
+  });
+}

@@ -8,7 +8,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = function() {
   return {
     context: path.join(__dirname, '/../src'),
-    entry: './client.js',
     output: {
       filename: '[name]-[hash].js',
       path: path.join(__dirname, '/../dist'),
@@ -69,6 +68,7 @@ module.exports = function() {
       }),
       new HtmlWebpackPlugin({
         template: 'index.html',
+        title: 'React on Rails',
         chunksSortMode: 'dependency'
       }),
       new ExtractTextPlugin({ 

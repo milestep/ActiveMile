@@ -8,27 +8,8 @@ set :passenger_restart_with_touch, true
 set :deploy_to, "/home/midnight/apps/activemile"
 set :linked_files, %w(config/database.yml config/application.yml config/secrets.yml)
 set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
-
-# Default branch is :master
+set :bundle_binstubs, nil
 set :branch, branch
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
-
-# Default value for :format is :airbrussh.
-# set :format, :airbrussh
-
-# You can configure the Airbrussh format using :format_options.
-# These are the defaults.
-# set :format_options, command_output: true, log_file: "log/capistrano.log", color: :auto, truncate: :auto
-
-# Default value for :pty is false
-# set :pty, true
-
-# Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
-
-# Default value for keep_releases is 5
-# set :keep_releases, 5
-
 set :puma_rackup, -> { File.join(current_path, 'config.ru') }
 set :puma_state, "#{shared_path}/tmp/pids/puma.state"
 set :puma_pid, "#{shared_path}/tmp/pids/puma.pid"
@@ -42,6 +23,7 @@ set :puma_threads, [0, 16]
 set :puma_workers, default: 2
 set :puma_init_active_record, true
 set :puma_preload_app, true
+set :keep_releases, 5
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'

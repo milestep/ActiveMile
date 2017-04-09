@@ -6,6 +6,7 @@
   "main": "./server.js",
   "scripts": {
     "start": "NODE_ENV=production node ./server.js",
+    "stop": "pkill --signal SIGINT .",
     "prod:hot": "NODE_ENV=development nodemon ./server.js",
     "prod:daemon": "pm2 start ./server.js",
     "build": "webpack -p --env=prod --colors",

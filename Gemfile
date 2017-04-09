@@ -13,6 +13,7 @@ gem 'bcrypt'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'rack-cors', require: 'rack/cors'
 gem 'figaro'
+gem 'listen', '~> 3.0.5'
 
 group :development, :test do
   gem 'byebug', platform: :mri
@@ -36,7 +37,6 @@ group :development do
   gem 'capistrano3-puma'
   # gem 'capistrano-resque', '~> 0.2.2', require: false
   gem 'web-console', '>= 3.3.0'
-  gem 'listen', '~> 3.0.5'
 end
 
 group :test do

@@ -7,7 +7,7 @@ set :repo_url, "git@github.com:milestep/ActiveMile.git"
 set :passenger_restart_with_touch, true
 set :deploy_to, "/home/midnight/apps/activemile"
 set :linked_files, %w(config/database.yml config/application.yml config/secrets.yml)
-set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
+set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
 set :bundle_binstubs, nil
 set :branch, branch
 set :puma_rackup, -> { File.join(current_path, 'config.ru') }

@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApiController
+class Api::V1::UsersController < Api::V1::BaseController
   before_action :find_user, only: [:show, :update, :destroy]
 
   def index

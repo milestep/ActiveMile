@@ -12,7 +12,7 @@ module Activemile
       end
     end
 
-    # Load validators
+    config.action_controller.allow_forgery_protection = false
     config.autoload_paths += %W["#{config.root}/app/validators/"]
   end
 end

@@ -9,7 +9,7 @@ export default class ErrorThrower {
   handleError(err, callback) {
     if (callback && this._performCallback(callback) === false) { return; }
 
-    const { response } = err;
+    const { response, text } = err;
     const { 
       error,
       errors, 
@@ -23,7 +23,10 @@ export default class ErrorThrower {
       (error ? this._getDoorkeeperError(error, response.status) : null)
     );
 
-    if (errors && errors.length) {
+    if (text) {
+      this._throwAlert(text);
+      this._emit(text);
+    } else if (errors && errors.length) {
       errors.forEach((error, i) => {
         this._throwAlert(error)
       });

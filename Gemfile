@@ -18,7 +18,9 @@ gem 'slim'
 
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'rspec-collection_matchers'
   gem 'rspec-rails'
   gem 'foreman'
   gem 'capybara'
@@ -36,7 +38,6 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-npm'
   gem 'capistrano3-puma'
-  # gem 'capistrano-resque', '~> 0.2.2', require: false
   gem 'web-console', '>= 3.3.0'
 end
 

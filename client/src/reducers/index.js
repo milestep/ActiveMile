@@ -1,4 +1,9 @@
-import auth    from './auth';
-import alerts  from './alerts';
+import auth        from './auth';
+import workspaces  from './workspaces';
+import alerts      from './alerts';
 
-export default { auth, alerts }
+export default { 
+  auth,
+  workspaces,
+  alerts
+}

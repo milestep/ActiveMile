@@ -3,12 +3,14 @@ Rails.application.routes.draw do
 
   scope :api do
     use_doorkeeper
+    get '/', to: dashboard_ctrl
+  end
 
+  namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
       resources :users, only: [:index, :create, :show, :update, :destroy]
+      resources :workspaces, only: [:index, :create, :update, :destroy]
     end
-
-    get '/', to: dashboard_ctrl
   end
 
   root dashboard_ctrl

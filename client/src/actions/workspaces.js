@@ -30,9 +30,13 @@ export function fetchWorkspaces(router) {
       type: FETCH_WORKSPACES_REJECTED, payload: { scope }
     });
 
+    headers['Content-Type'] = 'application/json';
+
     axios.get(apiEndpoint, { headers })
       .then(res => {
-        if (res.status !== 200) { return Promise.reject(); }
+        if (res.status >= 400) { 
+          return errHandler.throwError('Could not fetch workspaces! Bad response from server.'); 
+        }
 
         workspaces = res.data;
         dispatch({ type: FETCH_WORKSPACES_FULFILLED, payload: workspaces });
@@ -64,7 +68,9 @@ export function createWorkspace(workspace) {
 
     axios.post(apiEndpoint, body, { headers: headers })
       .then(res => {
-        if (res.status !== 201) { return Promise.reject(); }
+        if (res.status >= 400) { 
+          return errHandler.throwError('Could not create workspace! Bad response from server.'); 
+        }
         
         const { data } = res;
 

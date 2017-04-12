@@ -9,24 +9,16 @@ export default class ErrorThrower {
   handleError(err, callback) {
     if (callback && this._performCallback(callback) === false) { return; }
 
-    const { response, text } = err;
+    const { response } = err;
     const { 
       error,
       errors, 
       message, 
       error_description 
     } = response.data;
+    const errorFiltered = message || error_description || null;
 
-    let errorFiltered = (
-      message || 
-      error_description || 
-      (error ? this._getDoorkeeperError(error, response.status) : null)
-    );
-
-    if (text) {
-      this._throwAlert(text);
-      this._emit(text);
-    } else if (errors && errors.length) {
+    if (errors && errors.length) {
       errors.forEach((error, i) => {
         this._throwAlert(error)
       });
@@ -46,6 +38,13 @@ export default class ErrorThrower {
     this._performCallback(callback);
     this._emit(err);
     this._throwAlert(errorMsg);
+  }
+
+  throwError(err) {
+    if (err) {
+      this._throwAlert(err);
+      this._emit(err);
+    }
   }
 
   _emit(error) {
@@ -74,18 +73,5 @@ export default class ErrorThrower {
 
   _performCallback(cb) {
     if (cb && typeof cb === 'function') { return cb(); }
-  }
-
-  _getDoorkeeperError(error, status) {
-    let message = error;
-
-    switch (status) {
-      case 401: {
-        return 'You should to login before continuing';
-      }
-      default: {
-        return message;
-      }
-    } 
   }
 }

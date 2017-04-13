@@ -54,7 +54,6 @@ export default class Header extends Component {
     let navItems = [];
     let navItemsRight = [];
 
-
     navItems = [
       { 
         to: '/articles', 

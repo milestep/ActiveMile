@@ -1,10 +1,11 @@
-import axios             from 'axios';
-import config            from 'app-config';
-import { push }          from 'react-router-redux'
-import { addAlertAsync } from './alerts';
-import LoginActions      from '../constants/auth';
-import cookie            from '../utils/cookie';
-import ErrorThrower      from '../utils/errorThrower';
+import axios              from 'axios';
+import config             from 'app-config';
+import cookie             from 'react-cookie';
+import { push }           from 'react-router-redux'
+import { defaultHeaders } from 'redux-rest-resource'
+import { addAlertAsync }  from './alerts';
+import LoginActions       from '../constants/auth';
+import ErrorThrower       from '../utils/errorThrower';
 
 const {
   FETCHING_USER,
@@ -14,16 +15,35 @@ const {
 } = LoginActions;
 
 const apiEndpoint = `${window.location.origin}/api`;
-const headers = { 'Content-Type': 'application/json' }; 
+const headers = defaultHeaders;
 
-function saveAuthToken(token) {
+function saveAuthToken(data) {
+  const { access_token } = data;
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  cookie.set({
-    name: 'token',
-    value: token,
-    expires
-  });
+  cookie.save('token', access_token, { expires })
+  cookie.save('user', JSON.stringify(data), { expires });
+  setAuthHeader(data);
+}
+
+function resetAuthToken() {
+  cookie.remove('token');
+  cookie.remove('user');
+  resetAuthHeader();
+}
+
+export function setAuthHeader(data) {
+  const { access_token, token_type } = data;
+
+  if (!defaultHeaders['Authorization']) {
+    Object.assign(defaultHeaders, { 
+      Authorization: `${token_type} ${access_token}` 
+    });
+  }
+}
+
+export function resetAuthHeader() {
+  delete defaultHeaders.Authorization;
 }
 
 export function login(data, router) {
@@ -41,15 +61,18 @@ export function login(data, router) {
     axios.post(url, body, { headers })
       .then((res) => {
         if (res && res.status == 200) {
-          const { access_token } = res.data;
           const { query } = router.location;
           const redirectTo = (query && query.redirectTo) ? query.redirectTo : '/';
+          const { data } = res;
 
-          saveAuthToken(access_token);
+          saveAuthToken(data);
 
-          dispatch({ type: LOGIN_SUCCESS, payload: {
-            token: access_token
-          } });
+          dispatch({ 
+            type: LOGIN_SUCCESS, 
+            payload: {
+              token: data.access_token
+            } 
+          });
 
           dispatch(push(redirectTo));
 
@@ -66,11 +89,14 @@ export function login(data, router) {
 
 export function logout(router) {
   return dispatch => {
-    cookie.unset('token');
+    resetAuthToken();
+
     dispatch({ type: LOGOUT });
+
     addAlertAsync({
       message: 'Logout successfully'
     })(dispatch);
+    
     dispatch(push('/login'));
   };
 }

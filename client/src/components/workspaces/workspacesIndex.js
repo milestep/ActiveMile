@@ -1,31 +1,23 @@
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
-import { 
-  fetchWorkspaces,
-  createWorkspace }                    from '../../actions/workspaces';
-import CreateWorkspaceForm             from './forms/createWorkspace';
-import cookie                          from '../../utils/cookie';
+import { getCurrentUser }              from '../../utils/currentUser';
+import { actions as workspaceActions } from '../../resources/workspace';
+import CreateWorkspaceForm             from './createWorkspaceForm';
 
-@connect(state => ({
-  workspaces: state.workspaces.all,
-  fetching: state.workspaces.fetching.all,
-  fetched: state.workspaces.fetched.all
-}), {
-  fetchWorkspaces,
-  createWorkspace
-})
+@connect(
+  state => ({
+    workspaces: state.workspaces.items,
+    isFetching: state.workspaces.isFetching
+  }), 
+  dispatch => ({
+    actions: bindActionCreators({...workspaceActions}, dispatch)
+  })
+)
 export default class WorkspacesIndex extends Component {
   static propTypes = {
     workspaces: PropTypes.array.isRequired,
-    fetching: PropTypes.bool.isRequired,
-    fetched: PropTypes.bool.isRequired,
-    fetchWorkspaces: PropTypes.func.isRequired,
-    createWorkspace: PropTypes.func.isRequired
-  };
-
-   static contextTypes = {
-    router: React.PropTypes.object,
-    store: React.PropTypes.object
+    isFetching: PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -40,9 +32,8 @@ export default class WorkspacesIndex extends Component {
   }
 
   componentDidMount() {
-    const { store, router } = this.context;
-
-    return store.dispatch(fetchWorkspaces(router));
+    const { actions } = this.props;
+    actions.fetchWorkspaces();
   }
 
   componentWillReceiveProps(newProps) {
@@ -56,7 +47,8 @@ export default class WorkspacesIndex extends Component {
   }
 
   handleSave = workspace => {
-    this.props.createWorkspace(workspace);
+    const { actions } = this.props;
+    actions.createWorkspace({ workspace });
   }
 
   switchToSpace = id => {
@@ -67,8 +59,9 @@ export default class WorkspacesIndex extends Component {
   }
 
   render() {
+    const currentUser = getCurrentUser();
     const { workspaces, activeSpace } = this.state;
-    const { fetching, fetched } = this.props;
+    const { isFetching } = this.props;
     
     let workspacesTabsList = [], 
         workspacesTabsContent = [];
@@ -103,7 +96,7 @@ export default class WorkspacesIndex extends Component {
         <h3>Articles</h3>
 
         {
-          cookie.get('token') ? 
+          currentUser ? 
           <div className="row">
             <div className="col-md-6">
               <CreateWorkspaceForm 
@@ -132,3 +125,4 @@ export default class WorkspacesIndex extends Component {
     );
   };
 }
+

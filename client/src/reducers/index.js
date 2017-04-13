@@ -1,9 +1,11 @@
 import auth        from './auth';
-import workspaces  from './workspaces';
 import alerts      from './alerts';
+// import workspaces  from './workspaces';
+import { apiReducers } from './api'
 
 export default { 
   auth,
-  workspaces,
-  alerts
+  alerts,
+  /*workspaces,*/
+  ...apiReducers
 }

@@ -10,7 +10,7 @@ import {
 import RequireAuth      from '../containers/requireAuth';
 import App              from '../components/app';
 import NotFound         from '../components/errors/err404';
-import WorkspacesIndex  from '../components/workspaces/index';
+import WorkspacesIndex  from '../components/workspaces/workspacesIndex';
 import Dashboard        from '../components/admin/dashboard';
 import Login            from '../components/auth/login';
 

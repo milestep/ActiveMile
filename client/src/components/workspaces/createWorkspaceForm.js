@@ -1,12 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
-import FormInput                       from '../../layout/form/input';
-import extractPropertyFromObject       from '../../../utils/extractPropertyFromObject';
+import { bindActionCreators }          from 'redux';
+import { actions as workspaceActions } from '../../resources/workspace';
+import FormInput                       from '../layout/form/input';
+import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
 
-@connect(state => ({
-  fetching: state.workspaces.fetching.create,
-  fetched: state.workspaces.fetched.create
-}), {})
+@connect(
+  state => ({
+    isCreating: state.workspaces.isCreating
+  }), 
+  dispatch => ({
+    actions: bindActionCreators({...workspaceActions}, dispatch)
+  })
+)
 export default class CreateWorkspaceForm extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +26,7 @@ export default class CreateWorkspaceForm extends Component {
 
     this.state = {
       workspace: this.workspaceState,
+      isCreating: false,
       canSubmit: true
     };
 
@@ -27,18 +34,24 @@ export default class CreateWorkspaceForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { fetching } = this.props;
+    const { isCreating } = this.props;
 
-    if (nextProps.fetched === true && fetching === true) {
+    if (isCreating === true) {
       this.setState({
-        workspace: this.workspaceState
+        isCreating: true
+      });
+    }
+
+    if (isCreating === false && this.state.isCreating === true) {
+      this.setState({
+        workspace: this.workspaceState,
+        isCreating: false
       });
       this.resetForm();
     }
   }
 
   handleSubmit = model => {
-    const { fetching } = this.props;
     const { workspace } = this.state;
     const workspaceValues = extractPropertyFromObject(workspace, 'value');
 

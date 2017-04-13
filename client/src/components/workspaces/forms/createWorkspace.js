@@ -57,15 +57,9 @@ export default class CreateWorkspaceForm extends Component {
     }));
   }
 
-  enableButton = () => {
+  toggleButton = (status) => {
     this.setState({
-      canSubmit: true
-    });
-  }
-
-  disableButton = () => {
-    this.setState({
-      canSubmit: false
+      canSubmit: status
     });
   }
 
@@ -79,10 +73,10 @@ export default class CreateWorkspaceForm extends Component {
 
     return(
       <Formsy.Form 
-        ref='form'
+        ref="form"
         onValidSubmit={this.handleSubmit} 
-        onValid={this.enableButton} 
-        onInvalid={this.disableButton}
+        onValid={this.toggleButton.bind(this, true)} 
+        onInvalid={this.toggleButton.bind(this, false)}
         className="workspaceForm"
       >
         <FormInput 

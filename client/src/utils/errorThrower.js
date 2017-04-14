@@ -1,15 +1,17 @@
-import { addAlertAsync } from '../actions/alerts';
+import Toaster from '../actions/alerts';
 
 export default class ErrorThrower {
   constructor(dispatch, params) {
     this.dispatch = dispatch;
     this.params = params;
+    this.toaster = new Toaster(dispatch);
   }
 
   handleError(err, callback) {
     if (callback && this._performCallback(callback) === false) { return; }
 
     const { response } = err;
+    const { toaster } = this;
     const { 
       error,
       errors, 
@@ -20,11 +22,11 @@ export default class ErrorThrower {
 
     if (errors && errors.length) {
       errors.forEach((error, i) => {
-        this._throwAlert(error)
+        toaster.error(error);
       });
       this._emit(errors);
     } else if (errorFiltered) {
-      this._throwAlert(errorFiltered);
+      toaster.error(errorFiltered);
       this._emit(errorFiltered);
     } else {
       return Promise.reject(err);
@@ -37,19 +39,18 @@ export default class ErrorThrower {
 
     this._performCallback(callback);
     this._emit(err);
-    this._throwAlert(errorMsg);
+    this.toaster.error(errorMsg);
   }
 
   throwError(err) {
     if (err) {
-      this._throwAlert(err);
+      this.toaster.error(err);
       this._emit(err);
     }
   }
 
   _emit(error) {
     const { dispatch, params: { type, payload } } = this;
-
     let resPayload = { error };
 
     if (dispatch && type) {
@@ -61,14 +62,6 @@ export default class ErrorThrower {
 
       type ? dispatch({ type, payload: resPayload }) : null;
     }
-  }
-
-  _throwAlert(message) {
-    addAlertAsync({
-      message, 
-      type: 'danger',
-      delay: 6000
-    })(this.dispatch);
   }
 
   _performCallback(cb) {

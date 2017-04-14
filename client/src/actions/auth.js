@@ -3,7 +3,7 @@ import config             from 'app-config';
 import cookie             from 'react-cookie';
 import { push }           from 'react-router-redux'
 import { defaultHeaders } from 'redux-rest-resource'
-import { addAlertAsync }  from './alerts';
+import Toaster            from './alerts';
 import LoginActions       from '../constants/auth';
 import ErrorThrower       from '../utils/errorThrower';
 
@@ -53,8 +53,7 @@ export function login(data, router) {
     const url = `${apiEndpoint}/oauth/token?client_id=${config.clientId}&grant_type=password`;
     const { email, password } = data;
     const body = JSON.stringify(data);
-
-    let errHandler = new ErrorThrower(dispatch, { 
+    const errHandler = new ErrorThrower(dispatch, { 
       type: LOGIN_FAILURE
     });
 
@@ -65,8 +64,6 @@ export function login(data, router) {
           const redirectTo = (query && query.redirectTo) ? query.redirectTo : '/';
           const { data } = res;
 
-          saveAuthToken(data);
-
           dispatch({ 
             type: LOGIN_SUCCESS, 
             payload: {
@@ -74,29 +71,22 @@ export function login(data, router) {
             } 
           });
 
+          saveAuthToken(data);
           dispatch(push(redirectTo));
-
-          addAlertAsync({
-            message: 'Login successfully'
-          })(dispatch);
+          new Toaster(dispatch).success('Login successfully');
         }
-      }, (err => {
-        return errHandler.handleError(err);
-      }))
-      .catch(err => errHandler.handleUnknownError(err));
+      })
+      .catch(err => {
+        errHandler.handleError(err);
+      });
   };
 }
 
 export function logout(router) {
   return dispatch => {
     resetAuthToken();
-
     dispatch({ type: LOGOUT });
-
-    addAlertAsync({
-      message: 'Logout successfully'
-    })(dispatch);
-    
+    new Toaster(dispatch).success('Logout successfully');
     dispatch(push('/login'));
   };
 }

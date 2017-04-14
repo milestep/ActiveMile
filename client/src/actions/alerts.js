@@ -5,28 +5,39 @@ const {
   REMOVE_ALERT_ASYNC
 } = AlertsActions;
 
-export function addAlertAsync (inputParams) {
-  if (!inputParams.message) { return; }
+export default class Toaster {
+  constructor(dispatch, params) {
+    this.dispatch = dispatch;
+  }
 
-  let params = Object.assign({}, {
-    type: 'success',
-    delay: 4000
-  }, inputParams);
+  success(message, options) {
+    this._throwAlert('success', message, options);
+  }
 
-  return function(dispatch) {
-    let { message, type, delay } = params;
+  warning(message, options) {
+    this._throwAlert('warning', message, options);
+  }
+
+  error(message, options) {
+    this._throwAlert('danger', message, Object.assign({}, { delay: 6000 }, options));
+  }
+
+  _throwAlert(type, message, options = {}) {
+    if (!options) { return; }
+
+    const { dispatch } = this;
+    const params = Object.assign({}, { delay: 4000 }, options);
+    const { delay } = params;
 
     dispatch({ 
       type: ADD_ALERT_ASYNC,
       kind: type,
       message: message
-    })
+    });
 
     setTimeout(() => {
-      dispatch({
-        type: REMOVE_ALERT_ASYNC
-      });
-    }, delay)
+      dispatch({ type: REMOVE_ALERT_ASYNC });
+    }, delay);
   }
 }
 

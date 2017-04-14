@@ -5,14 +5,6 @@ import { actions as workspaceActions } from '../../resources/workspace';
 import FormInput                       from '../layout/form/input';
 import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
 
-@connect(
-  state => ({
-    isCreating: state.workspaces.isCreating
-  }), 
-  dispatch => ({
-    actions: bindActionCreators({...workspaceActions}, dispatch)
-  })
-)
 export default class CreateWorkspaceForm extends Component {
   constructor(props) {
     super(props);
@@ -26,36 +18,25 @@ export default class CreateWorkspaceForm extends Component {
 
     this.state = {
       workspace: this.workspaceState,
-      isCreating: false,
       canSubmit: true
     };
 
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { isCreating } = this.props;
-
-    if (isCreating === true) {
-      this.setState({
-        isCreating: true
-      });
-    }
-
-    if (isCreating === false && this.state.isCreating === true) {
-      this.setState({
-        workspace: this.workspaceState,
-        isCreating: false
-      });
-      this.resetForm();
-    }
-  }
+  componentWillReceiveProps(nextProps) {}
 
   handleSubmit = model => {
     const { workspace } = this.state;
     const workspaceValues = extractPropertyFromObject(workspace, 'value');
 
-    this.props.handleSave(workspaceValues);
+    this.props.handleSave(workspaceValues, function() {
+      this.setState({
+        workspace: this.workspaceState
+      });
+
+      this.resetForm();
+    }.bind(this));
   }
 
   handleChange = (field, values) => {

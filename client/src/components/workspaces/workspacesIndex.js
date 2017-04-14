@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
 import { getCurrentUser }              from '../../utils/currentUser';
+import Toaster                         from '../../actions/alerts';
 import { actions as workspaceActions } from '../../resources/workspace';
 import CreateWorkspaceForm             from './createWorkspaceForm';
 
@@ -28,12 +29,17 @@ export default class WorkspacesIndex extends Component {
       activeSpace: null
     };
 
+    this.toaster = new Toaster(props.dispatch);
     this.handleSave = this.handleSave.bind(this);
   }
 
   componentDidMount() {
-    const { actions } = this.props;
-    actions.fetchWorkspaces();
+    const { actions, dispatch } = this.props;
+
+    actions.fetchWorkspaces()
+      .catch(err => {
+        this.toaster.error('Could not load workspaces!');
+      })
   }
 
   componentWillReceiveProps(newProps) {
@@ -46,9 +52,19 @@ export default class WorkspacesIndex extends Component {
     }
   }
 
-  handleSave = workspace => {
+  handleSave = (workspace, callback) => {
     const { actions } = this.props;
-    actions.createWorkspace({ workspace });
+
+    actions.createWorkspace({ workspace })
+      .then(res => {
+        if (res.status == 'resolved') {
+          this.toaster.success('Workspace has been created');
+          if (typeof callback === 'function') { callback(); }
+        }
+      })
+      .catch(err => {
+        this.toaster.error('Could not create workspace!');
+      })
   }
 
   switchToSpace = id => {
@@ -125,4 +141,3 @@ export default class WorkspacesIndex extends Component {
     );
   };
 }
-

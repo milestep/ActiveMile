@@ -5,7 +5,6 @@ class Api::V1::WorkspacesController < Api::V1::BaseController
 
   def index
     render_api(workspaces, :ok, each_serializer: WorkspacesSerializer)
-    binding.pry
   end
 
   def create

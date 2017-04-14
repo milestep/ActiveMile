@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   describe 'validations' do
-    subject { FactoryGirl.build(:user) }
+    subject { build(:user) }
  
     context 'valid' do
       it { should validate_presence_of(:email) }

@@ -25,7 +25,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'foreman'
   gem 'capybara'
-  gem 'rspec-collection_matchers'
   gem 'pry-rails'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'

@@ -24,8 +24,6 @@ export default class CreateWorkspaceForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {}
-
   handleSubmit = model => {
     const { workspace } = this.state;
     const workspaceValues = extractPropertyFromObject(workspace, 'value');

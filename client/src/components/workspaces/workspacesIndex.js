@@ -74,13 +74,10 @@ export default class WorkspacesIndex extends Component {
     }));
   }
 
-  render() {
-    const currentUser = getCurrentUser();
+  createTabsTemplate() {
     const { workspaces, activeSpace } = this.state;
-    const { isFetching } = this.props;
-    
-    let workspacesTabsList = [], 
-        workspacesTabsContent = [];
+    let list    = [], 
+        content = [];
 
     if (workspaces && workspaces.length) {
       workspaces.forEach((workspace, i) => {
@@ -93,19 +90,28 @@ export default class WorkspacesIndex extends Component {
           contentClassName = 'active in';
         }
 
-        workspacesTabsList.push(
+        list.push(
           <li className={listClassName} key={i}>
             <a onClick={this.switchToSpace.bind(this, id)}>{title}</a>
           </li>
         );
 
-        workspacesTabsContent.push(
+        content.push(
           <div className={`tab-pane fade${' ' + contentClassName}`} key={i}>
             <p>Articles List {i + 1}</p>
           </div>
         );
       });
     }
+
+    return { list, content }
+  }
+
+  render() {
+    const currentUser = getCurrentUser();
+    const { workspaces } = this.state;
+    const { isFetching } = this.props;
+    const tabs = this.createTabsTemplate();
 
     return(
       <div>
@@ -128,10 +134,10 @@ export default class WorkspacesIndex extends Component {
             <div className="col-md-12">
               <div className="workspaces-container">
                 <ul class="nav nav-tabs">
-                  {workspacesTabsList}
+                  {tabs.list}
                 </ul>
                 <div className="tab-content">
-                  {workspacesTabsContent}
+                  {tabs.content}
                 </div>
               </div>
             </div>

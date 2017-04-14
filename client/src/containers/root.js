@@ -1,21 +1,23 @@
 import React, { 
   Component, 
-  PropTypes }        from 'react';
-import { Provider }  from 'react-redux';
+  PropTypes }           from 'react';
+import { Provider }     from 'react-redux';
 import { 
   Router, 
   Route, 
   IndexRedirect, 
-  browserHistory }   from 'react-router';
-import RequireAuth   from '../containers/requireAuth';
-import App           from '../components/app';
-import NotFound      from '../components/errors/err404';
-import Dashboard     from '../components/dashboard';
-import Login         from '../components/auth/login';
+  browserHistory }      from 'react-router';
+import RequireAuth      from '../containers/requireAuth';
+import App              from '../components/app';
+import NotFound         from '../components/errors/err404';
+import WorkspacesIndex  from '../components/workspaces/workspacesIndex';
+import Dashboard        from '../components/admin/dashboard';
+import Login            from '../components/auth/login';
 
 const routes = (
   <Route path="/" component={App}>
-    <IndexRedirect to="admin" />
+    <IndexRedirect to="articles" />
+    <Route path="articles" component={WorkspacesIndex} />
 
     <Route component={RequireAuth(false)}>
       <Route path="login" component={Login} />

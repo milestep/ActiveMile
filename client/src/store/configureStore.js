@@ -16,7 +16,6 @@ export default function configureStore(initialState, middleware) {
     ...appReducers,
     initialState,
     routing: routerReducer
-    // orm: createReducer(schema)
   }
 
   const reducer = combineReducers(reducers)

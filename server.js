@@ -4,7 +4,7 @@ const http = require('http');
 const proxy = require('http-proxy-middleware');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 4200;
+const port = process.env.PORT || 80;
 const API_URL = 'http://localhost:' + (process.env.API_PORT || '3000');
 
 app.use('/api', proxy({
@@ -23,5 +23,5 @@ app.get('/*', (req, res) => {
 
 const server = http.createServer(app);
 server.listen(port, () => {
-  console.info("==> 🌎 Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port);
+  console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port);
 });

@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/hashrocket/decent_exposure.git
+  revision: a4ba6bdeb1f1ec17123fcb865bb8e2a2828b1450
+  branch: master
+  specs:
+    decent_exposure (3.0.2)
+      activesupport (>= 4.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -242,6 +250,7 @@ DEPENDENCIES
   capistrano3-puma
   capybara
   database_cleaner
+  decent_exposure!
   doorkeeper
   factory_girl_rails
   faker

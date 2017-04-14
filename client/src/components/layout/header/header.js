@@ -51,35 +51,38 @@ export default class Header extends Component {
 
   renderNavBar() {
     const { loggedIn } = this.props;
-    let navItems;
-    let navItemsRight;
+    let navItems = [];
+    let navItemsRight = [];
+
+    navItems = [
+      { 
+        to: '/articles', 
+        title: 'Articles', 
+        onClick: this.toggleCollapse
+      }
+    ];
 
     if (loggedIn) {
-      navItems = [
-        { 
-          to: '/admin/dashboard', 
-          title: 'Dashboard', 
-          onClick: this.toggleCollapse
+      Array.prototype.push.apply(navItems, [{
+        to: '/admin/dashboard', 
+        title: 'Dashboard', 
+        onClick: this.toggleCollapse
+      }]);
+
+      Array.prototype.push.apply(navItemsRight, [{
+        to: '/logout', 
+        title: 'Logout', 
+        onClick: (e) => {
+          this.handleLogout(e); 
+          this.toggleCollapse.call(this); 
         }
-      ];
-      navItemsRight = [
-        {
-          to: '/logout', 
-          title: 'Logout', 
-          onClick: (e) => {
-            this.handleLogout(e); 
-            this.toggleCollapse.call(this); 
-          }
-        }
-      ];
+      }]);
     } else {
-      navItems = [
-        { 
-          to: '/login', 
-          title: 'Login', 
-          onClick: this.toggleCollapse
-        }
-      ];
+      Array.prototype.push.apply(navItemsRight, [{
+        to: '/login', 
+        title: 'Login', 
+        onClick: this.toggleCollapse
+      }]);
     }
 
     navItems = this.createNavItems(navItems);

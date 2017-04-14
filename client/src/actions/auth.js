@@ -1,10 +1,11 @@
-import axios             from 'axios';
-import config            from 'app-config';
-import { push }          from 'react-router-redux'
-import { addAlertAsync } from './alerts';
-import LoginActions      from '../constants/auth';
-import cookie            from '../utils/cookie';
-import ErrorThrower      from '../utils/errorThrower';
+import axios              from 'axios';
+import config             from 'app-config';
+import cookie             from 'react-cookie';
+import { push }           from 'react-router-redux'
+import { defaultHeaders } from 'redux-rest-resource'
+import Toaster            from './alerts';
+import LoginActions       from '../constants/auth';
+import ErrorThrower       from '../utils/errorThrower';
 
 const {
   FETCHING_USER,
@@ -14,16 +15,35 @@ const {
 } = LoginActions;
 
 const apiEndpoint = `${window.location.origin}/api`;
-const headers = { 'Content-Type': 'application/json' }; 
+const headers = defaultHeaders;
 
-function saveAuthToken(token) {
+function saveAuthToken(data) {
+  const { access_token } = data;
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  cookie.set({
-    name: 'token',
-    value: token,
-    expires
-  });
+  cookie.save('token', access_token, { expires })
+  cookie.save('user', JSON.stringify(data), { expires });
+  setAuthHeader(data);
+}
+
+function resetAuthToken() {
+  cookie.remove('token');
+  cookie.remove('user');
+  resetAuthHeader();
+}
+
+export function setAuthHeader(data) {
+  const { access_token, token_type } = data;
+
+  if (!defaultHeaders['Authorization']) {
+    Object.assign(defaultHeaders, { 
+      Authorization: `${token_type} ${access_token}` 
+    });
+  }
+}
+
+export function resetAuthHeader() {
+  delete defaultHeaders.Authorization;
 }
 
 export function login(data, router) {
@@ -33,44 +53,40 @@ export function login(data, router) {
     const url = `${apiEndpoint}/oauth/token?client_id=${config.clientId}&grant_type=password`;
     const { email, password } = data;
     const body = JSON.stringify(data);
-
-    let errHandler = new ErrorThrower(dispatch, { 
+    const errHandler = new ErrorThrower(dispatch, { 
       type: LOGIN_FAILURE
     });
 
     axios.post(url, body, { headers })
       .then((res) => {
         if (res && res.status == 200) {
-          const { access_token } = res.data;
           const { query } = router.location;
           const redirectTo = (query && query.redirectTo) ? query.redirectTo : '/';
+          const { data } = res;
 
-          saveAuthToken(access_token);
+          dispatch({ 
+            type: LOGIN_SUCCESS, 
+            payload: {
+              token: data.access_token
+            } 
+          });
 
-          dispatch({ type: LOGIN_SUCCESS, payload: {
-            token: access_token
-          } });
-
+          saveAuthToken(data);
           dispatch(push(redirectTo));
-
-          addAlertAsync({
-            message: 'Login successfully'
-          })(dispatch);
+          new Toaster(dispatch).success('Login successfully');
         }
-      }, (err => {
-        return errHandler.handleError(err);
-      }))
-      .catch(err => errHandler.handleUnknownError(err));
+      })
+      .catch(err => {
+        errHandler.handleError(err);
+      });
   };
 }
 
 export function logout(router) {
   return dispatch => {
-    cookie.unset('token');
+    resetAuthToken();
     dispatch({ type: LOGOUT });
-    addAlertAsync({
-      message: 'Logout successfully'
-    })(dispatch);
+    new Toaster(dispatch).success('Logout successfully');
     dispatch(push('/login'));
   };
 }

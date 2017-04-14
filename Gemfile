@@ -12,17 +12,19 @@ gem 'doorkeeper'
 gem 'bcrypt'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'rack-cors', require: 'rack/cors'
+gem 'decent_exposure', github: 'hashrocket/decent_exposure', branch: 'master'
 gem 'figaro'
 gem 'listen', '~> 3.0.5'
 gem 'slim'
 
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'rspec-collection_matchers'
   gem 'rspec-rails'
   gem 'foreman'
   gem 'capybara'
-  gem 'rspec-collection_matchers'
   gem 'pry-rails'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -36,7 +38,6 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-npm'
   gem 'capistrano3-puma'
-  # gem 'capistrano-resque', '~> 0.2.2', require: false
   gem 'web-console', '>= 3.3.0'
 end
 

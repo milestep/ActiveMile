@@ -3,7 +3,6 @@ import { connect }              from 'react-redux';
 import { bindActionCreators }   from 'redux';
 import Header                   from '../components/layout/header/header';
 import { logout }               from '../actions/auth';
-import { addAlertAsync }        from '../actions/alerts';
 
 @connect(state => ({
   auth: state.auth,

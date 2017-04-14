@@ -21,7 +21,6 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-
     case FETCHING_USER: {
       const field = action.payload;
 

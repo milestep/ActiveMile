@@ -5,7 +5,13 @@ const {
   REMOVE_ALERT_ASYNC
 } = AlertsActions;
 
-export default class Toaster {
+export function toaster() {
+  return function(dispatch) {
+    return new Toaster(dispatch);
+  }
+}
+
+export class Toaster {
   constructor(dispatch, params) {
     this.dispatch = dispatch;
   }

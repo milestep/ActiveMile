@@ -3,7 +3,7 @@ import config             from 'app-config';
 import cookie             from 'react-cookie';
 import { push }           from 'react-router-redux'
 import { defaultHeaders } from 'redux-rest-resource'
-import Toaster            from './alerts';
+import { Toaster }        from './alerts';
 import LoginActions       from '../constants/auth';
 import ErrorThrower       from '../utils/errorThrower';
 
@@ -21,7 +21,7 @@ function saveAuthToken(data) {
   const { access_token } = data;
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  cookie.save('token', access_token, { expires })
+  cookie.save('token', access_token, { expires });
   cookie.save('user', JSON.stringify(data), { expires });
   setAuthHeader(data);
 }

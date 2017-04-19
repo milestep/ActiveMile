@@ -1,5 +1,5 @@
 import AuthActions from '../constants/auth';
-import cookie  from '../utils/cookie';
+import cookie      from 'react-cookie';
 
 const {
   FETCHING_USER,
@@ -9,7 +9,7 @@ const {
 } = AuthActions;
 
 const initialState = {
-  token: cookie.get('token') || null,
+  token: cookie.load('token') || null,
   fetching: {
     signin: false
   },
@@ -74,7 +74,7 @@ export default (state = initialState, action) => {
     }
 
     case LOGOUT: {
-      return cookie.get('token') ? { ...initialState } : { ...state, token: null }
+      return cookie.load('token') ? { ...initialState } : { ...state, token: null }
     }
 
     default: {

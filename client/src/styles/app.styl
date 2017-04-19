@@ -2,6 +2,8 @@ $icon-font-path = "~bootstrap-styl/fonts/"
 $fa-font-path = "~font-awesome-stylus/fonts"
 @import "~font-awesome-stylus/stylus/index"
 @import 'bootstrap';
+@import './layout';
+@import './workspaces';
 
 html
   font-size 16px
@@ -27,10 +29,6 @@ textarea
     .Select
       .Select-control, .Select-menu-outer
         border 1px solid #a94442
-
-      // &.is-open
-      //   .Select-control, .Select-menu-outer
-      //     box-shadow inset 0 1px 1px rgba(0,0,0,0.075), 0 0 6px #ce8483
 
 .spin-wrap
   display flex

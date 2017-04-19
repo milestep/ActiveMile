@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users, only: [:index, :create, :show, :update, :destroy]
       resources :workspaces, only: [:index, :create, :update, :destroy]
+      resources :articles, only: [:index, :create, :update, :destroy]
     end
   end
 

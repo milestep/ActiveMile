@@ -1,4 +1,4 @@
-import Toaster from '../actions/alerts';
+import { Toaster } from '../actions/alerts';
 
 export default class ErrorThrower {
   constructor(dispatch, params) {

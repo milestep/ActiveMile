@@ -1,22 +1,19 @@
-import React, { PropTypes }     from 'react';
-import { connect }              from 'react-redux';
-import { bindActionCreators }   from 'redux';
-import Header                   from '../components/layout/header/header';
-import { 
-  actions as workspaceActions 
-}                               from '../resources/workspace';
+import React, { Component, PropTypes } from 'react';
+import { connect }                     from 'react-redux';
+import { bindActionCreators }          from 'redux';
+import { actions as workspaceActions } from '../resources/workspace';
 import { 
   getCurrentWorkspace, 
   specifyCurrentWorkspace,
-  setupCurrentWorkspace }       from '../actions/workspaces'
-import { toaster }              from '../actions/alerts';
-import { logout }               from '../actions/auth';
+  setupCurrentWorkspace,
+  unsetCurrentWorkspace }              from '../actions/workspaces'
+import { toaster }                     from '../actions/alerts';
+import { logout }                      from '../actions/auth';
+import Header                          from '../components/layout/header/header';
 
 @connect(
   state => ({
-    auth: state.auth,
-    alertsAsync: state.alerts.alertsAsync,
-    workspaces: state.workspaces.rest.items,
+    workspaces: state.workspaces.rest.items || [],
     currentWorkspace: state.workspaces.app.currentWorkspace
   }), 
   dispatch => ({
@@ -25,15 +22,17 @@ import { logout }               from '../actions/auth';
       getCurrentWorkspace,
       setupCurrentWorkspace,
       specifyCurrentWorkspace,
-      toaster
+      unsetCurrentWorkspace,
+      toaster,
+      logout
     }, dispatch)
   })
 )
-export default class App extends React.Component {
+export default class App extends Component {
   static propTypes = {
-    auth: PropTypes.object.isRequired,
-    alertsAsync: PropTypes.array.isRequired,
-    children: PropTypes.element.isRequired
+    children: PropTypes.element.isRequired,
+    workspaces: PropTypes.array.isRequired,
+    actions: PropTypes.object.isRequired
   };
 
   static contextTypes = {
@@ -43,12 +42,6 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      workspaces: [ ...props.workspaces ],
-      currentWorkspace: props.currentWorkspace
-    }
-
     this.toaster = props.actions.toaster();
   }
 
@@ -58,12 +51,10 @@ export default class App extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const { workspaces } = newProps;
+    const { workspaces, actions } = newProps;
 
-    if (workspaces !== this.state.workspaces) {
-      this.setState({
-        workspaces: workspaces
-      });
+    if (!workspaces.length && actions.getCurrentWorkspace()) {
+      actions.unsetCurrentWorkspace();
     }
   }
 
@@ -73,12 +64,12 @@ export default class App extends React.Component {
 
     actions.fetchWorkspaces()
       .then(res => {
-        const currentWorkspaceNext = actions.getCurrentWorkspace(res.body);
+        const currentWorkspaceNewest = actions.getCurrentWorkspace(res.body);
 
-        if (!currentWorkspaceNext) {
+        if (!currentWorkspaceNewest) {
           actions.setupCurrentWorkspace(res.body[0]);
         } else if (!currentWorkspace) {
-          actions.specifyCurrentWorkspace(currentWorkspaceNext);
+          actions.specifyCurrentWorkspace(currentWorkspaceNewest);
         }
       })
       .catch(err => {
@@ -87,19 +78,16 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { auth } = this.props;
-    const { dispatch } = this.context.store;
+    const { actions, logout } = this.props;
+    const { store, router } = this.context;
+    const { dispatch } = store;
 
     return (
       <div className="site-wrapper">
         <Header
-          loggedIn={!!auth.token}
-          router={this.context.router}
-          alertsAsync={this.props.alertsAsync}
-          workspaces={this.props.workspaces}
-          currentWorkspace={this.props.currentWorkspace}
-          setupCurrentWorkspace={this.props.actions.setupCurrentWorkspace}
-          {...bindActionCreators({ logout }, dispatch)}
+          router={router}
+          logout={actions.logout}
+          setupCurrentWorkspace={actions.setupCurrentWorkspace}
         />
 
         <div className="site-container">

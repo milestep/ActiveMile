@@ -1,13 +1,24 @@
 import React, { Component, PropTypes } from 'react';
+import { connect }                     from 'react-redux';
+import { bindActionCreators }          from 'redux';
 import NavItem                         from './navItem';
 import Dropdown                        from '../elements/dropdown';
 
+@connect(
+  state => ({
+    loggedIn: !!state.auth.token,
+    alertsAsync: state.alerts.alertsAsync,
+    workspaces: state.workspaces.rest.items || [],
+    currentWorkspace: state.workspaces.app.currentWorkspace
+  })
+)
 export default class Header extends Component {
   static propTypes = {
     router: PropTypes.object.isRequired,
-    loggedIn: PropTypes.bool,
+    loggedIn: PropTypes.bool.isRequired,
+    workspaces: PropTypes.array.isRequired,
     logout: PropTypes.func.isRequired,
-    workspaces: PropTypes.array.isRequired
+    setupCurrentWorkspace: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -52,10 +63,11 @@ export default class Header extends Component {
   }
 
   renderNavBar() {
-    const { 
+    const {
       loggedIn,
       workspaces,
-      currentWorkspace
+      currentWorkspace,
+      setupCurrentWorkspace
     } = this.props;
     let navItems = [];
     let navItemsRight = [];
@@ -100,7 +112,7 @@ export default class Header extends Component {
           <a href="#" 
             onClick={e => {
               e.preventDefault(); 
-              this.props.setupCurrentWorkspace(workspace);
+              setupCurrentWorkspace(workspace);
             }}
           >
             { workspace.title }

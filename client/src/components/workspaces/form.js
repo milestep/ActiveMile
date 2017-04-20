@@ -37,7 +37,7 @@ export default class WorkspaceForm extends Component {
       workspaceValues = Object.assign({}, workspace, workspaceValues);
     }
 
-    this.props.handleSave(workspaceValues, params)
+    this.props.handleSubmit(workspaceValues, params)
       .then(res => {
         if (this.refs.form) {
           this.setState({
@@ -74,6 +74,7 @@ export default class WorkspaceForm extends Component {
   render() {
     const { title } = this.state.workspace;
     const { fetching, editing } = this.props;
+    const buttonCaption = editing ? 'Update' : 'Create Workspace';
 
     return(
       <Formsy.Form 
@@ -104,10 +105,10 @@ export default class WorkspaceForm extends Component {
         >
           { fetching ?
             <span className="spin-wrap">
-              <span>Create Workspace</span>
+              <span>{buttonCaption}</span>
               <i class="fa fa-circle-o-notch fa-spin"></i>
             </span> 
-            : editing ? 'Update' : 'Create Workspace'
+            : buttonCaption
           }
         </button>
       </Formsy.Form>

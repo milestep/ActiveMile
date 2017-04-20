@@ -3,13 +3,18 @@ import Toaster          from './alerts';
 import WorkspaceActions from '../constants/workspaces';
 
 const COOKIE_NAME = 'current_workspace';
-const { CURRENT_WORKSPACE_SPECIFIED } = WorkspaceActions;
+const { 
+  CURRENT_WORKSPACE_SPECIFIED,
+  CURRENT_WORKSPACE_REMOVED
+} = WorkspaceActions;
 
 export function getCurrentWorkspace(workspaces = false) {
   return function(dispatch) {
     const currentWorkspace = cookie.load(COOKIE_NAME) || null;
 
     if (workspaces) {
+      if (!currentWorkspace) { return null }
+
       for (let i in workspaces) {
         if (workspaces[i].id === currentWorkspace.id) {
           return currentWorkspace;
@@ -39,3 +44,9 @@ export function setupCurrentWorkspace(workspace) {
   }
 }
 
+export function unsetCurrentWorkspace() {
+  return function(dispatch) {
+    cookie.remove(COOKIE_NAME);
+    dispatch({ type: CURRENT_WORKSPACE_REMOVED });
+  }
+}

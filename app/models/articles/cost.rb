@@ -1,0 +1,2 @@
+class Cost < Article
+end

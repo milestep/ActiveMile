@@ -21,9 +21,10 @@ export default class FormDatePicker extends Component {
   }
 
   getLabel() {
-    const { title, name, isRequired } = this.props;
+    const { label, title, name, isRequired } = this.props;
+    const allowLabel = label !== false ? true : false;
 
-    return (title ?
+    return ((allowLabel && title) ?
       <label htmlFor={name}>
         { title } { isRequired() ? '*' : null }
       </label>

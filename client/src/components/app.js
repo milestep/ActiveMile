@@ -73,7 +73,7 @@ export default class App extends React.Component {
 
     actions.fetchWorkspaces()
       .then(res => {
-        const currentWorkspaceNext = actions.getCurrentWorkspace();
+        const currentWorkspaceNext = actions.getCurrentWorkspace(res.body);
 
         if (!currentWorkspaceNext) {
           actions.setupCurrentWorkspace(res.body[0]);

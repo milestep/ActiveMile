@@ -9,12 +9,12 @@ class Api::V1::ArticlesController < Api::V1::BaseController
 
   def create
     article.save
-    render_api(article, :created, serializer: ArticleSerializer)
+    render_api(article, :created)
   end
 
   private
 
   def article_params
-    params.require(:article).permit(:title)
+    params.require(:article).permit(:title, :type)
   end
 end

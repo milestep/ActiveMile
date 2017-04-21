@@ -5,13 +5,15 @@ import { actions as workspaceActions } from '../../resources/workspace';
 import FormInput                       from '../layout/form/input';
 import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
 
-export default class CreateWorkspaceForm extends Component {
+export default class WorkspaceForm extends Component {
   constructor(props) {
     super(props);
 
+    const { workspace } = props;
+
     this.workspaceState = {
       title: {
-        value: '',
+        value: (workspace && workspace.title) ? workspace.title : '',
         blured: false,
       }
     };
@@ -25,16 +27,26 @@ export default class CreateWorkspaceForm extends Component {
   }
 
   handleSubmit = model => {
-    const { workspace } = this.state;
-    const workspaceValues = extractPropertyFromObject(workspace, 'value');
+    const { workspace, index } = this.props;
+    let workspaceValues = extractPropertyFromObject(this.state.workspace, 'value');
+    let params = {}
 
-    this.props.handleSave(workspaceValues, function() {
-      this.setState({
-        workspace: this.workspaceState
+    if (index) { params['index'] = index }
+
+    if (workspace) {
+      workspaceValues = Object.assign({}, workspace, workspaceValues);
+    }
+
+    this.props.handleSubmit(workspaceValues, params)
+      .then(res => {
+        if (this.refs.form) {
+          this.setState({
+            workspace: this.workspaceState
+          });
+
+          this.resetForm();
+        }
       });
-
-      this.resetForm();
-    }.bind(this));
   }
 
   handleChange = (field, values) => {
@@ -61,7 +73,8 @@ export default class CreateWorkspaceForm extends Component {
 
   render() {
     const { title } = this.state.workspace;
-    const { fetching } = this.props;
+    const { fetching, editing } = this.props;
+    const buttonCaption = editing ? 'Update' : 'Create Workspace';
 
     return(
       <Formsy.Form 
@@ -74,10 +87,12 @@ export default class CreateWorkspaceForm extends Component {
         <FormInput 
           title="Title"
           name="title"
+          label={editing ? false : true}
           value={title.value}
+          inputClassName={editing ? "input-sm" : false}
           isBlured={title.blured}
           handleChange={this.handleChange}
-          validationErrors={{
+          validationErrors={editing ? false : {
             isRequired: "Title is required"
           }}
           required
@@ -85,15 +100,15 @@ export default class CreateWorkspaceForm extends Component {
 
         <button 
           type="submit" 
-          className="btn btn-success"
+          className={`btn btn-success${editing ? ' btn-sm' : ''}`}
           disabled={!this.state.canSubmit || fetching}
         >
           { fetching ?
             <span className="spin-wrap">
-              <span>Create Workspace</span>
+              <span>{buttonCaption}</span>
               <i class="fa fa-circle-o-notch fa-spin"></i>
             </span> 
-            : 'Create Workspace'
+            : buttonCaption
           }
         </button>
       </Formsy.Form>

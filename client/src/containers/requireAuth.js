@@ -24,7 +24,7 @@ export default function (reqireAuth = true) {
       if (reqireAuth && !authenticated) {
         browserHistory.push('/login');
       } else if (!reqireAuth && authenticated) {
-        browserHistory.push('/admin');
+        browserHistory.push('/workspaces');
       }
     }
 

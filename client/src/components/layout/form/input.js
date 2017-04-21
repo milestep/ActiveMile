@@ -12,9 +12,10 @@ export default class FormInput extends Component {
   }
 
   getLabel() {
-    const { title, name, isRequired } = this.props;
+    const { label, title, name, isRequired } = this.props;
+    const allowLabel = label !== false ? true : false;
 
-    return (title ?
+    return ((allowLabel && title) ?
       <label htmlFor={name}>
         { title } { isRequired() ? '*' : null }
       </label>
@@ -90,19 +91,20 @@ export default class FormInput extends Component {
   render() {
     const className = this.getClassName();
     const errorMessages = this.getAllMessages();
+    const { inputClassName, placeholder, type, value } = this.props;
 
     return (
       <div className={className}>
         {this.getLabel()}
         <input
           checked={this.isCheckbox() && this.props.getValue() ? 'checked' : null}
-          className="form-control"
+          className={`form-control${inputClassName ? ' ' + inputClassName : ''}`}
           name={this.props.name}
           onBlur={this.handleBlur}
           onChange={this.changeValue}
-          placeholder={this.props.placeholder || null}
-          type={this.props.type || 'text'}
-          value={this.props.value}
+          placeholder={placeholder || null}
+          type={type || 'text'}
+          value={value}
         />
         {errorMessages}
       </div>

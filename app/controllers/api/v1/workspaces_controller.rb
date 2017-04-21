@@ -1,6 +1,6 @@
 class Api::V1::WorkspacesController < Api::V1::BaseController
   skip_before_action :doorkeeper_authorize!, only: :index
-  expose :workspaces, -> { Workspace.order(updated_at: :asc) }
+  expose :workspaces, -> { Workspace.order(id: :asc) }
   expose :workspace
 
   def index
@@ -9,7 +9,17 @@ class Api::V1::WorkspacesController < Api::V1::BaseController
 
   def create
     workspace.save
-    render_api(workspace, :created, serializer: WorkspaceSerializer)
+    render_api(workspace, :created)
+  end
+
+  def update
+    workspace.update(workspace_params)
+    render_api(workspace, :accepted)
+  end
+
+  def destroy
+    workspace.destroy
+    render json: { message: "Workspace has successfully deleted" }, status: :ok
   end
 
   private

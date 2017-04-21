@@ -10,14 +10,14 @@ import {
 import RequireAuth      from '../containers/requireAuth';
 import App              from '../components/app';
 import NotFound         from '../components/errors/err404';
-import WorkspacesIndex  from '../components/workspaces/workspacesIndex';
+import Workspaces       from '../components/workspaces/workspaces';
 import Dashboard        from '../components/admin/dashboard';
 import Login            from '../components/auth/login';
 
 const routes = (
   <Route path="/" component={App}>
-    <IndexRedirect to="articles" />
-    <Route path="articles" component={WorkspacesIndex} />
+    <IndexRedirect to="workspaces" />
+    <Route path="workspaces" component={Workspaces} />
 
     <Route component={RequireAuth(false)}>
       <Route path="login" component={Login} />

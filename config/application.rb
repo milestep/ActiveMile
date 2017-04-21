@@ -12,7 +12,7 @@ module Activemile
       end
     end
 
+    config.autoload_paths += Dir["#{config.root}/app/models/**/"]
     config.action_controller.allow_forgery_protection = false
-    config.autoload_paths += %W["#{config.root}/app/validators/"]
   end
 end

@@ -1,0 +1,2 @@
+class Revenue < Article
+end

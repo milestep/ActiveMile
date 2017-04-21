@@ -9,6 +9,6 @@ describe 'GET /api/v1/workspaces' do
   end
 
   it 'retrives all workspaces' do
-    expect(json).to have(2).item
+    expect(json).to have(2).items
   end
 end

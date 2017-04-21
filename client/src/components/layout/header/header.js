@@ -1,18 +1,31 @@
 import React, { Component, PropTypes } from 'react';
+import { connect }                     from 'react-redux';
+import { bindActionCreators }          from 'redux';
 import NavItem                         from './navItem';
+import Dropdown                        from '../elements/dropdown';
 
+@connect(
+  state => ({
+    loggedIn: !!state.auth.token,
+    alertsAsync: state.alerts.alertsAsync,
+    workspaces: state.workspaces.rest.items || [],
+    currentWorkspace: state.workspaces.app.currentWorkspace
+  })
+)
 export default class Header extends Component {
   static propTypes = {
     router: PropTypes.object.isRequired,
-    loggedIn: PropTypes.bool,
-    logout: PropTypes.func.isRequired
+    loggedIn: PropTypes.bool.isRequired,
+    workspaces: PropTypes.array.isRequired,
+    logout: PropTypes.func.isRequired,
+    setupCurrentWorkspace: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     
     this.state = {
-      collapsed: true,
+      collapsed: true
     };
 
     this.toggleCollapse = this.toggleCollapse.bind(this);
@@ -50,14 +63,20 @@ export default class Header extends Component {
   }
 
   renderNavBar() {
-    const { loggedIn } = this.props;
+    const {
+      loggedIn,
+      workspaces,
+      currentWorkspace,
+      setupCurrentWorkspace
+    } = this.props;
     let navItems = [];
     let navItemsRight = [];
+    let workspacesList = [];
 
-    navItems = [
-      { 
-        to: '/articles', 
-        title: 'Articles', 
+    navItemsRight = [
+      {
+        to: '/workspaces', 
+        title: 'Workspaces', 
         onClick: this.toggleCollapse
       }
     ];
@@ -87,17 +106,43 @@ export default class Header extends Component {
 
     navItems = this.createNavItems(navItems);
     navItemsRight = this.createNavItems(navItemsRight);
+    workspacesList = workspaces.map((workspace, i) => {
+      return(
+        <li key={i}>
+          <a href="#" 
+            onClick={e => {
+              e.preventDefault(); 
+              setupCurrentWorkspace(workspace);
+            }}
+          >
+            { workspace.title }
+          </a>
+        </li>
+      );
+    });
 
     return (
-      <nav>
-        <ul className="nav navbar-nav">
-          {navItems}
-        </ul>
-        {navItemsRight ? 
+      <nav className="site-nav">
+        { currentWorkspace ?
+          <ul className="nav navbar-nav navbar-main">
+            <Dropdown 
+              title={currentWorkspace.title}
+              list={workspacesList}
+            />
+          </ul>
+        : null }
+
+        { navItems ? 
+          <ul className="nav navbar-nav">
+            { navItems }
+          </ul>
+        : null }
+        
+        { navItemsRight ? 
           <ul className="nav navbar-nav navbar-right">
-            {navItemsRight}
-          </ul> : null
-        }
+            { navItemsRight }
+          </ul>
+         : null}
       </nav>
     );
   }

@@ -23,10 +23,6 @@ export default class FormInput extends Component {
     );
   }
 
-  componentDidMount() {
-
-  }
-
   getRequiredMessage() {
     const { 
       value, 

@@ -91,13 +91,15 @@ export default class FormInput extends Component {
   render() {
     const className = this.getClassName();
     const errorMessages = this.getAllMessages();
-    const { inputClassName, placeholder, type, value } = this.props;
+    const { 
+      inputClassName, placeholder, type, value, getValue 
+    } = this.props;
 
     return (
       <div className={className}>
         {this.getLabel()}
         <input
-          checked={this.isCheckbox() && this.props.getValue() ? 'checked' : null}
+          checked={this.isCheckbox() && getValue() ? 'checked' : null}
           className={`form-control${inputClassName ? ' ' + inputClassName : ''}`}
           name={this.props.name}
           onBlur={this.handleBlur}

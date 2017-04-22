@@ -61,20 +61,14 @@ export default class Login extends Component {
     this.props.login(userValues, router);
   }
 
+  toggleButton = status => {
+    this.setState({
+      canSubmit: status
+    });
+  }
+
   resetForm() {
     this.refs.form.reset();
-  }
-
-  enableButton = () => {
-    this.setState({
-      canSubmit: true
-    });
-  }
-
-  disableButton = () => {
-    this.setState({
-      canSubmit: false
-    });
   }
 
   render() {
@@ -90,8 +84,8 @@ export default class Login extends Component {
           <Formsy.Form 
             ref='form'
             onValidSubmit={this.handleSubmit} 
-            onValid={this.enableButton} 
-            onInvalid={this.disableButton}
+            onValid={this.toggleButton.bind(this, true)} 
+            onInvalid={this.toggleButton.bind(this, false)}
           >
 
             <FormInput 

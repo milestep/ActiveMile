@@ -73,22 +73,12 @@ export default class Header extends Component {
     let navItemsRight = [];
     let workspacesList = [];
 
-    navItemsRight = [
-      {
+    if (loggedIn) {
+      Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces', 
         title: 'Workspaces', 
         onClick: this.toggleCollapse
-      }
-    ];
-
-    if (loggedIn) {
-      Array.prototype.push.apply(navItems, [{
-        to: '/admin/dashboard', 
-        title: 'Dashboard', 
-        onClick: this.toggleCollapse
-      }]);
-
-      Array.prototype.push.apply(navItemsRight, [{
+      }, {
         to: '/logout', 
         title: 'Logout', 
         onClick: (e) => {
@@ -109,7 +99,7 @@ export default class Header extends Component {
     workspacesList = workspaces.map((workspace, i) => {
       return(
         <li key={i}>
-          <a href="#" 
+          <a href="#"
             onClick={e => {
               e.preventDefault(); 
               setupCurrentWorkspace(workspace);
@@ -123,7 +113,7 @@ export default class Header extends Component {
 
     return (
       <nav className="site-nav">
-        { currentWorkspace ?
+        { (loggedIn && currentWorkspace) ?
           <ul className="nav navbar-nav navbar-main">
             <Dropdown 
               title={currentWorkspace.title}

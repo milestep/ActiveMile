@@ -33,7 +33,7 @@ export default class FormSelect extends Component {
       showError 
     } = this.props;
 
-    if (isBlured && (!value && showRequired() && !showError())) {
+    if (isBlured && ((!value || !value.value) && showRequired() && !showError())) {
       return validationErrors.isRequired;
     }
     return '';
@@ -74,7 +74,11 @@ export default class FormSelect extends Component {
   changeValue(value) {
     const { name, handleChange, setValue } = this.props;
 
-    setValue(value);
+    if (!value || !value.value) {
+      value = this.props.value;
+    }
+
+    setValue(value.value || '');
     handleChange(name, {value: value});
   }
 
@@ -85,17 +89,18 @@ export default class FormSelect extends Component {
   render() {
     const className = this.getClassName();
     const errorMessages = this.getAllMessages();
+    const { name, options, value, selectClassName } = this.props;
 
     return (
       <div className={className}>
         {this.getLabel()}
         <Select
-          name={this.props.name}
+          name={name}
           onBlur={this.handleBlur}
           onChange={this.changeValue}
-          options={this.props.options}
-          placeholder={this.props.placeholder || null}
-          value={this.props.value}
+          className={selectClassName || ''}
+          options={options}
+          value={value.value}
         />
         {errorMessages}
       </div>

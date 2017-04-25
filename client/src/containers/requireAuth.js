@@ -13,12 +13,7 @@ const ComposedComponent = createClass({
 
 export default function (reqireAuth = true) {
   class Authentication extends Component {
-    static contextTypes = {
-      router: PropTypes.object
-    };
-
     componentWillMount() {
-      const { router } = this.context;
       const { authenticated } = this.props;
 
       if (reqireAuth && !authenticated) {

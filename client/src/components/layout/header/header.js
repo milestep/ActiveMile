@@ -74,6 +74,11 @@ export default class Header extends Component {
     let workspacesList = [];
 
     if (loggedIn) {
+      Array.prototype.push.apply(navItems, [{
+        to: '/articles', 
+        title: 'Articles', 
+        onClick: this.toggleCollapse
+      }]);
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces', 
         title: 'Workspaces', 

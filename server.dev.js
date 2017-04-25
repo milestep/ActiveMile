@@ -8,7 +8,7 @@ const port = process.env.PORT || 8080;
 const server = new webpackDevServer(compiler, {
   contentBase: config.context,
   hot: true,
-  inline: true,
+  inline: false,
   port: port,
   proxy: [{
     context: ['/api', '/assets'],

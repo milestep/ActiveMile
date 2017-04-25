@@ -45,8 +45,7 @@ export default class App extends Component {
     this.toaster = props.actions.toaster();
   }
 
-  componentDidMount() {
-    const { dispatch } = this.context.store;
+  componentWillMount() {
     this.fetchWorkspaces();
   }
 
@@ -60,7 +59,6 @@ export default class App extends Component {
 
   fetchWorkspaces() {
     const { actions, currentWorkspace } = this.props;
-    const { dispatch } = this.context.store;
 
     actions.fetchWorkspaces()
       .then(res => {
@@ -92,7 +90,7 @@ export default class App extends Component {
 
         <div className="site-container">
           <div className="container">
-            { React.cloneElement(this.props.children, { dispatch }) }
+            { this.props.children }
           </div>
         </div>
       </div>

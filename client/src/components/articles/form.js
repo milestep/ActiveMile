@@ -11,21 +11,30 @@ export default class ArticleForm extends Component {
     super(props);
 
     const { article, types } = props;
-    // const { type, title } = article;
+
+    let titleState = '',
+        typeState = {
+          value: types[0],
+          label: types[0]
+        };
+        
+    if (article) {
+      const { title, type } = article;
+
+      titleState = title;
+      typeState = {
+        value: type,
+        label: type
+      }
+    }
 
     this.articleState = {
       title: {
-        value: (article && article.title) ? article.title : '',
+        value: titleState,
         blured: false,
       },
       type: {
-        value: (article && article.type) ? {
-          value: article.type,
-          label: article.type
-        } : {
-          value: types[0],
-          label: types[0]
-        },
+        value: typeState,
         blured: false,
       }
     };

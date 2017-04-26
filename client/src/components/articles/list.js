@@ -39,7 +39,7 @@ export default class ArticlesList extends Component {
   }
 
   render() {
-    const { types, isFirst, articles, editedArticle, length } = this.props;
+    const { types, isFirst, articles, editedArticle } = this.props;
     const { isFetching } = this.state;
 
     let articlesList = [];

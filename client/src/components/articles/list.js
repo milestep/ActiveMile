@@ -39,7 +39,7 @@ export default class ArticlesList extends Component {
   }
 
   render() {
-    const { types, isCurrent, isFirst, articles, editedArticle } = this.props;
+    const { types, isFirst, articles, editedArticle, length } = this.props;
     const { isFetching } = this.state;
 
     let articlesList = [];
@@ -52,7 +52,6 @@ export default class ArticlesList extends Component {
         articlesList.unshift(
           <ArticlesListItem 
             key={i}
-            index={i}
             types={types}
             article={article}
             isEdited={isEdited}
@@ -78,16 +77,6 @@ export default class ArticlesList extends Component {
       )
     }
 
-    return(
-      <div 
-        className={`tab-pane fade${
-          isCurrent ? ' active in' : ''
-        }${
-          isCurrent && isFirst ? ' first' : ''
-        }`}
-      >
-        {articlesList}
-      </div>
-    );
+    return <div>{articlesList}</div>;
   }
 }

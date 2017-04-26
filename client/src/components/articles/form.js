@@ -30,6 +30,8 @@ export default class ArticleForm extends Component {
       }
     };
 
+
+
     this.state = {
       article: this.articleState,
       canSubmit: true
@@ -39,17 +41,14 @@ export default class ArticleForm extends Component {
   }
 
   handleSubmit = model => {
-    const { article, index } = this.props;
+    const { article } = this.props;
     let articleValues = extractPropertyFromObject(this.state.article, 'value');
-    let params = {}
-
-    if (index) { params['index'] = index }
 
     if (article) {
       articleValues = Object.assign({}, article, articleValues);
     }
 
-    this.props.handleSubmit(articleValues, params)
+    this.props.handleSubmit(articleValues)
       .then(res => {
         if (this.refs.form) {
           this.setState({

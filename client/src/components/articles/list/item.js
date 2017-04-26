@@ -22,21 +22,14 @@ export default class ArticlesListItem extends Component {
 
   render() {
     const currentUser = getCurrentUser();
-    const { 
-      index,
-      types,
-      article,
-      isEdited,
-      isUpdating
-    } = this.props;
+    const { types, article, isEdited, isUpdating } = this.props;
     const { id, title, type } = article;
 
     return(
-      <li className="list-group-item" key={index}>
+      <li className="list-group-item" >
         { isEdited ? 
           <div className="inline-form">
             <ArticleForm
-              index={index}
               editing={true}
               fetching={isUpdating}
               types={types}

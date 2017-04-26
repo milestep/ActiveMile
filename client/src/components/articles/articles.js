@@ -72,15 +72,17 @@ export default class Articles extends Component {
 
   getArticlesState(articles) {
     let all = { all: [ ...articles ] }, 
-        types = {}
+        types = {},
+        ids = []
 
     articles.forEach((article, j) => {
       const { type } = article;
 
       if (!types[type]) types[type] = [];
+      ids.push(article.id);
       types[type].push(article);
     });
-    return Object.assign({}, all, types);
+    return Object.assign({ ids }, all, types);
   }
 
   fetchArticles(id) {
@@ -103,7 +105,7 @@ export default class Articles extends Component {
     }));
   }
 
-  handleCreate = article => {
+  handleCreate(article) {
     return new Promise((resolve, reject) => {
       const { actions, currentWorkspace } = this.props;
       const { type } = article;
@@ -122,21 +124,22 @@ export default class Articles extends Component {
     })
   }
 
-  handleUpdate = (article, params) => {
+  handleUpdate(article) {
     return new Promise((resolve, reject) => {
       const { actions, dispatch, currentWorkspace } = this.props;
       const { store } = this.context;
       const { id, type } = article;
-      const { index } = params;
+      const { ids } = this.state.articles;
 
       delete article.id;
       article['type'] = type.label;
 
       actions.updateArticle({ id, article })
         .then(res => {
-          let { articles } = this.props;
+          const articles = this.state.articles.all;
+          const index = ids.indexOf(id);
 
-          articles.splice(index, 0, articles.shift());
+          articles.splice(index, 0, articles.shift())
 
           store.dispatch({ type: '@@resource/ARTICLE/FETCH',
                            status: 'resolved',
@@ -190,7 +193,7 @@ export default class Articles extends Component {
       editedArticle
     } = this.state;
 
-    let list    = [], 
+    let list    = [],
         content = [];
 
     this.types.forEach((type, i) => {
@@ -203,21 +206,25 @@ export default class Articles extends Component {
         </li>
       );
 
-      // if (articles[type] && articles[type].length) {
-        content.push(
+      content.push(
+        <div key={i}
+          className={`tab-pane fade${
+            isCurrent ? ' active in' : ''
+          }${
+            isCurrent && isFirst ? ' first' : ''
+          }`}
+        >
           <ArticlesList
-            key={i}
             types={this.types}
             articles={articles[type] || []}
             editedArticle={editedArticle}
-            isCurrent={isCurrent}
             isFirst={isFirst}
             handleUpdate={this.handleUpdate}
             handleDestroy={this.handleDestroy}
             toggleEdited={this.toggleEdited}
           />
-        );
-      // }
+        </div>
+      );
     });
     
     return { list, content }

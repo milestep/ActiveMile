@@ -12,34 +12,27 @@ export default class ArticlesListItem extends Component {
     toggleEdited: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super(props);
-
-    this.handleUpdate = props.handleUpdate;
-    this.handleDestroy = props.handleDestroy;
-    this.toggleEdited = props.toggleEdited;
-  }
-
   render() {
     const currentUser = getCurrentUser();
-    const { types, article, isEdited, isUpdating } = this.props;
+    const { props } = this;
+    const { article } = this.props;
     const { id, title, type } = article;
 
     return(
       <li className="list-group-item" >
-        { isEdited ? 
+        { props.isEdited ? 
           <div className="inline-form">
             <ArticleForm
               editing={true}
-              fetching={isUpdating}
-              types={types}
+              fetching={props.isUpdating}
+              types={props.types}
               article={article}
-              handleSubmit={this.handleUpdate}
+              handleSubmit={props.handleUpdate}
             />
             <div className="form-btn-wrap">
               <button
                 className="btn btn-sm btn-primary"
-                onClick={this.toggleEdited.bind(this, id, false)}
+                onClick={props.toggleEdited.bind(this, id, false)}
               >
                 <i class="fa fa-times" aria-hidden="true"></i>
               </button>
@@ -56,7 +49,7 @@ export default class ArticlesListItem extends Component {
               { currentUser ? 
                 <button
                   className="btn btn-sm btn-primary"
-                  onClick={this.toggleEdited.bind(this, id, true)}
+                  onClick={props.toggleEdited.bind(this, id, true)}
                 >
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
@@ -64,7 +57,7 @@ export default class ArticlesListItem extends Component {
               { currentUser ? 
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={this.handleDestroy.bind(this, id)}
+                  onClick={props.handleDestroy.bind(this, id)}
                 >
                   <i class="fa fa-times" aria-hidden="true"></i>
                 </button>

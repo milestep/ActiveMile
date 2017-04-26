@@ -218,7 +218,6 @@ export default class Articles extends Component {
             types={this.types}
             articles={articles[type] || []}
             editedArticle={editedArticle}
-            isFirst={isFirst}
             handleUpdate={this.handleUpdate}
             handleDestroy={this.handleDestroy}
             toggleEdited={this.toggleEdited}

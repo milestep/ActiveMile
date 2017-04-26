@@ -21,10 +21,6 @@ export default class ArticlesList extends Component {
     this.state = {
       isFetching: true
     }
-
-    this.handleUpdate = props.handleUpdate;
-    this.handleDestroy = props.handleDestroy;
-    this.toggleEdited = props.toggleEdited;
   }
 
   componentWillReceiveProps(newProps) {
@@ -39,7 +35,8 @@ export default class ArticlesList extends Component {
   }
 
   render() {
-    const { types, isFirst, articles, editedArticle } = this.props;
+    const { props } = this;
+    const { articles } = props;
     const { isFetching } = this.state;
 
     let articlesList = [];
@@ -47,17 +44,17 @@ export default class ArticlesList extends Component {
     if (articles && articles.length) {
       articles.forEach((article, i) => {
         const { id } = article;
-        const isEdited = editedArticle === id ? true : false;
+        const isEdited = props.editedArticle === id ? true : false;
 
         articlesList.unshift(
           <ArticlesListItem 
             key={i}
-            types={types}
+            types={props.types}
             article={article}
             isEdited={isEdited}
-            handleUpdate={this.handleUpdate}
-            handleDestroy={this.handleDestroy}
-            toggleEdited={this.toggleEdited}
+            handleUpdate={props.handleUpdate}
+            handleDestroy={props.handleDestroy}
+            toggleEdited={props.toggleEdited}
           />
         );
       });

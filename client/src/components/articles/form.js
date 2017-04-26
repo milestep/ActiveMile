@@ -30,8 +30,6 @@ export default class ArticleForm extends Component {
       }
     };
 
-
-
     this.state = {
       article: this.articleState,
       canSubmit: true

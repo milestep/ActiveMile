@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
+import { getCurrentUser }              from '../utils/currentUser';
 import { actions as workspaceActions } from '../resources/workspace';
 import { 
   getCurrentWorkspace, 
@@ -54,11 +55,15 @@ export default class App extends Component {
 
     if (!workspaces.length && actions.getCurrentWorkspace()) {
       actions.unsetCurrentWorkspace();
+      this.fetchWorkspaces();
     }
   }
 
   fetchWorkspaces() {
+    const currentUser = getCurrentUser();
     const { actions, currentWorkspace } = this.props;
+
+    if (!currentUser) { return }
 
     actions.fetchWorkspaces()
       .then(res => {

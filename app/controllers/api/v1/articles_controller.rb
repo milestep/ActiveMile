@@ -3,7 +3,7 @@ class Api::V1::ArticlesController < Api::V1::BaseController
 
   expose :article
   expose :articles, -> { 
-    Workspace.find(params[:workspace_id]).articles.order(id: :asc) 
+    current_workspace.articles.order(id: :asc) 
   }
 
   def index
@@ -22,7 +22,7 @@ class Api::V1::ArticlesController < Api::V1::BaseController
 
   def destroy
     article.destroy
-    render json: { message: "Article has successfully deleted" }, status: :ok
+    render json: { message: I18n.t('articles.destroy.success') }, status: :ok
   end
 
   private

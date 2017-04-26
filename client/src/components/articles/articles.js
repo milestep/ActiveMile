@@ -46,11 +46,18 @@ export default class Articles extends Component {
     };
 
     this.toaster = props.actions.toaster();
-    this.fetchArticles = this.fetchArticles.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDestroy = this.handleDestroy.bind(this);
     this.toggleEdited = this.toggleEdited.bind(this);
+  }
+
+  componentDidMount() {
+    const { currentWorkspace } = this.props;
+
+    if (currentWorkspace) {
+      this.fetchArticles(currentWorkspace.id);
+    }
   }
 
   componentWillReceiveProps(newProps) {
@@ -59,8 +66,7 @@ export default class Articles extends Component {
     const prevArticles = this.state.articles;
 
     if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      const { id } = currentWorkspace;
-      this.fetchArticles(id);
+      this.fetchArticles(currentWorkspace.id);
     }
 
     if (articles !== prevArticles) {

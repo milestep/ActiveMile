@@ -19,7 +19,7 @@ class Api::V1::WorkspacesController < Api::V1::BaseController
 
   def destroy
     workspace.destroy
-    render json: { message: "Workspace has successfully deleted" }, status: :ok
+    render json: { message: I18n.t('workspaces.destroy.success') }, status: :ok
   end
 
   private

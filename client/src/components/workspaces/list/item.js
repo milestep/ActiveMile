@@ -86,7 +86,7 @@ export default class WorkspacesListItem extends Component {
                 >
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
-               : null }
+              : null }
               { currentUser ? 
                 <button
                   className="btn btn-sm btn-danger"

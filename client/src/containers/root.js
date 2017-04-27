@@ -6,11 +6,13 @@ import {
   Router, 
   Route, 
   IndexRedirect }   from 'react-router';
+import { 
+  App, 
+  Login, 
+  Workspaces, 
+  Articles,
+  NotFound }        from '../components';
 import RequireAuth  from '../containers/requireAuth';
-import App          from '../components/app';
-import Workspaces   from '../components/workspaces/workspaces';
-import Login        from '../components/auth/login';
-import NotFound     from '../components/errors/err404';
 
 const routes = (
   <Route path="/" component={App}>
@@ -21,7 +23,8 @@ const routes = (
     </Route>
 
     <Route component={RequireAuth()}>
-      <IndexRedirect to="workspaces" />
+      <IndexRedirect to="articles" />
+      <Route path="articles" component={Articles} />
       <Route path="workspaces" component={Workspaces} />
     </Route>
 

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
+import { getCurrentUser }              from '../utils/currentUser';
 import { actions as workspaceActions } from '../resources/workspace';
 import { 
   getCurrentWorkspace, 
@@ -45,8 +46,7 @@ export default class App extends Component {
     this.toaster = props.actions.toaster();
   }
 
-  componentDidMount() {
-    const { dispatch } = this.context.store;
+  componentWillMount() {
     this.fetchWorkspaces();
   }
 
@@ -55,12 +55,15 @@ export default class App extends Component {
 
     if (!workspaces.length && actions.getCurrentWorkspace()) {
       actions.unsetCurrentWorkspace();
+      this.fetchWorkspaces();
     }
   }
 
   fetchWorkspaces() {
+    const currentUser = getCurrentUser();
     const { actions, currentWorkspace } = this.props;
-    const { dispatch } = this.context.store;
+
+    if (!currentUser) { return }
 
     actions.fetchWorkspaces()
       .then(res => {
@@ -92,7 +95,7 @@ export default class App extends Component {
 
         <div className="site-container">
           <div className="container">
-            { React.cloneElement(this.props.children, { dispatch }) }
+            { this.props.children }
           </div>
         </div>
       </div>

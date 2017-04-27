@@ -1,15 +1,12 @@
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const commonConfig = require('./base.js');
+const API_URL = `http://localhost:${process.env.API_PORT || 3000}`;
+const port = process.env.PORT || 8080;
 
 module.exports = function() {
   return webpackMerge(commonConfig(), {
-    entry: [
-      'react-hot-loader/patch', 
-      'webpack-dev-server/client?http://localhost:8080',
-      'webpack/hot/only-dev-server',
-      './client.js'
-    ],
+    entry: './client.js',
     devtool: 'inline-sourcemap',
     externals: {
       'app-config': JSON.stringify(require('./../config/dev.json'))
@@ -24,6 +21,29 @@ module.exports = function() {
           'NODE_ENV': JSON.stringify('development')
         }
       })
-    ]
+    ],
+    devServer: {
+      port: port,
+      inline: true,
+      proxy: [{
+        context: ['/api', '/assets'],
+        target: API_URL,
+        secure: false
+      }],
+      historyApiFallback: {
+        index: '/index.html'
+      },
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000
+      },
+      stats: {
+        colors: true,
+        hash: true,
+        chunks: true,
+        chunkModules: false,
+        modules: false
+      }
+    }
   });
 };

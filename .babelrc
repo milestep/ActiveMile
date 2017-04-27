@@ -8,12 +8,5 @@
     "react-html-attrs",
     "transform-decorators-legacy",
     "transform-class-properties"
-  ],
-  env: {
-    development: {
-      plugins: [
-        'react-hot-loader/babel',
-      ],
-    }
-  }
+  ]
 }

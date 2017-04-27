@@ -74,13 +74,19 @@ export default class Header extends Component {
     let workspacesList = [];
 
     if (loggedIn) {
+      Array.prototype.push.apply(navItems, [{
+        to: '/counterparties', 
+        title: 'Counterparties', 
+        onClick: this.toggleCollapse
+      }]);
+
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces', 
         title: 'Workspaces', 
         onClick: this.toggleCollapse
       }, {
-        to: '/logout', 
-        title: 'Logout', 
+        to: '/logout',
+        title: 'Logout',
         onClick: (e) => {
           this.handleLogout(e); 
           this.toggleCollapse.call(this); 

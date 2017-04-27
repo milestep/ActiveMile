@@ -77,7 +77,7 @@ export default class WorkspaceForm extends Component {
     const buttonCaption = editing ? 'Update' : 'Create Workspace';
 
     return(
-      <Formsy.Form 
+      <Formsy.Form
         ref="form"
         onValidSubmit={this.handleSubmit} 
         onValid={this.toggleButton.bind(this, true)} 

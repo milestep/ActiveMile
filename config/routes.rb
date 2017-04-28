@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       resources :users, only: [:create, :update, :destroy]
       resources :workspaces, except: [:show, :new]
       resources :articles
-      resources :counterparties
+      resources :counterparties, only: [:index, :create, :destroy]
     end
   end
 

@@ -1,13 +1,11 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect } from 'react-redux';
-import * as queryString from 'query-string';
-
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import * as queryString                   from 'query-string';
 import { actions as counterpartyActions } from '../../resources/counterparty';
-import { toaster } from '../../actions/alerts';
-
-import List from './list';
-import Form from './form';
+import { toaster }                        from '../../actions/alerts';
+import List                               from './list';
+import Form                               from './form';
 
 @connect(
   state => ({
@@ -21,7 +19,6 @@ import Form from './form';
     }, dispatch)
   })
 )
- 
 export default class Counterparties extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +49,6 @@ export default class Counterparties extends Component {
     const prevWorkspace = this.props.currentWorkspace;
  
     if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      // console.log("this.props.counterparties", this.props.counterparties)
       actions.fetchCounterpartys({
         params: queryString.stringify({
           workspace_id: newProps.currentWorkspace.id
@@ -78,7 +74,6 @@ export default class Counterparties extends Component {
       const { actions } = this.props;
       const { workspaces } = this.state;
       
-      console.log("sajdnasdnasdn", counterparty)
       actions.createCounterparty({ counterparty })
         .then(res => {
           this.toaster.success('Counterparty has been created');
@@ -93,13 +88,11 @@ export default class Counterparties extends Component {
 
   handleSubmit(counterparty) { 
     return new Promise((resolve, reject) => {
-      console.log("THIS.PROPS.SUBMIT", counterparty)
       const { actions } = this.props;
-      //const { counterparty } = this.state;
 
       actions.createCounterparty({ counterparty })
         .then(res => {
-          this.toaster.success('Workspace has been created');
+          this.toaster.success('Counterparty has been created');
 
           actions.fetchCounterpartys({
             params: queryString.stringify({

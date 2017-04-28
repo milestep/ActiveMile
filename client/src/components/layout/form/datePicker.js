@@ -40,7 +40,13 @@ export default class FormDatePicker extends Component {
         {this.getLabel()}
         <DatePicker
           className='form-control'
-          customInput={this.props.customInput || <DateInput />}
+          customInput={
+            this.props.customInput || 
+            <DateInput 
+              value={this.props.value}
+              onChange={this.changeValue} 
+            />
+          }
           minDate={this.props.minDate}
           onChange={this.changeValue}
           placeholderText={this.props.placeholderText || null}

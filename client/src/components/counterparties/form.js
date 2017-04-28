@@ -1,7 +1,5 @@
 import React, { Component } from 'react'; 
 import moment from 'moment';
-require('react-datepicker/dist/react-datepicker.css');
-
 import FormSelect from '../layout/form/select';
 import FormInput from '../layout/form/input';
 import FormDatePicker from '../layout/form/datePicker.js';
@@ -84,7 +82,6 @@ export default class Form extends Component {
           this.setState({
             counterparty: this.counterpartyState
           });
-
           this.refs.form.reset();
         }
       });
@@ -105,7 +102,7 @@ export default class Form extends Component {
           onValidSubmit={this.handleSubmit} 
           onValid={this.toggleButton.bind(this, true)} 
           onInvalid={this.toggleButton.bind(this, false)}
-          className="articleForm"
+          className="counterpartyForm"
         >
 
           <FormInput

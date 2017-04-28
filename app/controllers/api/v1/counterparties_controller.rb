@@ -1,7 +1,8 @@
 class Api::V1::CounterpartiesController < Api::V1::BaseController
   skip_before_action :doorkeeper_authorize!, only: :index
+  
   expose :counterparties, -> { 
-    Workspace.find(params[:workspace_id]).counterparties
+    current_workspace.counterparties
   }
   expose :counterparty
 

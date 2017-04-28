@@ -10,8 +10,7 @@
     "prod:hot": "NODE_ENV=development nodemon ./server.js",
     "prod:daemon": "pm2 start ./server.js",
     "build": "webpack -p --env=prod --colors",
-    "dev": "NODE_ENV=development node ./server.dev.js",
-    "dev:hot": "NODE_ENV=development nodemon ./server.dev.js"
+    "dev": "NODE_ENV=development webpack-dev-server --env=dev --content-base client/src --progress"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.6",
@@ -43,11 +42,11 @@
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
     "postcss-loader": "^1.2.2",
+    "query-string": "^4.3.4",
     "react": "^15.4.2",
     "react-cookie": "^1.0.5",
     "react-datepicker": "^0.41.1",
     "react-dom": "^15.4.2",
-    "react-hot-loader": "^3.0.0-beta.6",
     "react-mixin": "^2.0.2",
     "react-redux": "^5.0.2",
     "react-router": "^3.0.2",
@@ -68,7 +67,6 @@
     "url-loader": "^0.5.8",
     "webpack": "^2.2.0",
     "webpack-cleanup-plugin": "^0.5.1",
-    "webpack-dev-server": "^2.2.0",
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {

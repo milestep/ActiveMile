@@ -50,6 +50,7 @@ export function login(data, router) {
   return (dispatch) => {
     dispatch({ type: FETCHING_USER, payload: 'signin' });
 
+    // TODO: use query-string here
     const url = `${apiEndpoint}/oauth/token?client_id=${config.clientId}&grant_type=password`;
     const { email, password } = data;
     const body = JSON.stringify(data);

@@ -75,11 +75,15 @@ export default class Header extends Component {
 
     if (loggedIn) {
       Array.prototype.push.apply(navItems, [{
+        to: '/articles', 
+        title: 'Articles', 
+        onClick: this.toggleCollapse
+      }, {
         to: '/counterparties', 
         title: 'Counterparties', 
         onClick: this.toggleCollapse
       }]);
-
+      
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces', 
         title: 'Workspaces', 

@@ -29,6 +29,10 @@ export default class Workspaces extends Component {
     isCreating: PropTypes.bool.isRequired
   };
 
+  static contextTypes = {
+    store: React.PropTypes.object
+  };
+
   constructor(props) {
     super(props);
 
@@ -77,6 +81,7 @@ export default class Workspaces extends Component {
   handleUpdate = (workspace, params) => {
     return new Promise((resolve, reject) => {
       const { actions, dispatch, currentWorkspace } = this.props;
+      const { store } = this.context;
       const { id } = workspace;
       const { index } = params;
 
@@ -90,9 +95,9 @@ export default class Workspaces extends Component {
             actions.setupCurrentWorkspace(res.body);
           }
           workspaces.splice(index, 0, workspaces.shift());
-          dispatch({ type: '@@resource/WORKSPACE/FETCH',
-                     status: 'resolved',
-                     body: workspaces });
+          store.dispatch({ type: '@@resource/WORKSPACE/FETCH',
+                           status: 'resolved',
+                           body: workspaces });
           this.toggleEdited(id, false);
           this.toaster.success('Workspace has been updated');
           resolve(res);
@@ -148,7 +153,7 @@ export default class Workspaces extends Component {
       toggleEdited, handleUpdate, deleteWorkspace 
     } = this;
     const methods = {
-      handleUpdate, toggleEdited, deleteWorkspace
+      toggleEdited, handleUpdate, deleteWorkspace
     }
 
     return(
@@ -157,16 +162,15 @@ export default class Workspaces extends Component {
 
         <div className="row">
 
-          <div className="col-md-7">
-            <WorkspacesList 
-              dispatch={this.props.dispatch} 
+          <div className="col-md-8">
+            <WorkspacesList
               editedWorkspace={editedWorkspace} 
               methods={methods}
             />
           </div>
 
           { currentUser ?
-            <div className="col-md-5">
+            <div className="col-md-4">
               <WorkspaceForm 
                 fetching={isCreating}
                 handleSubmit={this.handleCreate}

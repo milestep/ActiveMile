@@ -1,14 +1,16 @@
-import { combineReducers }               from 'redux'
-import { reducers as workspaceReducers } from '../resources/workspace';
+import { combineReducers }                  from 'redux'
+import { reducers as workspaceReducers }    from '../resources/workspace';
 import { reducers as counterpartyReducers } from '../resources/counterparty';
-import workspaces                        from './workspaces';
+import { reducers as articleReducers }      from '../resources/article';
+import workspaces                           from './workspaces';
 
 const apiReducers = {
   workspaces: combineReducers({
     rest: workspaceReducers,
     app: workspaces
   }),
-  counterparties: counterpartyReducers
+  counterparties: counterpartyReducers,
+  articles: articleReducers
 }
 
 export default apiReducers;

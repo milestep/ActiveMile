@@ -34,6 +34,18 @@ export default class Counterparties extends Component {
     this.toaster = props.actions.toaster();
   }
 
+  componentDidMount(){
+    const { actions, currentWorkspace } = this.props;
+
+    if (currentWorkspace && currentWorkspace.id) {
+      actions.fetchCounterpartys({
+        params: queryString.stringify({
+          workspace_id: this.props.currentWorkspace.id
+        })
+      })
+    }
+  }
+
   componentWillReceiveProps(newProps) {
     const { actions } = this.props;
     const { currentWorkspace } = newProps;

@@ -1,4 +1,5 @@
 # ActiveMile
-add config/database.yml
-add config/secrets.yml
-sudo npm install -g webpack-dev-server
+## Installation
+* create `config/database.yml`, `config/secrets.yml`
+* setup client config `client/src/config/*`
+* install development server `sudo npm install -g webpack-dev-server`

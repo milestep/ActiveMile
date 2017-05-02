@@ -117,8 +117,10 @@ export default class Articles extends Component {
       const { type } = article;
 
       article['type'] = type.label;
-      article['workspace_id'] = currentWorkspace.id;
-      actions.createArticle({ article })
+      actions.createArticle({ 
+        article,
+        workspace_id: this.props.currentWorkspace.id
+      })
         .then(res => {
           this.toaster.success('Article has been created');
           resolve(res);
@@ -128,7 +130,7 @@ export default class Articles extends Component {
           reject(err);
         });
     })
-  }
+  } 
 
   handleUpdate(article) {
     return new Promise((resolve, reject) => {

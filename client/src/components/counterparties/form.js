@@ -69,11 +69,6 @@ export default class Form extends Component {
   }
 
   handleSubmit(counterparty) {
-    counterparty = {
-      ...counterparty,
-      workspace_id: this.props.currentWorkspace.id
-    }
-
     counterparty.type = counterparty.type.value
      
     this.props.handleSubmit(counterparty)

@@ -2,7 +2,7 @@ class Api::V1::ArticlesController < Api::V1::BaseController
   skip_before_action :doorkeeper_authorize!, only: :index
 
   expose :article
-  expose :articles, -> { 
+  expose :articles, -> {
     current_workspace.articles.order(id: :asc) 
   }
 
@@ -11,7 +11,7 @@ class Api::V1::ArticlesController < Api::V1::BaseController
   end
 
   def create
-    article.save
+    article = current_workspace.articles.create(article_params)
     render_api(article, :created)
   end
 
@@ -28,6 +28,6 @@ class Api::V1::ArticlesController < Api::V1::BaseController
   private
 
   def article_params
-    params.require(:article).permit(:title, :type, :workspace_id)
+    params.require(:article).permit(:title, :type)
   end
 end

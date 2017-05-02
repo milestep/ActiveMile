@@ -25,7 +25,6 @@ export default class Counterparties extends Component {
 
     this.types = ['Client', 'Vendor', 'Other'];
 
-    this.handleCreate = this.handleCreate.bind(this);
     this.handleDestroy = this.handleDestroy.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toaster = props.actions.toaster();
@@ -69,28 +68,14 @@ export default class Counterparties extends Component {
     })
   }
 
-  handleCreate() {
-    return new Promise((resolve, reject) => {
-      const { actions } = this.props;
-      const { workspaces } = this.state;
-      
-      actions.createCounterparty({ counterparty })
-        .then(res => {
-          this.toaster.success('Counterparty has been created');
-          resolve(res);
-        })
-        .catch(err => {
-          this.toaster.error('Could not create counterparty!');
-          reject(err);
-        });
-    })
-  }
-
   handleSubmit(counterparty) { 
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
 
-      actions.createCounterparty({ counterparty })
+      actions.createCounterparty({ 
+          counterparty,
+          workspace_id: this.props.currentWorkspace.id
+      })
         .then(res => {
           this.toaster.success('Counterparty has been created');
 
@@ -124,7 +109,6 @@ export default class Counterparties extends Component {
           <div className="col-md-5">
             <Form
               counterparties={this.props.counterparties}
-              currentWorkspace={this.props.currentWorkspace}
               handleSubmit={this.handleSubmit}
               types={this.types}
             />

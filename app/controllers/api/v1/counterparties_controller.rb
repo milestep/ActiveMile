@@ -1,7 +1,7 @@
 class Api::V1::CounterpartiesController < Api::V1::BaseController
   skip_before_action :doorkeeper_authorize!, only: :index
   
-  expose :counterparties, -> { 
+  expose :counterparties, -> {
     current_workspace.counterparties
   }
   expose :counterparty
@@ -11,8 +11,8 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
   end
 
   def create
-    counterparty.save
-    render_api(counterparty, :created)
+    current_workspace.counterparties.create(counterparty_params)
+    render_api(:created)
   end
 
   def destroy
@@ -25,6 +25,6 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
 
   private
     def counterparty_params
-      params.require(:counterparty).permit(:name, :workspace_id, :date, :type)
+      params.require(:counterparty).permit(:name, :date, :type)
     end
 end

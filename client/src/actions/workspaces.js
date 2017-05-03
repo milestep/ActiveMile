@@ -29,7 +29,7 @@ export function getCurrentWorkspace(workspaces = false) {
 
 export function specifyCurrentWorkspace(workspace) {
   Object.assign(defaultHeaders, {
-    'workspace': workspace.id
+    'workspace-id': workspace.id
   });
 
   return function(dispatch) {

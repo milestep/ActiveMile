@@ -55,9 +55,7 @@ export default class Articles extends Component {
   componentDidMount() {
     const { currentWorkspace } = this.props;
 
-    if (currentWorkspace) {
-      this.fetchArticles(currentWorkspace.id);
-    }
+    this.fetchArticles();
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,7 +64,7 @@ export default class Articles extends Component {
     const prevArticles = this.state.articles;
 
     if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      this.fetchArticles(currentWorkspace.id);
+      this.fetchArticles();
     }
 
     if (articles !== prevArticles) {

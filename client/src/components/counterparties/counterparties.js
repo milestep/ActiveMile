@@ -31,11 +31,9 @@ export default class Counterparties extends Component {
   }
 
   componentDidMount(){
-    const { actions, currentWorkspace } = this.props;
+    const { actions } = this.props;
 
-    if (currentWorkspace && currentWorkspace.id) {
-      actions.fetchCounterpartys();
-    }
+    actions.fetchCounterpartys();
   }
 
   componentWillReceiveProps(newProps) {

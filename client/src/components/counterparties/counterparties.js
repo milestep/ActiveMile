@@ -82,14 +82,14 @@ export default class Counterparties extends Component {
       <div className="container">
         <h3>Counterparties</h3>
         <div className="row">
-          <div className="col-md-7">
+          <div className="col-md-8">
             <List
               counterparties={this.props.counterparties}
               handleDestroy={this.handleDestroy}
             />
           </div>
 
-          <div className="col-md-5">
+          <div className="col-md-4">
             <Form
               counterparties={this.props.counterparties}
               handleSubmit={this.handleSubmit}

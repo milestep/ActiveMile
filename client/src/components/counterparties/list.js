@@ -9,31 +9,37 @@ export default class List extends Component {
   renderItems() {  
     const { counterparties } = this.props;
 
-    return counterparties.map((item, i) => {
+    return counterparties.map((item, i) => { 
       return (
-        <li className="list-group-item li_height hover1 for_icons" key={i}> 
-          <div className="col-md-6">{ item.name }</div>
-          <div className="col-md-2">{ item.type }</div>
-          <div className="col-md-2">{ item.date } </div>
-          <div className="col-md-2 text-right hover2">
-            <span 
-              onClick={this.props.handleDestroy.bind(this, item.id)} 
-              className="glyphicon glyphicon-trash"
-              title="Delete">
-            </span>  
-          </div>
-        </li>
+        <div key={i}>
+          <li className="list-group-item">
+            <div className="counterparty-overlap">
+              <div className="col-md-10">
+                <div className="counterparty-overlap">
+                  <span className="col-md-6">{ item.name }</span>
+                  <span className="col-md-3">{ item.type }</span>
+                  <span className="col-md-3">{ item.date }</span>
+                </div>
+              </div>
+              <div className="col-md-1 col-xs-offset-1">
+                <div className="btn-group">
+                  <button className="btn btn-sm btn-danger" onClick={this.props.handleDestroy.bind(this, item.id)}>
+                    <i className="fa fa-times" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>  
+            </div>
+          </li>
+        </div>
       );
     });
   }
 
   render() {
     return(
-      <div>
-        <ul className="list-group">
-          {this.renderItems()}
-        </ul>
-      </div>
+      <ul className="list-group workspaces-container">
+        {this.renderItems()}
+      </ul>
     );
   }
 }

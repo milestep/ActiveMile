@@ -34,11 +34,7 @@ export default class Counterparties extends Component {
     const { actions, currentWorkspace } = this.props;
 
     if (currentWorkspace && currentWorkspace.id) {
-      actions.fetchCounterpartys({
-        params: queryString.stringify({
-          workspace_id: this.props.currentWorkspace.id
-        })
-      })
+      actions.fetchCounterpartys();
     }
   }
 
@@ -48,11 +44,7 @@ export default class Counterparties extends Component {
     const prevWorkspace = this.props.currentWorkspace;
  
     if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      actions.fetchCounterpartys({
-        params: queryString.stringify({
-          workspace_id: newProps.currentWorkspace.id
-        })
-      })
+      actions.fetchCounterpartys();
     }
   }
 
@@ -72,19 +64,10 @@ export default class Counterparties extends Component {
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
 
-      actions.createCounterparty({ 
-          counterparty,
-          workspace_id: this.props.currentWorkspace.id
-      })
+      actions.createCounterparty({ counterparty })
         .then(res => {
           this.toaster.success('Counterparty has been created');
-
-          actions.fetchCounterpartys({
-            params: queryString.stringify({
-              workspace_id: this.props.currentWorkspace.id
-            })
-          })
-
+          actions.fetchCounterpartys();
           resolve(res);
         })
         .catch(err => {

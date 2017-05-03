@@ -1,6 +1,7 @@
-import cookie           from 'react-cookie';
-import Toaster          from './alerts';
-import WorkspaceActions from '../constants/workspaces';
+import cookie             from 'react-cookie';
+import Toaster            from './alerts';
+import { defaultHeaders } from 'redux-rest-resource';
+import WorkspaceActions   from '../constants/workspaces';
 
 const COOKIE_NAME = 'current_workspace';
 const { 
@@ -27,6 +28,10 @@ export function getCurrentWorkspace(workspaces = false) {
 }
 
 export function specifyCurrentWorkspace(workspace) {
+  Object.assign(defaultHeaders, {
+    'workspace': workspace.id
+  });
+
   return function(dispatch) {
     dispatch({ 
       type: CURRENT_WORKSPACE_SPECIFIED, 

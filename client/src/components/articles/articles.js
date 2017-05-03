@@ -94,14 +94,10 @@ export default class Articles extends Component {
   fetchArticles(id) {
     const { actions } = this.props;
 
-    actions.fetchArticles({
-      params: queryString.stringify({
-        workspace_id: id
-      })
-    })
-    .catch(err => {
-      this.toaster.error('Could not load articles!');
-    })
+    actions.fetchArticles()
+      .catch(err => {
+        this.toaster.error('Could not load articles!');
+      });
   }
 
   switchToType(type) {
@@ -117,10 +113,7 @@ export default class Articles extends Component {
       const { type } = article;
 
       article['type'] = type.label;
-      actions.createArticle({ 
-        article,
-        workspace_id: this.props.currentWorkspace.id
-      })
+      actions.createArticle({ article })
         .then(res => {
           this.toaster.success('Article has been created');
           resolve(res);

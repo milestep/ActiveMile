@@ -1,10 +1,16 @@
-import React, { Component } from 'react'; 
+import React, { Component, PropTypes } from 'react'; 
 import moment from 'moment';
 import FormSelect from '../layout/form/select';
 import FormInput from '../layout/form/input';
 import FormDatePicker from '../layout/form/datePicker.js';
 
 export default class Form extends Component {
+  static propTypes = {
+    counterparties: PropTypes.array.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    types: PropTypes.array.isRequired
+  };
+
   constructor(props) {
     super(props);
 

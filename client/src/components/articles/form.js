@@ -7,6 +7,12 @@ import FormSelect                      from '../layout/form/select';
 import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
 
 export default class ArticleForm extends Component {
+  static propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+    fetching: PropTypes.bool.isRequired,
+    types: PropTypes.array.isRequired
+  };
+  
   constructor(props) {
     super(props);
 

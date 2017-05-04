@@ -20,6 +20,11 @@ import Form                               from './form';
   })
 )
 export default class Counterparties extends Component {
+  static propTypes = {
+    actions: PropTypes.object.isRequired,
+    counterparties: PropTypes.array.isRequired
+  };
+
   constructor(props) {
     super(props);
 

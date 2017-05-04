@@ -13,9 +13,9 @@ export function getCurrentWorkspace(workspaces = false) {
   return function(dispatch) {
     const currentWorkspace = cookie.load(COOKIE_NAME) || null;
 
-    if (workspaces) {
-      if (!currentWorkspace) { return null }
+    if (!currentWorkspace) { return null }
 
+    if (workspaces) {
       for (let i in workspaces) {
         if (workspaces[i].id === currentWorkspace.id) {
           return currentWorkspace;
@@ -28,9 +28,11 @@ export function getCurrentWorkspace(workspaces = false) {
 }
 
 export function specifyCurrentWorkspace(workspace) {
-  Object.assign(defaultHeaders, {
-    'workspace-id': workspace.id
-  });
+  if (workspace) {
+    Object.assign(defaultHeaders, {
+      'workspace-id': workspace.id
+    });
+  }
 
   return function(dispatch) {
     dispatch({ 

@@ -157,7 +157,7 @@ export default class Workspaces extends Component {
     }
 
     return(
-      <div>
+      <div className="container">
         <h3>Workspaces</h3>
 
         <div className="row">

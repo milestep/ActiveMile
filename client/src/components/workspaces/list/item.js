@@ -10,7 +10,7 @@ import WorkspaceForm                   from '../form';
   state => ({
     isUpdating: state.workspaces.rest.isUpdating,
     currentWorkspace: state.workspaces.app.currentWorkspace
-  }), 
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,

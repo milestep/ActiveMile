@@ -1,8 +1,8 @@
 import axios              from 'axios';
 import config             from 'app-config';
 import cookie             from 'react-cookie';
-import { push }           from 'react-router-redux'
-import { defaultHeaders } from 'redux-rest-resource'
+import { push }           from 'react-router-redux';
+import { defaultHeaders } from 'redux-rest-resource';
 import { Toaster }        from './alerts';
 import LoginActions       from '../constants/auth';
 import ErrorThrower       from '../utils/errorThrower';

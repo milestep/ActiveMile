@@ -55,9 +55,7 @@ export default class Articles extends Component {
   componentDidMount() {
     const { currentWorkspace } = this.props;
 
-    if (currentWorkspace) {
-      this.fetchArticles(currentWorkspace.id);
-    }
+    this.fetchArticles();
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,7 +64,7 @@ export default class Articles extends Component {
     const prevArticles = this.state.articles;
 
     if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      this.fetchArticles(currentWorkspace.id);
+      this.fetchArticles();
     }
 
     if (articles !== prevArticles) {
@@ -94,14 +92,10 @@ export default class Articles extends Component {
   fetchArticles(id) {
     const { actions } = this.props;
 
-    actions.fetchArticles({
-      params: queryString.stringify({
-        workspace_id: id
-      })
-    })
-    .catch(err => {
-      this.toaster.error('Could not load articles!');
-    })
+    actions.fetchArticles()
+      .catch(err => {
+        this.toaster.error('Could not load articles!');
+      });
   }
 
   switchToType(type) {
@@ -117,7 +111,6 @@ export default class Articles extends Component {
       const { type } = article;
 
       article['type'] = type.label;
-      article['workspace_id'] = currentWorkspace.id;
       actions.createArticle({ article })
         .then(res => {
           this.toaster.success('Article has been created');
@@ -128,7 +121,7 @@ export default class Articles extends Component {
           reject(err);
         });
     })
-  }
+  } 
 
   handleUpdate(article) {
     return new Promise((resolve, reject) => {

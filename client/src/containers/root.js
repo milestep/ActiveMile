@@ -11,6 +11,7 @@ import {
   Login, 
   Workspaces, 
   Articles,
+  Counterparties,
   NotFound }        from '../components';
 import RequireAuth  from '../containers/requireAuth';
 
@@ -26,6 +27,7 @@ const routes = (
       <IndexRedirect to="articles" />
       <Route path="articles" component={Articles} />
       <Route path="workspaces" component={Workspaces} />
+      <Route path="counterparties" component={Counterparties} />
     </Route>
 
     <Route path='*' component={NotFound} />

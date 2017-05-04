@@ -3,7 +3,7 @@ import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
 import { getCurrentUser }              from '../utils/currentUser';
 import { actions as workspaceActions } from '../resources/workspace';
-import { 
+import {
   getCurrentWorkspace, 
   specifyCurrentWorkspace,
   setupCurrentWorkspace,

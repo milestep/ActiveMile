@@ -2,7 +2,7 @@ class Api::V1::BaseController < ActionController::API
   before_action :doorkeeper_authorize!
 
   expose :current_user, model: User, id: -> { doorkeeper_token&.resource_owner_id }
-  expose :current_workspace, model: Workspace, id: -> { params[:workspace_id] }
+  expose :current_workspace, model: Workspace, id: -> { request.headers['workspace-id'] }
 
   def perform_caching
     Rails.configuration.action_controller.perform_caching

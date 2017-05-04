@@ -63,14 +63,17 @@ export default class App extends Component {
     const currentUser = getCurrentUser();
     const { actions, currentWorkspace } = this.props;
 
-    if (!currentUser) { return }
+    if (!currentUser) return;
 
     actions.fetchWorkspaces()
       .then(res => {
         const currentWorkspaceNewest = actions.getCurrentWorkspace(res.body);
+        const workspaces = res.body[0];
+
+        if (!workspaces) return;
 
         if (!currentWorkspaceNewest) {
-          actions.setupCurrentWorkspace(res.body[0]);
+          actions.setupCurrentWorkspace(workspaces);
         } else if (!currentWorkspace) {
           actions.specifyCurrentWorkspace(currentWorkspaceNewest);
         }

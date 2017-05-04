@@ -19,7 +19,7 @@ export default class ArticlesListItem extends Component {
     const { id, title, type } = article;
 
     return(
-      <li className="list-group-item" >
+      <li className="list-group-item">
         { props.isEdited ? 
           <div className="inline-form">
             <ArticleForm

@@ -1,6 +1,7 @@
 import axios              from 'axios';
 import config             from 'app-config';
 import cookie             from 'react-cookie';
+import * as queryString   from 'query-string';
 import { push }           from 'react-router-redux';
 import { defaultHeaders } from 'redux-rest-resource';
 import { Toaster }        from './alerts';
@@ -50,8 +51,11 @@ export function login(data, router) {
   return (dispatch) => {
     dispatch({ type: FETCHING_USER, payload: 'signin' });
 
-    // TODO: use query-string here
-    const url = `${apiEndpoint}/oauth/token?client_id=${config.clientId}&grant_type=password`;
+    const stringifiedParams = queryString.stringify({
+      'client_id': config.clientId,
+      'grant_type': 'password'
+    });
+    const url = `${apiEndpoint}/oauth/token?${stringifiedParams}`;
     const { email, password } = data;
     const body = JSON.stringify(data);
     const errHandler = new ErrorThrower(dispatch, { 

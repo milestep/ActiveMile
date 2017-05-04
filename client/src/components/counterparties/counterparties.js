@@ -1,7 +1,6 @@
 import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
-import * as queryString                   from 'query-string';
 import { actions as counterpartyActions } from '../../resources/counterparty';
 import { toaster }                        from '../../actions/alerts';
 import List                               from './list';

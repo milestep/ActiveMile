@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require 'rails_helper'  
 require 'rspec-rails'
 require 'shoulda/matchers'

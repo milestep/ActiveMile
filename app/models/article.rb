@@ -11,5 +11,5 @@ class Article < ApplicationRecord
   end
 
   belongs_to :workspace
-  validates :title, :type, presence: true
+  validates :title, :type, :workspace_id, presence: true
 end

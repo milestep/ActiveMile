@@ -9,6 +9,7 @@ import Form                               from './form';
 @connect(
   state => ({
     counterparties: state.counterparties.items,
+    isFetching: state.counterparties.isFetching,
     currentWorkspace: state.workspaces.app.currentWorkspace
   }),
   dispatch => ({
@@ -134,6 +135,7 @@ export default class Counterparties extends Component {
     return(
       <div className="container">
         <h3>Counterparties</h3>
+        
         <div className="row">
           <div className="col-md-8">
             <List
@@ -143,6 +145,7 @@ export default class Counterparties extends Component {
               editedCounterparty={this.state.editedCounterparty}
               types={this.types}
               handleUpdate={this.handleUpdate}
+              isFetching={this.props.isFetching}
             />
           </div>
 

@@ -47,7 +47,7 @@ export default class ArticlesList extends Component {
         const isEdited = props.editedArticle === id ? true : false;
 
         articlesList.unshift(
-          <ArticlesListItem 
+          <ArticlesListItem
             key={i}
             types={props.types}
             article={article}

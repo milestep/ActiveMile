@@ -9,7 +9,7 @@ import extractPropertyFromObject       from '../../utils/extractPropertyFromObje
 export default class ArticleForm extends Component {
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-    fetching: PropTypes.bool.isRequired,
+    fetching: PropTypes.bool,
     types: PropTypes.array.isRequired
   };
   

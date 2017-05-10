@@ -91,6 +91,7 @@ export default class List extends Component {
 
     this.props.types.forEach((type, i) => {
       const isCurrent = type === this.state.currentType ? true : false;
+      const isFirst = i === 0 ? true : false;
 
       list.push(
         <li className={isCurrent ? 'active' : ''} key={i}>
@@ -100,8 +101,10 @@ export default class List extends Component {
 
       content.push(
         <div key={i}
-          className={`tab-pane fade${
+          className={`tab-pane fade ${
             isCurrent ? ' active in' : ''
+          }${
+            isCurrent && isFirst ? ' first' : ''
           }`}
         >
           {this.renderItems(type)}

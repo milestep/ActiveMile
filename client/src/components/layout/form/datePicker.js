@@ -12,6 +12,11 @@ export default class FormDatePicker extends Component {
     this.changeValue = this.changeValue.bind(this)
   }
 
+  componentWillMount() {
+    const { setValue, selected } = this.props;
+    if (selected) setValue(selected);
+  }
+
   changeValue = e => {
     const { handleChange, setValue } = this.props;
     const date = e._d;
@@ -33,18 +38,18 @@ export default class FormDatePicker extends Component {
   }
 
   render() {
-    const className = 'form-group' + (this.props.className || '');
-
-    console.log(this.props.selected)
+    const { className } = this.props;
+    const wrapperClass = `form-group ${className ? ' ' + className : ''}`;
 
     return (
-      <div className={className}>
+      <div className={wrapperClass}>
         {this.getLabel()}
         <DatePicker
           className='form-control'
           customInput={
             this.props.customInput || 
             <DateInput 
+              inputClassName={this.props.inputClassName}
               value={this.props.value}
               onChange={this.changeValue} 
             />

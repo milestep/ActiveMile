@@ -23,7 +23,7 @@ export default class Edit extends Component {
         blured: true,
       },
       date: '',
-      start_date: moment(),
+      start_date: moment(Date.parse(counterparty.date)),
       type: {
         value: {
           value: counterparty.type,

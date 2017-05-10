@@ -82,7 +82,6 @@ export default class Form extends Component {
           this.setState({
             counterparty: this.counterpartyState
           });
-          this.refs.form.reset();
         }
       });
   }

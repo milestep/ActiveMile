@@ -69,7 +69,7 @@ export default class Counterparties extends Component {
     })
   }
 
-  toggleEdited(id, status) {    
+  toggleEdited(id, status) {
     let { editedCounterparty } = this.state;
 
     if (status) {

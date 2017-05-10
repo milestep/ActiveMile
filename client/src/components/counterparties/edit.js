@@ -16,11 +16,7 @@ export default class Edit extends Component {
     super(props);
 
     const { counterparty, types } = props;
-
-    /*let dateState = moment()
-    dateState = fixDateBeforeStringify(counterparty.date)
-    console.log("dateState", dateState)*/
-
+    
     this.counterpartyState = {
       name: {
         value: counterparty.name,

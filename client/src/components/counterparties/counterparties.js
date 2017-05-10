@@ -69,11 +69,7 @@ export default class Counterparties extends Component {
     })
   }
 
-  toggleEdited(id, status) {
-    console.log("GOOD", id)
-    console.log("status", status)
-    //console.log("editedCounterparty", this.state.editedCounterparty)
-    
+  toggleEdited(id, status) {    
     let { editedCounterparty } = this.state;
 
     if (status) {
@@ -85,16 +81,9 @@ export default class Counterparties extends Component {
     this.setState({
       editedCounterparty: editedCounterparty
     });
-
-    console.log("editedCounterparty", editedCounterparty)
   }
 
   handleUpdate(counterparty, id) {
-    console.log(counterparty)
-    console.log(id)
-
-
-
     const { actions } = this.props;
 
     actions.updateCounterparty({ id, counterparty })
@@ -103,15 +92,10 @@ export default class Counterparties extends Component {
       this.toaster.success('Counterparty has been updated'); 
 
       actions.fetchCounterpartys()
-
-      //resolve(res);
     })
     .catch(err => {
-      this.toaster.error('Could not update article!');
-      //reject(err);
+      this.toaster.error('Could not update counterparty!');
     });
-
-
   }
 
   handleSubmit(counterparty) { 
@@ -135,7 +119,7 @@ export default class Counterparties extends Component {
     return(
       <div className="container">
         <h3>Counterparties</h3>
-        
+
         <div className="row">
           <div className="col-md-8">
             <List

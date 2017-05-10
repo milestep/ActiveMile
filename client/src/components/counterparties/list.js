@@ -40,8 +40,7 @@ export default class List extends Component {
               <div className="counterparty-overlap">
                 <div className="col-md-10">
                   <div className="counterparty-overlap">
-                    <span className="col-md-6">{ item.name }</span>
-                    <span className="col-md-3">{ item.type }</span>
+                    <span className="col-md-9">{ item.name }</span>
                     <span className="col-md-3">{ item.date }</span>
                   </div>
                 </div>
@@ -126,7 +125,7 @@ export default class List extends Component {
         <div className="tab-content">
           {tabs.content}
         </div>
-      </div> 
+      </div>
     );
   }
 }

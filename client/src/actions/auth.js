@@ -6,7 +6,7 @@ import { push }           from 'react-router-redux';
 import { defaultHeaders } from 'redux-rest-resource';
 import { Toaster }        from './alerts';
 import LoginActions       from '../constants/auth';
-import ErrorThrower       from '../utils/errorThrower';
+import ErrorThrower       from '../helpers/errorThrower';
 
 const {
   FETCHING_USER,

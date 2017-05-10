@@ -1,7 +1,7 @@
 import WorkspaceActions from '../constants/workspaces';
 
 const initialState = {
-  currentWorkspace: null
+  current: null
 };
 const { 
   CURRENT_WORKSPACE_SPECIFIED,
@@ -13,14 +13,14 @@ export default (state = initialState, action) => {
     case CURRENT_WORKSPACE_SPECIFIED: {
       return {
         ...state,
-        currentWorkspace: action.payload
+        current: action.payload
       }
     }
 
     case CURRENT_WORKSPACE_REMOVED: {
       return {
         ...state,
-        currentWorkspace: null
+        current: null
       }
     }
 

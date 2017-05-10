@@ -9,7 +9,7 @@ import Form                               from './form';
 @connect(
   state => ({
     counterparties: state.counterparties.items,
-    currentWorkspace: state.workspaces.app.currentWorkspace
+    currentWorkspace: state.workspaces.app.current
   }),
   dispatch => ({
     actions: bindActionCreators({

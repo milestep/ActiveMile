@@ -1,6 +1,4 @@
 class Api::V1::CounterpartiesController < Api::V1::BaseController
-  skip_before_action :doorkeeper_authorize!, only: :index
-  
   expose :counterparty, -> { current_workspace.counterparties.find(params[:id]) }
   expose :counterparties, -> {
     current_workspace.counterparties
@@ -25,7 +23,7 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
 
   private
   
-    def counterparty_params
-      params.require(:counterparty).permit(:name, :date, :type)
-    end
+  def counterparty_params
+    params.require(:counterparty).permit(:name, :date, :type)
+  end
 end

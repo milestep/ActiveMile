@@ -3,7 +3,7 @@ import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
 import { actions as workspaceActions } from '../../resources/workspace';
 import FormInput                       from '../layout/form/input';
-import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
+import * as utils                      from '../../utils';
 
 export default class WorkspaceForm extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class WorkspaceForm extends Component {
 
   handleSubmit = model => {
     const { workspace, index } = this.props;
-    let workspaceValues = extractPropertyFromObject(this.state.workspace, 'value');
+    let workspaceValues = utils.extractPropertyFromObject(this.state.workspace, 'value');
     let params = {}
 
     if (index) { params['index'] = index }

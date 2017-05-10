@@ -1,18 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import ArticlesListItem                from './list/item';
+import * as utils                      from '../../utils';
 
-@connect(
-  state => ({
-    isFetching: state.articles.isFetching
-  })
-)
 export default class ArticlesList extends Component {
   static propTypes = {
     articles: PropTypes.array.isRequired,
     handleUpdate: PropTypes.func.isRequired,
     handleDestroy: PropTypes.func.isRequired,
-    toggleEdited: PropTypes.func.isRequired
+    toggleEdited: PropTypes.func.isRequired,
+    isFetching: PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -41,7 +38,7 @@ export default class ArticlesList extends Component {
 
     let articlesList = [];
 
-    if (articles && articles.length) {
+    if (!utils.empty(articles)) {
       articles.forEach((article, i) => {
         const { id } = article;
         const isEdited = props.editedArticle === id ? true : false;

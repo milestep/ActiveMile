@@ -1,8 +1,8 @@
-import React, { PropTypes, Component }  from 'react';
-import { connect }                      from 'react-redux';
-import { login }                        from '../../actions/auth';
-import FormInput                        from '../layout/form/input';
-import extractPropertyFromObject        from '../../utils/extractPropertyFromObject';
+import React, { PropTypes, Component } from 'react';
+import { connect }                     from 'react-redux';
+import { login }                       from '../../actions/auth';
+import FormInput                       from '../layout/form/input';
+import * as utils                      from '../../utils';
 
 @connect(state => ({
   fetching: state.auth.fetching.signin,
@@ -56,7 +56,7 @@ export default class Login extends Component {
   handleSubmit = model => {
     const { user } = this.state;
     const router = this.context.router;
-    const userValues = extractPropertyFromObject(user, 'value');
+    const userValues = utils.extractPropertyFromObject(user, 'value');
 
     this.props.login(userValues, router);
   }

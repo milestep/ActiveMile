@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170425111915) do
+ActiveRecord::Schema.define(version: 20170504125333) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,18 @@ ActiveRecord::Schema.define(version: 20170425111915) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
   end
 
+  create_table "registers", force: :cascade do |t|
+    t.date    "date"
+    t.integer "value"
+    t.text    "note"
+    t.integer "workspace_id"
+    t.integer "article_id"
+    t.integer "counterparty_id"
+    t.index ["article_id"], name: "index_registers_on_article_id", using: :btree
+    t.index ["counterparty_id"], name: "index_registers_on_counterparty_id", using: :btree
+    t.index ["workspace_id"], name: "index_registers_on_workspace_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
@@ -86,4 +98,7 @@ ActiveRecord::Schema.define(version: 20170425111915) do
   add_foreign_key "articles", "workspaces"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "registers", "articles"
+  add_foreign_key "registers", "counterparties"
+  add_foreign_key "registers", "workspaces"
 end

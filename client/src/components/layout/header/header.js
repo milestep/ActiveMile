@@ -8,8 +8,8 @@ import Dropdown                        from '../elements/dropdown';
   state => ({
     loggedIn: !!state.auth.token,
     alertsAsync: state.alerts.alertsAsync,
-    workspaces: state.workspaces.rest.items || [],
-    currentWorkspace: state.workspaces.app.currentWorkspace
+    workspaces: state.workspaces.rest.items,
+    currentWorkspace: state.workspaces.app.current
   })
 )
 export default class Header extends Component {
@@ -81,6 +81,10 @@ export default class Header extends Component {
       }, {
         to: '/counterparties', 
         title: 'Counterparties', 
+        onClick: this.toggleCollapse
+      }, {
+        to: '/registers', 
+        title: 'Registers', 
         onClick: this.toggleCollapse
       }]);
       

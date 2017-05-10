@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../../utils/currentUser';
+import { getCurrentUser }              from '../../../helpers/currentUser';
 import { setupCurrentWorkspace }       from '../../../actions/workspaces';
 import { actions as workspaceActions } from '../../../resources/workspace';
 import WorkspaceForm                   from '../form';

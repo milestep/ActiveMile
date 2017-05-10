@@ -12,6 +12,7 @@ import {
   Workspaces, 
   Articles,
   Counterparties,
+  Registers,
   NotFound }        from '../components';
 import RequireAuth  from '../containers/requireAuth';
 
@@ -28,6 +29,7 @@ const routes = (
       <Route path="articles" component={Articles} />
       <Route path="workspaces" component={Workspaces} />
       <Route path="counterparties" component={Counterparties} />
+      <Route path="registers" component={Registers} />
     </Route>
 
     <Route path='*' component={NotFound} />

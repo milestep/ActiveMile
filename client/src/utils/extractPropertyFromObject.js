@@ -1,4 +1,4 @@
-export default function extractPropertyFromObject(objects, prop) {
+export function extractPropertyFromObject(objects, prop) {
   let res = {};
 
   for (let obj in objects) {

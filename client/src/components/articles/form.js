@@ -4,7 +4,7 @@ import { bindActionCreators }          from 'redux';
 import { actions as articleActions }   from '../../resources/article';
 import FormInput                       from '../layout/form/input';
 import FormSelect                      from '../layout/form/select';
-import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
+import * as utils                      from '../../utils';
 
 export default class ArticleForm extends Component {
   static propTypes = {
@@ -55,7 +55,7 @@ export default class ArticleForm extends Component {
 
   handleSubmit = model => {
     const { article } = this.props;
-    let articleValues = extractPropertyFromObject(this.state.article, 'value');
+    let articleValues = utils.extractPropertyFromObject(this.state.article, 'value');
 
     if (article) {
       articleValues = Object.assign({}, article, articleValues);

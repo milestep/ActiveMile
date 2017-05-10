@@ -1,15 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../../utils/currentUser';
+import { getCurrentUser }              from '../../../helpers/currentUser';
 import ArticleForm                     from '../form';
 
+@connect(
+  state => ({
+    isUpdating: state.articles.isUpdating
+  }) 
+)
 export default class ArticlesListItem extends Component {
   static propTypes = {
     article: PropTypes.object.isRequired,
     handleUpdate: PropTypes.func.isRequired,
     handleDestroy: PropTypes.func.isRequired,
-    toggleEdited: PropTypes.func.isRequired
+    toggleEdited: PropTypes.func.isRequired,
+    isUpdating: PropTypes.bool
   };
 
   render() {

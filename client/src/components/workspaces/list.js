@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import WorkspacesListItem              from './list/item';
+import * as utils                      from '../../utils';
 
 @connect(
   state => ({
@@ -20,7 +21,7 @@ export default class WorkspacesList extends Component {
       methods,
     } = this.props;
 
-    if (!workspaces && !workspaces.length) { return null }
+    if (utils.empty(workspaces)) return null;
 
     let workspacesList = [];
 

@@ -2,9 +2,7 @@ import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import { actions as counterpartyActions } from '../../resources/counterparty';
-import moment                             from 'moment';
 import { toaster }                        from '../../actions/alerts';
-import FormSelect                         from '../layout/form/select';
 import Filtr                              from './filtr';
 
 @connect(

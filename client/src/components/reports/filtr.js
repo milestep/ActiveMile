@@ -30,7 +30,6 @@ export default class Filtr extends Component {
     this.handleChange = this.handleChange.bind(this); 
   }
 
-
   handleChange(field, values) {
     this.setState((prevState) => ({
       filtr: {
@@ -42,7 +41,6 @@ export default class Filtr extends Component {
       }
     }));
   }
-
 
   dates() {
     // YEARS

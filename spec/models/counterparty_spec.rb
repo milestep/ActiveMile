@@ -21,21 +21,25 @@ RSpec.describe Counterparty, type: :model do
       it "expect require name" do
         counterparty.name = nil
         expect(counterparty).not_to be_valid
+        expect(counterparty).to have(1).error_on(:name)
       end
 
       it "expect require date" do
         counterparty.date = nil
         expect(counterparty).not_to be_valid
+        expect(counterparty).to have(1).error_on(:date)
       end
 
       it "expect require type" do
         counterparty.type = nil
         expect(counterparty).not_to be_valid
+        expect(counterparty).to have(1).error_on(:type)
       end
 
       it "expect require workspace_id" do
         counterparty.workspace_id = nil
         expect(counterparty).not_to be_valid
+        expect(counterparty).to have(1).error_on(:workspace_id)
       end
     end
   end

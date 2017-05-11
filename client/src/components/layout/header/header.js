@@ -82,6 +82,10 @@ export default class Header extends Component {
         to: '/counterparties', 
         title: 'Counterparties', 
         onClick: this.toggleCollapse
+      }, {
+        to: '/reports', 
+        title: 'Reports', 
+        onClick: this.toggleCollapse
       }]);
       
       Array.prototype.push.apply(navItemsRight, [{

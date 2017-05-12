@@ -25,10 +25,13 @@ ActiveRecord::Schema.define(version: 20170504125333) do
   end
 
   create_table "counterparties", force: :cascade do |t|
-    t.string  "name"
-    t.date    "date"
-    t.string  "type"
-    t.integer "workspace_id"
+    t.string   "name"
+    t.date     "date"
+    t.string   "type"
+    t.integer  "workspace_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["workspace_id"], name: "index_counterparties_on_workspace_id", using: :btree
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -70,12 +73,14 @@ ActiveRecord::Schema.define(version: 20170504125333) do
   end
 
   create_table "registers", force: :cascade do |t|
-    t.date    "date"
-    t.integer "value"
-    t.text    "note"
-    t.integer "workspace_id"
-    t.integer "article_id"
-    t.integer "counterparty_id"
+    t.date     "date"
+    t.integer  "value"
+    t.text     "note"
+    t.integer  "workspace_id"
+    t.integer  "article_id"
+    t.integer  "counterparty_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.index ["article_id"], name: "index_registers_on_article_id", using: :btree
     t.index ["counterparty_id"], name: "index_registers_on_counterparty_id", using: :btree
     t.index ["workspace_id"], name: "index_registers_on_workspace_id", using: :btree
@@ -96,6 +101,7 @@ ActiveRecord::Schema.define(version: 20170504125333) do
   end
 
   add_foreign_key "articles", "workspaces"
+  add_foreign_key "counterparties", "workspaces"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "registers", "articles"

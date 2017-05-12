@@ -1,21 +1,23 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect }                     from 'react-redux';
-import { toaster }                     from '../../actions/alerts';
-import { actions as articleActions }   from '../../resources/article';
-import ArticlesList                    from './list';
-import ArticleForm                     from './form';
-import * as utils                      from '../../utils';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import { toaster }                        from '../../actions/alerts';
+import { actions as articleActions }      from '../../resources/article';
+import { actions as subscriptionActions } from '../../actions/subscriptions';
+import ArticlesList                       from './list';
+import ArticleForm                        from './form';
+import * as utils                         from '../../utils';
 
 @connect(
   state => ({
     articles: state.articles.items,
-    isCreating: state.articles.isCreating,
-    currentWorkspace: state.workspaces.app.current
+    isFetching: state.articles.isFetching,
+    isCreating: state.articles.isCreating
   }),
   dispatch => ({
     actions: bindActionCreators({
       ...articleActions,
+      ...subscriptionActions,
       toaster
     }, dispatch)
   })
@@ -24,7 +26,7 @@ export default class Articles extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     articles: PropTypes.array.isRequired,
-    currentWorkspace: PropTypes.object,
+    isFetching: PropTypes.bool,
     isCreating: PropTypes.bool
   };
 
@@ -38,11 +40,11 @@ export default class Articles extends Component {
     const { articles } = props;
 
     this.types = ['Revenue', 'Cost'];
+    this.subscriptions = ['articles'];
 
     this.state = {
       articles: this.getArticlesState(articles),
       currentType: this.types[0],
-      currentWorkspace: props.currentWorkspace,
       editedArticle: null,
       isFetching: false
     };
@@ -55,18 +57,16 @@ export default class Articles extends Component {
   }
 
   componentWillMount() {
-    this.fetchArticles(this.props);
+    this.props.actions.subscribe(this.subscriptions);
+  }
+
+  componentWillUnmount() {
+    this.props.actions.unsubscribe(this.subscriptions);
   }
 
   componentWillReceiveProps(newProps) {
-    const { articles, currentWorkspace } = newProps;
+    const { articles } = newProps;
     const prevArticles = this.state.articles.all;
-
-    this.fetchArticles(newProps);
-
-    if (this.didWorkspaceChanged(currentWorkspace)) {
-      this.setState({ currentWorkspace });
-    }
 
     if (articles !== prevArticles) {
       this.setState({
@@ -75,33 +75,8 @@ export default class Articles extends Component {
     }
   }
 
-  fetchArticles(props) {
-    const { actions, currentWorkspace } = props;
-
-    if (currentWorkspace && this.needArticles(currentWorkspace)) {
-      this.toggleFetching(true);
-
-      actions.fetchArticles()
-        .then(res => this.toggleFetching(false))
-        .catch(err => {
-          this.toggleFetching(false);
-          if (utils.debug) console.error(err);
-          this.toaster.error('Could not load articles!');
-        });
-    }
-  }
-
-  needArticles(currentWorkspace) {
-    const { articles, isFetching } = this.state;
-    return (utils.empty(articles.all) || this.didWorkspaceChanged(currentWorkspace)) && !isFetching;
-  }
-
-  didWorkspaceChanged(currentWorkspace) {
-    return currentWorkspace !== this.state.currentWorkspace;
-  }
-
   getArticlesState(articles) {
-    let all = { all: [ ...articles ] }, 
+    let all = { all: [ ...articles ] },
         types = {},
         ids = []
 
@@ -112,7 +87,7 @@ export default class Articles extends Component {
       ids.push(article.id);
       types[type].push(article);
     });
-    
+
     return Object.assign({ ids }, all, types);
   }
 
@@ -123,13 +98,9 @@ export default class Articles extends Component {
     }));
   }
 
-  toggleFetching(status) {
-    this.setState({ isFetching: status });
-  }
-
   handleCreate(article) {
     return new Promise((resolve, reject) => {
-      const { actions, currentWorkspace } = this.props;
+      const { actions } = this.props;
       const { type } = article;
 
       article['type'] = type.label;
@@ -144,11 +115,11 @@ export default class Articles extends Component {
           reject(err);
         });
     })
-  } 
+  }
 
   handleUpdate(article) {
     return new Promise((resolve, reject) => {
-      const { actions, dispatch, currentWorkspace } = this.props;
+      const { actions, dispatch } = this.props;
       const { store } = this.context;
       const { id, type } = article;
       const { ids } = this.state.articles;
@@ -211,12 +182,13 @@ export default class Articles extends Component {
   }
 
   createTabsTemplate() {
-    const { 
+    const {
       articles,
       currentType,
-      editedArticle,
-      isFetching
+      editedArticle
     } = this.state;
+
+    const { isFetching } = this.props;
 
     let list    = [],
         content = [];
@@ -251,7 +223,7 @@ export default class Articles extends Component {
         </div>
       );
     });
-    
+
     return { list, content }
   }
 
@@ -276,7 +248,7 @@ export default class Articles extends Component {
             </div>
           </div>
           <div className="col-md-4">
-            <ArticleForm 
+            <ArticleForm
               types={this.types}
               fetching={isCreating}
               handleSubmit={this.handleCreate}

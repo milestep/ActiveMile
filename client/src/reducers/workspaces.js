@@ -1,12 +1,13 @@
 import WorkspaceActions from '../constants/workspaces';
 
-const initialState = {
-  current: null
-};
 const { 
   CURRENT_WORKSPACE_SPECIFIED,
   CURRENT_WORKSPACE_REMOVED
 } = WorkspaceActions;
+
+const initialState = {
+  current: null
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {

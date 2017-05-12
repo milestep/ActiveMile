@@ -1,7 +1,7 @@
 class Api::V1::ArticlesController < Api::V1::BaseController
   expose :article, -> { current_workspace.articles.find(params[:id]) }
   expose :articles, -> {
-    current_workspace.articles.order(id: :asc) 
+    current_workspace.articles.order(id: :asc)
   }
 
   def index

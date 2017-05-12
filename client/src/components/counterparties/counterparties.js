@@ -2,18 +2,19 @@ import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import { actions as counterpartyActions } from '../../resources/counterparty';
+import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
 import List                               from './list';
 import Form                               from './form';
 
 @connect(
   state => ({
-    counterparties: state.counterparties.items,
-    currentWorkspace: state.workspaces.app.current
+    counterparties: state.counterparties.items
   }),
   dispatch => ({
     actions: bindActionCreators({
       ...counterpartyActions,
+      ...subscriptionActions,
       toaster
     }, dispatch)
   })
@@ -28,26 +29,19 @@ export default class Counterparties extends Component {
     super(props);
 
     this.types = ['Client', 'Vendor', 'Other'];
+    this.subscriptions = ['counterparties'];
 
+    this.toaster = props.actions.toaster();
     this.handleDestroy = this.handleDestroy.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.toaster = props.actions.toaster();
   }
 
-  componentDidMount(){
-    const { actions } = this.props;
-
-    actions.fetchCounterpartys();
+  componentWillMount() {
+    this.props.actions.subscribe(this.subscriptions);
   }
 
-  componentWillReceiveProps(newProps) {
-    const { actions } = this.props;
-    const { currentWorkspace } = newProps;
-    const prevWorkspace = this.props.currentWorkspace;
- 
-    if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      actions.fetchCounterpartys();
-    }
+  componentWillUnmount() {
+    this.props.actions.unsubscribe(this.subscriptions);
   }
 
   handleDestroy(id) {
@@ -62,7 +56,7 @@ export default class Counterparties extends Component {
     })
   }
 
-  handleSubmit(counterparty) { 
+  handleSubmit(counterparty) {
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
 

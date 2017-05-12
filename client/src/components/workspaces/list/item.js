@@ -1,10 +1,11 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../../helpers/currentUser';
-import { setupCurrentWorkspace }       from '../../../actions/workspaces';
-import { actions as workspaceActions } from '../../../resources/workspace';
-import WorkspaceForm                   from '../form';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import { getCurrentUser }                 from '../../../helpers/currentUser';
+import { setupCurrentWorkspace }          from '../../../actions/workspaces';
+import { actions as workspaceAppActions } from '../../../actions/workspaces';
+import { actions as workspaceActions }    from '../../../resources/workspace';
+import WorkspaceForm                      from '../form';
 
 @connect(
   state => ({
@@ -14,7 +15,7 @@ import WorkspaceForm                   from '../form';
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      setupCurrentWorkspace
+      ...workspaceAppActions
     }, dispatch)
   })
 )

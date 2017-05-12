@@ -1,30 +1,23 @@
-import React, { Component, PropTypes } from 'react';
-import { connect }                     from 'react-redux';
-import { bindActionCreators }          from 'redux';
-import { getCurrentUser }              from '../helpers/currentUser';
-import { actions as workspaceActions } from '../resources/workspace';
-import {
-  getCurrentWorkspace, 
-  specifyCurrentWorkspace,
-  setupCurrentWorkspace,
-  unsetCurrentWorkspace }              from '../actions/workspaces'
-import { toaster }                     from '../actions/alerts';
-import { logout }                      from '../actions/auth';
-import Header                          from '../components/layout/header/header';
-import * as utils                      from '../utils';
+import React, { Component, PropTypes }    from 'react';
+import { connect }                        from 'react-redux';
+import { bindActionCreators }             from 'redux';
+import { getCurrentUser }                 from '../helpers/currentUser';
+import { actions as workspaceActions }    from '../resources/workspace';
+import { actions as workspaceAppActions } from '../actions/workspaces';
+import { toaster }                        from '../actions/alerts';
+import { logout }                         from '../actions/auth';
+import Header                             from '../components/layout/header/header';
+import * as utils                         from '../utils';
 
 @connect(
   state => ({
     workspaces: state.workspaces.rest.items,
     currentWorkspace: state.workspaces.app.current
-  }), 
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      getCurrentWorkspace,
-      setupCurrentWorkspace,
-      specifyCurrentWorkspace,
-      unsetCurrentWorkspace,
+      ...workspaceAppActions,
       toaster,
       logout
     }, dispatch)

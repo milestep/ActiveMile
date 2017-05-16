@@ -9,6 +9,7 @@ import Form                               from './form';
 @connect(
   state => ({
     counterparties: state.counterparties.items,
+    isFetching: state.counterparties.isFetching,
     currentWorkspace: state.workspaces.app.currentWorkspace
   }),
   dispatch => ({
@@ -29,8 +30,14 @@ export default class Counterparties extends Component {
 
     this.types = ['Client', 'Vendor', 'Other'];
 
+    this.state = {
+      editedCounterparty: null
+    };
+
     this.handleDestroy = this.handleDestroy.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.toggleEdited = this.toggleEdited.bind(this);
     this.toaster = props.actions.toaster();
   }
 
@@ -62,6 +69,35 @@ export default class Counterparties extends Component {
     })
   }
 
+  toggleEdited(id, status) {
+    let { editedCounterparty } = this.state;
+
+    if (status) {
+      editedCounterparty = id;
+    } else {
+      editedCounterparty = null;
+    }
+
+    this.setState({
+      editedCounterparty: editedCounterparty
+    });
+  }
+
+  handleUpdate(counterparty, id) {
+    const { actions } = this.props;
+
+    actions.updateCounterparty({ id, counterparty })
+    .then(res => {
+      this.toggleEdited(id, false)
+      this.toaster.success('Counterparty has been updated'); 
+
+      actions.fetchCounterpartys()
+    })
+    .catch(err => {
+      this.toaster.error('Could not update counterparty!');
+    });
+  }
+
   handleSubmit(counterparty) { 
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
@@ -83,17 +119,22 @@ export default class Counterparties extends Component {
     return(
       <div className="container">
         <h3>Counterparties</h3>
+
         <div className="row">
           <div className="col-md-8">
             <List
               counterparties={this.props.counterparties}
               handleDestroy={this.handleDestroy}
+              toggleEdited={this.toggleEdited}
+              editedCounterparty={this.state.editedCounterparty}
+              types={this.types}
+              handleUpdate={this.handleUpdate}
+              isFetching={this.props.isFetching}
             />
           </div>
 
           <div className="col-md-4">
             <Form
-              counterparties={this.props.counterparties}
               handleSubmit={this.handleSubmit}
               types={this.types}
             />

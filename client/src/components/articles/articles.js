@@ -234,7 +234,7 @@ export default class Articles extends Component {
     const tabs = this.createTabsTemplate();
 
     return(
-      <div>
+      <div className="container">
         <h3>Articles</h3>
 
         <div className="row">

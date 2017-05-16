@@ -6,7 +6,6 @@ import FormDatePicker from '../layout/form/datePicker.js';
 
 export default class Form extends Component {
   static propTypes = {
-    counterparties: PropTypes.array.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     types: PropTypes.array.isRequired
   };
@@ -83,7 +82,6 @@ export default class Form extends Component {
           this.setState({
             counterparty: this.counterpartyState
           });
-          this.refs.form.reset();
         }
       });
   }
@@ -132,7 +130,6 @@ export default class Form extends Component {
 
           <FormDatePicker
             name="date"
-            minDate={moment()}
             selected={this.state.counterparty.start_date}
             handleChange={this.onChangeDueDate}
             dateFormat="YYYY/MM/DD"

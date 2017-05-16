@@ -15,6 +15,11 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
     render_api(counterparty, :created)
   end
 
+  def update
+    counterparty.update(counterparty_params)
+    render_api(counterparty, :accepted)
+  end
+
   def destroy
     if counterparty.destroy
       render json: {}, status: :ok

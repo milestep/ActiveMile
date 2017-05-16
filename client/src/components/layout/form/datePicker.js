@@ -1,6 +1,6 @@
 import React, { Component }      from 'react';
 import DatePicker                from 'react-datepicker'
-import Formsy, 
+import Formsy,
   { Decorator as FormsyElement } from 'formsy-react';
 import DateInput                 from './datePicker/dateInput';
 
@@ -9,15 +9,26 @@ export default class FormDatePicker extends Component {
   constructor(props) {
     super(props);
 
-    this.changeValue = this.changeValue.bind(this)
+    this.changeValue = this.changeValue.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
+  }
+
+  componentWillMount() {
+    const { setValue, selected } = this.props;
+    if (selected) setValue(selected);
   }
 
   changeValue = e => {
-    const { handleChange, setValue } = this.props;
-    const date = e._d;
+    const { name, handleChange, setValue } = this.props;
 
-    setValue(date);
-    handleChange(e);
+    setValue(e);
+    handleChange(name, { value: e });
+  }
+
+  handleBlur(e) {
+    const { name, handleChange } = this.props;
+
+    handleChange(name, { blured: true });
   }
 
   getLabel() {
@@ -33,18 +44,21 @@ export default class FormDatePicker extends Component {
   }
 
   render() {
-    const className = 'form-group' + (this.props.className || '');
+    const { className } = this.props;
+    const wrapperClass = `form-group ${className ? ' ' + className : ''}`;
 
     return (
-      <div className={className}>
+      <div className={wrapperClass}>
         {this.getLabel()}
         <DatePicker
           className='form-control'
           customInput={
-            this.props.customInput || 
-            <DateInput 
+            this.props.customInput ||
+            <DateInput
+              inputClassName={this.props.inputClassName}
               value={this.props.value}
-              onChange={this.changeValue} 
+              handleBlur={this.handleBlur}
+              onChange={this.changeValue}
             />
           }
           minDate={this.props.minDate}

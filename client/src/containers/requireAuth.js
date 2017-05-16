@@ -1,9 +1,9 @@
-import React, { 
-  Component, 
-  PropTypes, 
+import React, {
+  Component,
+  PropTypes,
   createClass }            from 'react';
 import { connect }         from 'react-redux';
-import { browserHistory }  from 'react-router'
+import { browserHistory }  from 'react-router';
 
 const ComposedComponent = createClass({
   render: function() {

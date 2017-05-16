@@ -8,7 +8,8 @@ import { actions as subscriptionActions } from './subscriptions';
 const COOKIE_NAME = 'current_workspace';
 const {
   CURRENT_WORKSPACE_SPECIFIED,
-  CURRENT_WORKSPACE_REMOVED
+  CURRENT_WORKSPACE_REMOVED,
+  CURRENT_WORKSPACE_FETCHING
 } = WorkspaceActions;
 
 export const actions = {
@@ -59,6 +60,11 @@ export const actions = {
     return function(dispatch) {
       cookie.remove(COOKIE_NAME);
       dispatch({ type: CURRENT_WORKSPACE_REMOVED });
+    }
+  },
+  moveToPending: function() {
+    return function(dispatch) {
+      dispatch({ type: CURRENT_WORKSPACE_FETCHING });
     }
   }
 }

@@ -82,7 +82,6 @@ export default (state = initialState, action) => {
       let nextState = state;
 
       for (let i in nextState) {
-        nextState[i]['fetching'] = false;
         nextState[i]['resolved'] = false;
       }
 

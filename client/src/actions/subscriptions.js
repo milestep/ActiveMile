@@ -43,8 +43,11 @@ export const actions = {
         _actions.loadCounterparties();
       }
 
-      function needModel(model) {
-        return subscriptions[model].qty && !subscriptions[model].resolved && !subscriptions[model].fetching;
+      function needModel(inputModel) {
+        const model = subscriptions[inputModel];
+        const { qty, fetching, resolved } = model;
+
+        return qty && !resolved && !fetching;
       }
     }
   },

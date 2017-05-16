@@ -11,7 +11,7 @@ export const actions = {
       const toaster = new Toaster(dispatch);
       const _actions = bindActionCreators({
         ...subscriptionActions,
-        ...articleActions,
+        ...registerActions,
       }, dispatch);
 
       _actions.moveToPending(model);

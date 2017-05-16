@@ -61,6 +61,8 @@ export default class App extends Component {
     const { actions } = this.props;
     const prevWorkspace = this.props.currentWorkspace;
 
+    actions.moveToPending();
+
     actions.fetchWorkspaces()
       .then(res => {
         const currentWorkspace = actions.getCurrentWorkspace(res.body);

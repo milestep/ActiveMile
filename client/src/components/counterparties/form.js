@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react'; 
-import moment from 'moment';
-import FormSelect from '../layout/form/select';
-import FormInput from '../layout/form/input';
-import FormDatePicker from '../layout/form/datePicker.js';
+import React, { Component, PropTypes } from 'react';
+import moment                          from 'moment';
+import FormSelect                      from '../layout/form/select';
+import FormInput                       from '../layout/form/input';
+import FormDatePicker                  from '../layout/form/datePicker';
 
 export default class Form extends Component {
   static propTypes = {
@@ -76,7 +76,7 @@ export default class Form extends Component {
 
   handleSubmit(counterparty) {
     counterparty.type = counterparty.type.value
-     
+
     this.props.handleSubmit(counterparty)
       .then(res => {
         if (this.refs.form) {
@@ -87,7 +87,7 @@ export default class Form extends Component {
         }
       });
   }
- 
+
   render() {
     const typeOptions = this.props.types.map((type, i) => {
       return {
@@ -100,8 +100,8 @@ export default class Form extends Component {
       <div>
         <Formsy.Form
           ref="form"
-          onValidSubmit={this.handleSubmit} 
-          onValid={this.toggleButton.bind(this, true)} 
+          onValidSubmit={this.handleSubmit}
+          onValid={this.toggleButton.bind(this, true)}
           onInvalid={this.toggleButton.bind(this, false)}
           className="counterpartyForm"
         >
@@ -138,9 +138,9 @@ export default class Form extends Component {
             dateFormat="YYYY/MM/DD"
             required
           />
- 
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             className="btn btn-success"
             disabled={!this.state.canSubmit}
           >

@@ -1,11 +1,18 @@
 class Api::V1::RegistersController < Api::V1::BaseController
-  expose :register, -> { current_workspace.registers.find(params[:id]) }
+  expose :register, -> {
+    current_workspace.registers.find(params[:id])
+  }
   expose :registers, -> {
-    current_workspace.registers.order(id: :asc) 
+    current_workspace.registers.order(id: :asc)
   }
 
   def index
     render_api(registers, :ok, each_serializer: RegistersSerializer)
+  end
+
+  def show
+    return render_api(register) if register
+    render json: { errors: I18n.t('register.show.error.not_found') }, status: 404
   end
 
   def create

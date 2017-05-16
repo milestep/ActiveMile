@@ -8,11 +8,11 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :users, only: [ :create, :update, :destroy ]
-      resources :workspaces, except: [ :show, :new ]
-      resources :articles, except: [ :show, :new ]
-      resources :counterparties, except: [ :show, :new ]
-      resources :registers, except: [ :show, :new ]
+      resources :users, only: [:create, :update, :destroy]
+      resources :workspaces, except: [:show, :new]
+      resources :articles, except: [:show, :new]
+      resources :counterparties, except: [:show, :new]
+      resources :registers, except: [:new]
     end
   end
 

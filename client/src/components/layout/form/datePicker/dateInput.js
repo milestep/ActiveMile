@@ -12,15 +12,23 @@ export default class DateInput extends Component {
     this.props.onChange(e);
   }
 
+  handleBlur(e) {
+    this.props.handleBlur(e);
+  }
+
   render () {
+    const { inputClassName, onClick, value, defaultValue } = this.props;
+    const className = `form-control${inputClassName ? ' ' + inputClassName : ''}`;
+
     return (
-      <input 
-        type="text" 
-        className="form-control" 
+      <input
+        type="text"
+        className={className}
+        onBlur={this.handleBlur.bind(this)}
         onChange={this.onChange}
-        onClick={this.props.onClick} 
-        value={this.props.value} 
-        defaultValue={this.props.defaultValue} 
+        onClick={onClick}
+        value={value}
+        defaultValue={defaultValue}
       />
     )
   }

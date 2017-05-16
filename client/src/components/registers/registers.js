@@ -54,6 +54,8 @@ export default class Registers extends Component {
 
     this.toaster = props.actions.toaster();
     this.handleCreate = this.handleCreate.bind(this);
+    // this.handleDestroy = this.handleDestroy.bind(this);
+    // this.toggleEdited = this.toggleEdited.bind(this);
   }
 
   componentWillMount() {

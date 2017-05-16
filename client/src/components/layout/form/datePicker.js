@@ -18,6 +18,11 @@ export default class FormDatePicker extends Component {
     if (selected) setValue(selected);
   }
 
+  componentWillMount() {
+    const { setValue, selected } = this.props;
+    if (selected) setValue(selected);
+  }
+
   changeValue = e => {
     const { name, handleChange, setValue } = this.props;
 

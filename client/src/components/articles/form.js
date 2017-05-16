@@ -6,7 +6,7 @@ import * as utils                      from '../../utils';
 export default class ArticleForm extends Component {
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-    fetching: PropTypes.bool.isRequired,
+    fetching: PropTypes.bool,
     types: PropTypes.array.isRequired
   };
 

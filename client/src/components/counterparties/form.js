@@ -70,10 +70,20 @@ export default class Form extends Component {
     });
   }
 
-  handleSubmit(counterparty) {
-    counterparty.type = counterparty.type.value
+  handleSubmit(model) {
+    const { counterparty } = this.props;
 
-    this.props.handleSubmit(counterparty)
+    if (counterparty) {
+      model.id = counterparty.id;
+    }
+
+    model = {
+      ...model,
+      date: model.date._d,
+      type: model.type.value,
+    }
+
+    this.props.handleSubmit(model)
       .then(res => {
         if (this.refs.form) {
           this.setState({
@@ -85,6 +95,8 @@ export default class Form extends Component {
 
   render() {
     const { counterparty, canSubmit } = this.state;
+    const { editing } = this.props;
+    const buttonCaption = editing ? 'Update' : 'Create Counterparty';
     const typeOptions = this.props.types.map((type, i) => {
       return {
         value: type,
@@ -93,53 +105,53 @@ export default class Form extends Component {
     });
 
     return (
-      <div>
-        <Formsy.Form
-          ref="form"
-          onValidSubmit={this.handleSubmit}
-          onValid={this.toggleButton.bind(this, true)}
-          onInvalid={this.toggleButton.bind(this, false)}
-          className="counterpartyForm"
+      <Formsy.Form
+        ref="form"
+        onValidSubmit={this.handleSubmit}
+        onValid={this.toggleButton.bind(this, true)}
+        onInvalid={this.toggleButton.bind(this, false)}
+        className={`site-form counterparty-form${editing ? ' inline-form' : ''}`}
+      >
+        <FormInput
+          name="name"
+          placeholder="Name *"
+          value={counterparty.name.value}
+          handleChange={this.handleChange}
+          isBlured={counterparty.name.blured}
+          inputClassName={editing ? "input-sm" : false}
+          validationErrors={{
+           isRequired: "Title is required"
+          }}
+          required
+        />
+
+        <FormSelect
+          name="type"
+          value={counterparty.type.value}
+          isBlured={counterparty.type.blured}
+          selectClassName={editing ? "select-sm" : false}
+          options={typeOptions}
+          handleChange={this.handleChange}
+          required
+        />
+
+        <FormDatePicker
+          name="date"
+          selected={counterparty.date.value}
+          handleChange={this.handleChange}
+          inputClassName={editing ? "input-sm" : false}
+          dateFormat="YYYY/MM/DD"
+          required
+        />
+
+        <button
+          type="submit"
+          className={`btn btn-success${editing ? ' btn-sm' : ''}`}
+          disabled={!canSubmit}
         >
-
-          <FormInput
-            name="name"
-            placeholder="Name *"
-            value={counterparty.name.value}
-            handleChange={this.handleChange}
-            isBlured={counterparty.name.blured}
-            validationErrors={{
-             isRequired: "Title is required"
-            }}
-            required
-          />
-
-          <FormSelect
-            name="type"
-            value={counterparty.type.value}
-            isBlured={counterparty.type.blured}
-            options={typeOptions}
-            handleChange={this.handleChange}
-            required
-          />
-
-          <FormDatePicker
-            name="date"
-            selected={counterparty.date.value}
-            handleChange={this.handleChange}
-            dateFormat="YYYY/MM/DD"
-            required
-          />
-
-          <button
-            type="submit"
-            className="btn btn-success"
-            disabled={!canSubmit}
-          >
-            Add counterparty
-          </button>
-        </Formsy.Form>
-      </div>
+          {buttonCaption}
+        </button>
+      </Formsy.Form>
     );
   }
 }

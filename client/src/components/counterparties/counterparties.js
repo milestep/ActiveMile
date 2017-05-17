@@ -77,21 +77,6 @@ export default class Counterparties extends Component {
     });
   }
 
-  handleUpdate(counterparty, id) {
-    const { actions } = this.props;
-
-    actions.updateCounterparty({ id, counterparty })
-    .then(res => {
-      this.toggleEdited(id, false)
-      this.toaster.success('Counterparty has been updated');
-
-      actions.fetchCounterpartys()
-    })
-    .catch(err => {
-      this.toaster.error('Could not update counterparty!');
-    });
-  }
-
   handleSubmit(counterparty) {
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
@@ -107,6 +92,26 @@ export default class Counterparties extends Component {
           reject(err);
         });
     })
+  }
+
+  handleUpdate(counterparty) {
+    return new Promise((resolve, reject) => {
+      const { actions } = this.props;
+      const { id } = counterparty;
+
+      delete counterparty.id;
+
+      actions.updateCounterparty({ id, counterparty })
+        .then(res => {
+          this.toggleEdited(id, false)
+          this.toaster.success('Counterparty has been updated');
+
+          actions.fetchCounterpartys()
+        })
+        .catch(err => {
+          this.toaster.error('Could not update counterparty!');
+        });
+    });
   }
 
   render() {

@@ -7,7 +7,7 @@ import ArticleForm                     from '../form';
 @connect(
   state => ({
     isUpdating: state.articles.isUpdating
-  }) 
+  })
 )
 export default class ArticlesListItem extends Component {
   static propTypes = {
@@ -26,7 +26,7 @@ export default class ArticlesListItem extends Component {
 
     return(
       <li className="list-group-item">
-        { props.isEdited ? 
+        { props.isEdited ?
           <div className="inline-form">
             <ArticleForm
               editing={true}
@@ -52,7 +52,7 @@ export default class ArticlesListItem extends Component {
               </span>
             </div>
             <div className="article-actions btn-group">
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={props.toggleEdited.bind(this, id, true)}
@@ -60,7 +60,7 @@ export default class ArticlesListItem extends Component {
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={props.handleDestroy.bind(this, id)}

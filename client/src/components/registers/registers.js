@@ -54,6 +54,7 @@ export default class Registers extends Component {
 
     this.toaster = props.actions.toaster();
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleDestroy = this.handleDestroy.bind(this);
   }
 
   componentWillMount() {
@@ -80,6 +81,19 @@ export default class Registers extends Component {
           reject(err);
         });
     })
+  }
+
+  handleDestroy(id) {
+    const { actions } = this.props;
+
+    actions.deleteRegister(id)
+      .then(res => {
+        this.toaster.success('Register was successfully deleted!');
+      })
+      .catch(err => {
+        if (utils.debug) console.error(err);
+        this.toaster.error('Could not delete register!');
+      })
   }
 
   isModelsFetched(models) {
@@ -109,7 +123,7 @@ export default class Registers extends Component {
           registers={registers}
           articles={articles}
           counterparties={counterparties}
-          handleUpdate={this.handleUpdate}
+          handleDestroy={this.handleDestroy}
           isFetching={isFormDataReady}
         />
       )
@@ -131,31 +145,33 @@ export default class Registers extends Component {
       <div>
         <h3>Registers</h3>
 
-        { isFormDataReady ?
-          <div className="col-md-12">
-            <RegisterForm
-              isFetching={isCreating}
-              handleSubmit={this.handleCreate}
-              articles={articles}
-              counterparties={counterparties}
-            />
+        <div className="row">
+          <div className="col-md-8">
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Article</th>
+                  <th>Counterparty</th>
+                  <th>Value</th>
+                  <th>Notes</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              { registerList }
+            </table>
           </div>
-        : null }
 
-        <div className="col-md-12">
-          <table className="table table-hover">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Article</th>
-                <th>Counterparty</th>
-                <th>Value</th>
-                <th>Notes</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            { registerList }
-          </table>
+          { isFormDataReady ?
+            <div className="col-md-4">
+              <RegisterForm
+                isFetching={isCreating}
+                handleSubmit={this.handleCreate}
+                articles={articles}
+                counterparties={counterparties}
+              />
+            </div>
+          : null }
         </div>
       </div>
     );

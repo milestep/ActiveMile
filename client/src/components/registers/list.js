@@ -6,11 +6,12 @@ export default class RegistersList extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
+    handleDestroy: PropTypes.func.isRequired,
     counterparties: PropTypes.array.isRequired
   };
 
   render() {
-    const { registers, articles, counterparties } = this.props;
+    const { registers, articles, counterparties, handleDestroy } = this.props;
 
     const registersList = registers.map((register, i) => {
       const article = articles.find(a => a.id === register.article_id);
@@ -31,6 +32,12 @@ export default class RegistersList extends Component {
                 >
                   <i className="glyphicon glyphicon-pencil"></i>
               </Link>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={handleDestroy.bind(this, register.id)}
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </button>
             </div>
           </td>
         </tr>

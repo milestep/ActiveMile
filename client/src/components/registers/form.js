@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import moment                          from 'moment';
 import FormInput                       from '../layout/form/input';
+import FormTextarea                    from '../layout/form/textarea';
 import FormSelect                      from '../layout/form/select';
 import FormDatePicker                  from '../layout/form/datePicker';
 import * as utils                      from '../../utils';
@@ -181,7 +182,7 @@ export default class RegisterForm extends Component {
           required
         />
 
-        <FormInput
+        <FormTextarea
           title="Note"
           name="note"
           value={note.value}

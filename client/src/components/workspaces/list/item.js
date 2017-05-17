@@ -30,21 +30,23 @@ export default class WorkspacesListItem extends Component {
 
   render() {
     const currentUser = getCurrentUser();
-    const { 
+    const {
       index,
-      workspace, 
-      isEdited, 
-      isUpdating, 
-      methods, 
+      workspace,
+      isEdited,
+      isUpdating,
+      methods,
       currentWorkspace,
       actions
     } = this.props;
     const { id, title } = workspace;
-    const isCurrent = (currentWorkspace && currentWorkspace.id) === id ? true : false;
+
+    // TODO: fix it (isCurrent doesn't properly work now)
+    const isCurrent = currentWorkspace && (currentWorkspace.id === id) ? true : false;
 
     return(
       <li className="list-group-item" key={index}>
-        { isEdited ? 
+        { isEdited ?
           <div className="inline-form">
             <WorkspaceForm
               index={index}
@@ -70,7 +72,7 @@ export default class WorkspacesListItem extends Component {
               </span>
               { isCurrent ? <span class="label label-primary">Current</span> : null }
             </div>
-            
+
             <div className="workspace-actions btn-group">
               { !isCurrent ?
                 <button
@@ -80,7 +82,7 @@ export default class WorkspacesListItem extends Component {
                   Select
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={methods.toggleEdited.bind(this, id, true)}
@@ -88,7 +90,7 @@ export default class WorkspacesListItem extends Component {
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={methods.deleteWorkspace.bind(this, id)}

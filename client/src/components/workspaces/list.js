@@ -5,7 +5,7 @@ import * as utils                      from '../../utils';
 
 @connect(
   state => ({
-    workspaces: state.workspaces.rest.items || []
+    workspaces: state.workspaces.rest.items
   })
 )
 export default class WorkspacesList extends Component {
@@ -17,7 +17,7 @@ export default class WorkspacesList extends Component {
   render() {
     const {
       editedWorkspace,
-      workspaces, 
+      workspaces,
       methods,
     } = this.props;
 
@@ -30,7 +30,7 @@ export default class WorkspacesList extends Component {
       const isEdited = editedWorkspace === id ? true : false;
 
       workspacesList.unshift(
-        <WorkspacesListItem 
+        <WorkspacesListItem
           key={i}
           index={i}
           workspace={workspace}

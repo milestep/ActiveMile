@@ -15,7 +15,7 @@ import * as utils                         from '../../utils';
     workspaces: state.workspaces.rest.items,
     isCreating: state.workspaces.rest.isCreating,
     currentWorkspace: state.workspaces.app.current
-  }), 
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
@@ -156,8 +156,8 @@ export default class Workspaces extends Component {
     const currentUser = getCurrentUser();
     const { isCreating } = this.props;
     const { editedWorkspace } = this.state;
-    const { 
-      toggleEdited, handleUpdate, deleteWorkspace 
+    const {
+      toggleEdited, handleUpdate, deleteWorkspace
     } = this;
     const methods = {
       toggleEdited, handleUpdate, deleteWorkspace
@@ -171,14 +171,14 @@ export default class Workspaces extends Component {
 
           <div className="col-md-8">
             <WorkspacesList
-              editedWorkspace={editedWorkspace} 
+              editedWorkspace={editedWorkspace}
               methods={methods}
             />
           </div>
 
           { currentUser ?
             <div className="col-md-4">
-              <WorkspaceForm 
+              <WorkspaceForm
                 fetching={isCreating}
                 handleSubmit={this.handleCreate}
               />

@@ -13,38 +13,46 @@ export default class Form extends Component {
   constructor(props) {
     super(props);
 
-    const { counterparty, types } = props;
-
-    this.counterpartyState = {
-      name: {
-        value: (counterparty && counterparty.name) ? counterparty.name : '',
-        blured: false,
-      },
-      date: '',
-      start_date: moment(),
-      type: {
-        value: (counterparty && counterparty.type) ? {
-          value: counterparty.type,
-          label: counterparty.type
-        } : {
-          value: types[0],
-          label: types[0]
-        },
-        blured: false,
-      }
-    }
-
     this.state = {
-      counterparty: this.counterpartyState,
+      counterparty: this.createCounterpartyState(props),
       canSubmit: true
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.onChangeDueDate = this.onChangeDueDate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(field, values) {
+  createCounterpartyState(props) {
+    if (!props) props = this.props;
+
+    const { counterparty, types } = props;
+
+    let prev = counterparty ? {
+      name: counterparty.name,
+      date: moment(Date.parse(counterparty.date)),
+      type: {
+        value: counterparty.type,
+        label: counterparty.type
+      },
+    } : {
+      name: '',
+      date: moment(),
+      type: {
+        value: types[0],
+        label: types[0]
+      },
+    }, next = {};
+
+    for (let i in prev) {
+      next[i] = {};
+      next[i]['value'] = prev[i];
+      next[i]['blured'] = false;
+    }
+
+    return next;
+  }
+
+  handleChange = (field, values) => {
     this.setState((prevState) => ({
       counterparty: {
         ...prevState.counterparty,
@@ -62,17 +70,6 @@ export default class Form extends Component {
     });
   }
 
-  onChangeDueDate(e) {
-    this.setState((prevState) => ({
-      ...prevState,
-      counterparty: {
-        ...prevState.counterparty,
-        date: e._d,
-        start_date: e
-      }
-    }));
-  }
-
   handleSubmit(counterparty) {
     counterparty.type = counterparty.type.value
 
@@ -80,13 +77,14 @@ export default class Form extends Component {
       .then(res => {
         if (this.refs.form) {
           this.setState({
-            counterparty: this.counterpartyState
+            counterparty: this.createCounterpartyState()
           });
         }
       });
   }
 
   render() {
+    const { counterparty, canSubmit } = this.state;
     const typeOptions = this.props.types.map((type, i) => {
       return {
         value: type,
@@ -107,9 +105,9 @@ export default class Form extends Component {
           <FormInput
             name="name"
             placeholder="Name *"
-            value={this.state.counterparty.name.value}
+            value={counterparty.name.value}
             handleChange={this.handleChange}
-            isBlured={this.state.counterparty.name.blured}
+            isBlured={counterparty.name.blured}
             validationErrors={{
              isRequired: "Title is required"
             }}
@@ -118,20 +116,17 @@ export default class Form extends Component {
 
           <FormSelect
             name="type"
-            value={this.state.counterparty.type.value}
-            isBlured={this.state.counterparty.type.blured}
+            value={counterparty.type.value}
+            isBlured={counterparty.type.blured}
             options={typeOptions}
             handleChange={this.handleChange}
-            validationErrors={{
-              isRequired: "Type is required"
-            }}
             required
           />
 
           <FormDatePicker
             name="date"
-            selected={this.state.counterparty.start_date}
-            handleChange={this.onChangeDueDate}
+            selected={counterparty.date.value}
+            handleChange={this.handleChange}
             dateFormat="YYYY/MM/DD"
             required
           />
@@ -139,7 +134,7 @@ export default class Form extends Component {
           <button
             type="submit"
             className="btn btn-success"
-            disabled={!this.state.canSubmit}
+            disabled={!canSubmit}
           >
             Add counterparty
           </button>

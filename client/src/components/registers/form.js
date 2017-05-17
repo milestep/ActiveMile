@@ -192,7 +192,7 @@ export default class RegisterForm extends Component {
 
         <button
           type="submit"
-          className={`btn btn-success${editing ? ' btn-sm' : ''}`}
+          className="btn btn-success"
           disabled={!this.state.canSubmit || isFetching}
         >
           { isFetching ?

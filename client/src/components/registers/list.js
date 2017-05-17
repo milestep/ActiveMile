@@ -6,8 +6,8 @@ export default class RegistersList extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
-    handleDestroy: PropTypes.func.isRequired,
-    counterparties: PropTypes.array.isRequired
+    counterparties: PropTypes.array.isRequired,
+    handleDestroy: PropTypes.func.isRequired
   };
 
   render() {

@@ -17,11 +17,8 @@ import * as utils                         from '../../utils';
     isCreating: state.registers.isCreating,
     isResolved: {
       registers: state.subscriptions.registers.resolved,
-    },
-    isFetching: {
-      registers: state.registers.isFetching,
-      articles: state.articles.isFetching,
-      counterparties: state.counterparties.isFetching
+      articles: state.subscriptions.articles.resolved,
+      counterparties: state.subscriptions.counterparties.resolved
     }
   }),
   dispatch => ({
@@ -36,6 +33,9 @@ export default class Registers extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     registers: PropTypes.array.isRequired,
+    articles: PropTypes.array.isRequired,
+    counterparties: PropTypes.array.isRequired,
+    isResolved: PropTypes.object.isRequired,
     isCreating: PropTypes.bool
   };
 
@@ -97,11 +97,12 @@ export default class Registers extends Component {
   }
 
   isModelsFetched(models) {
+    const { isResolved } = this.props;
     const { empty } = utils;
     let returnedValue = true;
 
     models.forEach((model, i) => {
-      if (empty(this.props[model])) {
+      if (empty(this.props[model]) || !isResolved[model]) {
         returnedValue = false;
         return;
       }
@@ -124,7 +125,6 @@ export default class Registers extends Component {
           articles={articles}
           counterparties={counterparties}
           handleDestroy={this.handleDestroy}
-          isFetching={isFormDataReady}
         />
       )
     } else if (!isResolved.registers) {

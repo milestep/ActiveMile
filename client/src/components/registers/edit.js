@@ -127,18 +127,19 @@ export default class RegistersEditor extends Component {
     const isDataReady = this.isDataReady();
 
     return(
-      <div>
-        { isDataReady ?
-          <RegisterForm
-            editing={true}
-            isFetching={isUpdating}
-            handleSubmit={this.handleUpdate}
-            register={register}
-            articles={articles}
-            counterparties={counterparties}
-          />
-        : null }
-
+      <div className="row">
+        <div className="col-md-6 col-md-offset-3">
+          { isDataReady ?
+            <RegisterForm
+              editing={true}
+              isFetching={isUpdating}
+              handleSubmit={this.handleUpdate}
+              register={register}
+              articles={articles}
+              counterparties={counterparties}
+            />
+          : null }
+        </div>
       </div>
     )
   }

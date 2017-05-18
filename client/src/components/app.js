@@ -1,29 +1,23 @@
-import React, { Component, PropTypes } from 'react';
-import { connect }                     from 'react-redux';
-import { bindActionCreators }          from 'redux';
-import { getCurrentUser }              from '../utils/currentUser';
-import { actions as workspaceActions } from '../resources/workspace';
-import {
-  getCurrentWorkspace, 
-  specifyCurrentWorkspace,
-  setupCurrentWorkspace,
-  unsetCurrentWorkspace }              from '../actions/workspaces'
-import { toaster }                     from '../actions/alerts';
-import { logout }                      from '../actions/auth';
-import Header                          from '../components/layout/header/header';
+import React, { Component, PropTypes }    from 'react';
+import { connect }                        from 'react-redux';
+import { bindActionCreators }             from 'redux';
+import { getCurrentUser }                 from '../helpers/currentUser';
+import { actions as workspaceActions }    from '../resources/workspace';
+import { actions as workspaceAppActions } from '../actions/workspaces';
+import { toaster }                        from '../actions/alerts';
+import { logout }                         from '../actions/auth';
+import Header                             from '../components/layout/header/header';
+import * as utils                         from '../utils';
 
 @connect(
   state => ({
-    workspaces: state.workspaces.rest.items || [],
-    currentWorkspace: state.workspaces.app.currentWorkspace
-  }), 
+    workspaces: state.workspaces.rest.items,
+    currentWorkspace: state.workspaces.app.current
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      getCurrentWorkspace,
-      setupCurrentWorkspace,
-      specifyCurrentWorkspace,
-      unsetCurrentWorkspace,
+      ...workspaceAppActions,
       toaster,
       logout
     }, dispatch)
@@ -53,7 +47,7 @@ export default class App extends Component {
   componentWillReceiveProps(newProps) {
     const { workspaces, actions } = newProps;
 
-    if (!workspaces.length && actions.getCurrentWorkspace()) {
+    if (utils.empty(workspaces) && actions.getCurrentWorkspace()) {
       actions.unsetCurrentWorkspace();
       this.fetchWorkspaces();
     }
@@ -61,24 +55,29 @@ export default class App extends Component {
 
   fetchWorkspaces() {
     const currentUser = getCurrentUser();
-    const { actions, currentWorkspace } = this.props;
 
     if (!currentUser) return;
 
+    const { actions } = this.props;
+    const prevWorkspace = this.props.currentWorkspace;
+
+    actions.moveToPending();
+
     actions.fetchWorkspaces()
       .then(res => {
-        const currentWorkspaceNewest = actions.getCurrentWorkspace(res.body);
+        const currentWorkspace = actions.getCurrentWorkspace(res.body);
         const workspaces = res.body[0];
 
         if (!workspaces) return;
 
-        if (!currentWorkspaceNewest) {
+        if (!currentWorkspace) {
           actions.setupCurrentWorkspace(workspaces);
-        } else if (!currentWorkspace) {
-          actions.specifyCurrentWorkspace(currentWorkspaceNewest);
+        } else if (!prevWorkspace) {
+          actions.specifyCurrentWorkspace(currentWorkspace);
         }
       })
       .catch(err => {
+        if (utils.debug) console.error(err);
         this.toaster.error('Could not load workspaces!');
       })
   }

@@ -3,7 +3,7 @@ import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
 import { actions as workspaceActions } from '../../resources/workspace';
 import FormInput                       from '../layout/form/input';
-import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
+import * as utils                      from '../../utils';
 
 export default class WorkspaceForm extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class WorkspaceForm extends Component {
 
   handleSubmit = model => {
     const { workspace, index } = this.props;
-    let workspaceValues = extractPropertyFromObject(this.state.workspace, 'value');
+    let workspaceValues = utils.extractPropertyFromObject(this.state.workspace, 'value');
     let params = {}
 
     if (index) { params['index'] = index }
@@ -79,12 +79,12 @@ export default class WorkspaceForm extends Component {
     return(
       <Formsy.Form
         ref="form"
-        onValidSubmit={this.handleSubmit} 
-        onValid={this.toggleButton.bind(this, true)} 
+        onValidSubmit={this.handleSubmit}
+        onValid={this.toggleButton.bind(this, true)}
         onInvalid={this.toggleButton.bind(this, false)}
-        className="workspaceForm"
+        className="site-form workspaces-form"
       >
-        <FormInput 
+        <FormInput
           title="Title"
           name="title"
           label={editing ? false : true}
@@ -98,8 +98,8 @@ export default class WorkspaceForm extends Component {
           required
         />
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className={`btn btn-success${editing ? ' btn-sm' : ''}`}
           disabled={!this.state.canSubmit || fetching}
         >
@@ -107,7 +107,7 @@ export default class WorkspaceForm extends Component {
             <span className="spin-wrap">
               <span>{buttonCaption}</span>
               <i class="fa fa-circle-o-notch fa-spin"></i>
-            </span> 
+            </span>
             : buttonCaption
           }
         </button>

@@ -1,10 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { connect }                     from 'react-redux';
-import { bindActionCreators }          from 'redux';
-import { actions as articleActions }   from '../../resources/article';
 import FormInput                       from '../layout/form/input';
 import FormSelect                      from '../layout/form/select';
-import extractPropertyFromObject       from '../../utils/extractPropertyFromObject';
+import * as utils                      from '../../utils';
 
 export default class ArticleForm extends Component {
   static propTypes = {
@@ -12,7 +9,7 @@ export default class ArticleForm extends Component {
     fetching: PropTypes.bool,
     types: PropTypes.array.isRequired
   };
-  
+
   constructor(props) {
     super(props);
 
@@ -23,7 +20,7 @@ export default class ArticleForm extends Component {
           value: types[0],
           label: types[0]
         };
-        
+
     if (article) {
       const { title, type } = article;
 
@@ -55,7 +52,7 @@ export default class ArticleForm extends Component {
 
   handleSubmit = model => {
     const { article } = this.props;
-    let articleValues = extractPropertyFromObject(this.state.article, 'value');
+    let articleValues = utils.extractPropertyFromObject(this.state.article, 'value');
 
     if (article) {
       articleValues = Object.assign({}, article, articleValues);
@@ -67,8 +64,6 @@ export default class ArticleForm extends Component {
           this.setState({
             article: this.articleState
           });
-
-          this.resetForm();
         }
       });
   }
@@ -91,10 +86,6 @@ export default class ArticleForm extends Component {
     });
   }
 
-  resetForm() {
-    this.refs.form.reset();
-  }
-
   render() {
     const { title, type } = this.state.article;
     const { fetching, editing, types } = this.props;
@@ -108,12 +99,12 @@ export default class ArticleForm extends Component {
     });
 
     return(
-      <Formsy.Form 
+      <Formsy.Form
         ref="form"
-        onValidSubmit={this.handleSubmit} 
-        onValid={this.toggleButton.bind(this, true)} 
+        onValidSubmit={this.handleSubmit}
+        onValid={this.toggleButton.bind(this, true)}
         onInvalid={this.toggleButton.bind(this, false)}
-        className="articleForm"
+        className="site-form articles-form"
       >
         <FormInput
           title="Title"
@@ -129,7 +120,7 @@ export default class ArticleForm extends Component {
           required
         />
 
-        <FormSelect 
+        <FormSelect
           title="Type"
           name="type"
           label={editing ? false : true}
@@ -144,8 +135,8 @@ export default class ArticleForm extends Component {
           required
         />
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className={`btn btn-success${editing ? ' btn-sm' : ''}`}
           disabled={!this.state.canSubmit || fetching}
         >
@@ -153,7 +144,7 @@ export default class ArticleForm extends Component {
             <span className="spin-wrap">
               <span>{buttonCaption}</span>
               <i class="fa fa-circle-o-notch fa-spin"></i>
-            </span> 
+            </span>
             : buttonCaption
           }
         </button>

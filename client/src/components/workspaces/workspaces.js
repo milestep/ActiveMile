@@ -1,23 +1,25 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../utils/currentUser';
-import { toaster }                     from '../../actions/alerts';
-import { setupCurrentWorkspace }       from '../../actions/workspaces';
-import { actions as workspaceActions } from '../../resources/workspace';
-import WorkspacesList                  from './list';
-import WorkspaceForm                   from './form';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import { getCurrentUser }                 from '../../helpers/currentUser';
+import { toaster }                        from '../../actions/alerts';
+import { setupCurrentWorkspace }          from '../../actions/workspaces';
+import { actions as workspaceActions }    from '../../resources/workspace';
+import { actions as workspaceAppActions } from '../../actions/workspaces';
+import WorkspacesList                     from './list';
+import WorkspaceForm                      from './form';
+import * as utils                         from '../../utils';
 
 @connect(
   state => ({
     workspaces: state.workspaces.rest.items,
     isCreating: state.workspaces.rest.isCreating,
-    currentWorkspace: state.workspaces.app.currentWorkspace
-  }), 
+    currentWorkspace: state.workspaces.app.current
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      setupCurrentWorkspace,
+      ...workspaceAppActions,
       toaster
     }, dispatch)
   })
@@ -65,13 +67,14 @@ export default class Workspaces extends Component {
 
       actions.createWorkspace({ workspace })
         .then(res => {
-          if (!workspaces.length)  {
+          if (utils.empty(workspaces))  {
             actions.setupCurrentWorkspace(res.body);
           }
           this.toaster.success('Workspace has been created');
           resolve(res);
         })
         .catch(err => {
+          if (utils.debug) console.error(err);
           this.toaster.error('Could not create workspace!');
           reject(err);
         });
@@ -103,6 +106,7 @@ export default class Workspaces extends Component {
           resolve(res);
         })
         .catch(err => {
+          if (utils.debug) console.error(err);
           this.toaster.error('Could not update workspace!');
           reject(err);
         });
@@ -116,12 +120,13 @@ export default class Workspaces extends Component {
       .then(res => {
         const { workspaces } = this.props;
 
-        if (workspaces && workspaces.length && id === currentWorkspace.id) {
+        if (!utils.empty(workspaces) && id === currentWorkspace.id) {
           actions.setupCurrentWorkspace(workspaces[workspaces.length - 1]);
         }
         this.toaster.success('Workspace was deleted!');
       })
       .catch(err => {
+        if (utils.debug) console.error(err);
         this.toaster.error('Could not delete workspace!');
       })
   }
@@ -151,8 +156,8 @@ export default class Workspaces extends Component {
     const currentUser = getCurrentUser();
     const { isCreating } = this.props;
     const { editedWorkspace } = this.state;
-    const { 
-      toggleEdited, handleUpdate, deleteWorkspace 
+    const {
+      toggleEdited, handleUpdate, deleteWorkspace
     } = this;
     const methods = {
       toggleEdited, handleUpdate, deleteWorkspace
@@ -166,14 +171,14 @@ export default class Workspaces extends Component {
 
           <div className="col-md-8">
             <WorkspacesList
-              editedWorkspace={editedWorkspace} 
+              editedWorkspace={editedWorkspace}
               methods={methods}
             />
           </div>
 
           { currentUser ?
             <div className="col-md-4">
-              <WorkspaceForm 
+              <WorkspaceForm
                 fetching={isCreating}
                 handleSubmit={this.handleCreate}
               />

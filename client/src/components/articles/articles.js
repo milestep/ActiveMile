@@ -1,21 +1,23 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../utils/currentUser';
-import { toaster }                     from '../../actions/alerts';
-import { actions as articleActions }   from '../../resources/article';
-import ArticlesList                    from './list';
-import ArticleForm                     from './form';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import { toaster }                        from '../../actions/alerts';
+import { actions as articleActions }      from '../../resources/article';
+import { actions as subscriptionActions } from '../../actions/subscriptions';
+import ArticlesList                       from './list';
+import ArticleForm                        from './form';
+import * as utils                         from '../../utils';
 
 @connect(
   state => ({
     articles: state.articles.items,
-    isCreating: state.articles.isCreating,
-    currentWorkspace: state.workspaces.app.currentWorkspace
-  }), 
+    isFetching: state.articles.isFetching,
+    isCreating: state.articles.isCreating
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...articleActions,
+      ...subscriptionActions,
       toaster
     }, dispatch)
   })
@@ -24,7 +26,8 @@ export default class Articles extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     articles: PropTypes.array.isRequired,
-    isCreating: PropTypes.bool.isRequired
+    isFetching: PropTypes.bool,
+    isCreating: PropTypes.bool
   };
 
   static contextTypes = {
@@ -37,11 +40,13 @@ export default class Articles extends Component {
     const { articles } = props;
 
     this.types = ['Revenue', 'Cost'];
+    this.subscriptions = ['articles'];
 
     this.state = {
       articles: this.getArticlesState(articles),
       currentType: this.types[0],
-      editedArticle: null
+      editedArticle: null,
+      isFetching: false
     };
 
     this.toaster = props.actions.toaster();
@@ -51,30 +56,27 @@ export default class Articles extends Component {
     this.toggleEdited = this.toggleEdited.bind(this);
   }
 
-  componentDidMount() {
-    const { currentWorkspace } = this.props;
+  componentWillMount() {
+    this.props.actions.subscribe(this.subscriptions);
+  }
 
-    this.fetchArticles();
+  componentWillUnmount() {
+    this.props.actions.unsubscribe(this.subscriptions);
   }
 
   componentWillReceiveProps(newProps) {
-    const { currentWorkspace, articles } = newProps;
-    const prevWorkspace = this.props.currentWorkspace;
-    const prevArticles = this.state.articles;
-
-    if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      this.fetchArticles();
-    }
+    const { articles } = newProps;
+    const prevArticles = this.state.articles.all;
 
     if (articles !== prevArticles) {
       this.setState({
-        articles: this.getArticlesState(articles),
+        articles: this.getArticlesState(articles)
       });
     }
   }
 
   getArticlesState(articles) {
-    let all = { all: [ ...articles ] }, 
+    let all = { all: [ ...articles ] },
         types = {},
         ids = []
 
@@ -85,16 +87,8 @@ export default class Articles extends Component {
       ids.push(article.id);
       types[type].push(article);
     });
+
     return Object.assign({ ids }, all, types);
-  }
-
-  fetchArticles(id) {
-    const { actions } = this.props;
-
-    actions.fetchArticles()
-      .catch(err => {
-        this.toaster.error('Could not load articles!');
-      });
   }
 
   switchToType(type) {
@@ -106,7 +100,7 @@ export default class Articles extends Component {
 
   handleCreate(article) {
     return new Promise((resolve, reject) => {
-      const { actions, currentWorkspace } = this.props;
+      const { actions } = this.props;
       const { type } = article;
 
       article['type'] = type.label;
@@ -116,15 +110,16 @@ export default class Articles extends Component {
           resolve(res);
         })
         .catch(err => {
+          if (utils.debug) console.error(err);
           this.toaster.error('Could not create article!');
           reject(err);
         });
     })
-  } 
+  }
 
   handleUpdate(article) {
     return new Promise((resolve, reject) => {
-      const { actions, dispatch, currentWorkspace } = this.props;
+      const { actions, dispatch } = this.props;
       const { store } = this.context;
       const { id, type } = article;
       const { ids } = this.state.articles;
@@ -152,6 +147,7 @@ export default class Articles extends Component {
           resolve(res);
         })
         .catch(err => {
+          if (utils.debug) console.error(err);
           this.toaster.error('Could not update article!');
           reject(err);
         });
@@ -166,6 +162,7 @@ export default class Articles extends Component {
         this.toaster.success('Article was successfully deleted!');
       })
       .catch(err => {
+        if (utils.debug) console.error(err);
         this.toaster.error('Could not delete article!');
       })
   }
@@ -185,11 +182,13 @@ export default class Articles extends Component {
   }
 
   createTabsTemplate() {
-    const { 
+    const {
       articles,
       currentType,
       editedArticle
     } = this.state;
+
+    const { isFetching } = this.props;
 
     let list    = [],
         content = [];
@@ -219,16 +218,16 @@ export default class Articles extends Component {
             handleUpdate={this.handleUpdate}
             handleDestroy={this.handleDestroy}
             toggleEdited={this.toggleEdited}
+            isFetching={isFetching}
           />
         </div>
       );
     });
-    
+
     return { list, content }
   }
 
   render() {
-    const currentUser = getCurrentUser();
     const { isCreating } = this.props;
     const { editedArticle } = this.state;
     const tabs = this.createTabsTemplate();
@@ -239,7 +238,7 @@ export default class Articles extends Component {
 
         <div className="row">
           <div className="col-md-8">
-            <div className="articles-tabs">
+            <div className="site-tabs articles-tabs">
               <ul class="nav nav-tabs">
                 {tabs.list}
               </ul>
@@ -248,15 +247,13 @@ export default class Articles extends Component {
               </div>
             </div>
           </div>
-          { currentUser ?
-            <div className="col-md-4">
-              <ArticleForm 
-                types={this.types}
-                fetching={isCreating}
-                handleSubmit={this.handleCreate}
-              />
-            </div>
-          : null }
+          <div className="col-md-4">
+            <ArticleForm
+              types={this.types}
+              fetching={isCreating}
+              handleSubmit={this.handleCreate}
+            />
+          </div>
         </div>
       </div>
     );

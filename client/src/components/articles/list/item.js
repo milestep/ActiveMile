@@ -1,15 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../../utils/currentUser';
+import { getCurrentUser }              from '../../../helpers/currentUser';
 import ArticleForm                     from '../form';
 
+@connect(
+  state => ({
+    isUpdating: state.articles.isUpdating
+  })
+)
 export default class ArticlesListItem extends Component {
   static propTypes = {
     article: PropTypes.object.isRequired,
     handleUpdate: PropTypes.func.isRequired,
     handleDestroy: PropTypes.func.isRequired,
-    toggleEdited: PropTypes.func.isRequired
+    toggleEdited: PropTypes.func.isRequired,
+    isUpdating: PropTypes.bool
   };
 
   render() {
@@ -20,7 +26,7 @@ export default class ArticlesListItem extends Component {
 
     return(
       <li className="list-group-item">
-        { props.isEdited ? 
+        { props.isEdited ?
           <div className="inline-form">
             <ArticleForm
               editing={true}
@@ -39,14 +45,14 @@ export default class ArticlesListItem extends Component {
             </div>
           </div>
           :
-          <div className="articles-overlap">
+          <div className="tabs-overlap">
             <div className="article-info">
               <span className="article-title">
                 {title}
               </span>
             </div>
             <div className="article-actions btn-group">
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={props.toggleEdited.bind(this, id, true)}
@@ -54,7 +60,7 @@ export default class ArticlesListItem extends Component {
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={props.handleDestroy.bind(this, id)}

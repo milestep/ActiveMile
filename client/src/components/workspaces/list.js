@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import WorkspacesListItem              from './list/item';
+import * as utils                      from '../../utils';
 
 @connect(
   state => ({
-    workspaces: state.workspaces.rest.items || []
+    workspaces: state.workspaces.rest.items
   })
 )
 export default class WorkspacesList extends Component {
@@ -16,11 +17,11 @@ export default class WorkspacesList extends Component {
   render() {
     const {
       editedWorkspace,
-      workspaces, 
+      workspaces,
       methods,
     } = this.props;
 
-    if (!workspaces && !workspaces.length) { return null }
+    if (utils.empty(workspaces)) return null;
 
     let workspacesList = [];
 
@@ -29,7 +30,7 @@ export default class WorkspacesList extends Component {
       const isEdited = editedWorkspace === id ? true : false;
 
       workspacesList.unshift(
-        <WorkspacesListItem 
+        <WorkspacesListItem
           key={i}
           index={i}
           workspace={workspace}
@@ -40,7 +41,7 @@ export default class WorkspacesList extends Component {
     });
 
     return(
-      <ul className="list-group workspaces-container">
+      <ul className="list-group site-tabs">
         {workspacesList}
       </ul>
     );

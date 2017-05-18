@@ -4,14 +4,11 @@ $fa-font-path = "~font-awesome-stylus/fonts"
 @import 'bootstrap';
 @import './layout';
 @import './elements';
-@import './workspaces';
-@import './articles';
-@import './counterparties';
 
 html
   font-size 16px
   line-height 20px
-  
+
 a
   cursor pointer
 
@@ -20,18 +17,12 @@ p
   &.sm
     font-size .9rem
 
-img, 
+img,
 textarea
   max-width 100%
-  
+
 .nav.nav-tabs
   margin-bottom 15px
-
-.form-group
-  &.has-error
-    .Select
-      .Select-control, .Select-menu-outer
-        border 1px solid #a94442
 
 .spin-wrap
   display flex
@@ -43,5 +34,5 @@ textarea
     &:only-child
       margin 0
 
-.workspaceForm
-  margin-bottom 30px
+.react-datepicker__input-container
+  width: 100%;

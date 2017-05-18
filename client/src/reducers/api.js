@@ -2,6 +2,7 @@ import { combineReducers }                  from 'redux'
 import { reducers as workspaceReducers }    from '../resources/workspace';
 import { reducers as counterpartyReducers } from '../resources/counterparty';
 import { reducers as articleReducers }      from '../resources/article';
+import { reducers as registerReducers }     from '../resources/register';
 import workspaces                           from './workspaces';
 
 const apiReducers = {
@@ -10,7 +11,8 @@ const apiReducers = {
     app: workspaces
   }),
   counterparties: counterpartyReducers,
-  articles: articleReducers
+  articles: articleReducers,
+  registers: registerReducers,
 }
 
 export default apiReducers;

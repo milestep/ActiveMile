@@ -1,20 +1,21 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators }          from 'redux';
-import { connect }                     from 'react-redux';
-import { getCurrentUser }              from '../../../utils/currentUser';
-import { setupCurrentWorkspace }       from '../../../actions/workspaces';
-import { actions as workspaceActions } from '../../../resources/workspace';
-import WorkspaceForm                   from '../form';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
+import { getCurrentUser }                 from '../../../helpers/currentUser';
+import { setupCurrentWorkspace }          from '../../../actions/workspaces';
+import { actions as workspaceAppActions } from '../../../actions/workspaces';
+import { actions as workspaceActions }    from '../../../resources/workspace';
+import WorkspaceForm                      from '../form';
 
 @connect(
   state => ({
     isUpdating: state.workspaces.rest.isUpdating,
-    currentWorkspace: state.workspaces.app.currentWorkspace
+    currentWorkspace: state.workspaces.app.current
   }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      setupCurrentWorkspace
+      ...workspaceAppActions
     }, dispatch)
   })
 )
@@ -29,21 +30,22 @@ export default class WorkspacesListItem extends Component {
 
   render() {
     const currentUser = getCurrentUser();
-    const { 
+    const {
       index,
-      workspace, 
-      isEdited, 
-      isUpdating, 
-      methods, 
+      workspace,
+      isEdited,
+      isUpdating,
+      methods,
       currentWorkspace,
       actions
     } = this.props;
     const { id, title } = workspace;
-    const isCurrent = (currentWorkspace && currentWorkspace.id) === id ? true : false;
+
+    const isCurrent = currentWorkspace && (currentWorkspace.id === id) ? true : false;
 
     return(
       <li className="list-group-item" key={index}>
-        { isEdited ? 
+        { isEdited ?
           <div className="inline-form">
             <WorkspaceForm
               index={index}
@@ -62,14 +64,14 @@ export default class WorkspacesListItem extends Component {
             </div>
           </div>
         :
-          <div className="workspace-overlap">
+          <div className="tabs-overlap">
             <div className="workspace-info">
               <span className="workspace-title">
                 {title}&nbsp;
               </span>
               { isCurrent ? <span class="label label-primary">Current</span> : null }
             </div>
-            
+
             <div className="workspace-actions btn-group">
               { !isCurrent ?
                 <button
@@ -79,7 +81,7 @@ export default class WorkspacesListItem extends Component {
                   Select
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={methods.toggleEdited.bind(this, id, true)}
@@ -87,7 +89,7 @@ export default class WorkspacesListItem extends Component {
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </button>
               : null }
-              { currentUser ? 
+              { currentUser ?
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={methods.deleteWorkspace.bind(this, id)}

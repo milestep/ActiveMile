@@ -1,6 +1,6 @@
 import React, { Component }      from 'react';
 import DatePicker                from 'react-datepicker'
-import Formsy, 
+import Formsy,
   { Decorator as FormsyElement } from 'formsy-react';
 import DateInput                 from './datePicker/dateInput';
 
@@ -9,7 +9,13 @@ export default class FormDatePicker extends Component {
   constructor(props) {
     super(props);
 
-    this.changeValue = this.changeValue.bind(this)
+    this.changeValue = this.changeValue.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
+  }
+
+  componentWillMount() {
+    const { setValue, selected } = this.props;
+    if (selected) setValue(selected);
   }
 
   componentWillMount() {
@@ -18,11 +24,16 @@ export default class FormDatePicker extends Component {
   }
 
   changeValue = e => {
-    const { handleChange, setValue } = this.props;
-    const date = e._d;
+    const { name, handleChange, setValue } = this.props;
 
-    setValue(date);
-    handleChange(e);
+    setValue(e);
+    handleChange(name, { value: e });
+  }
+
+  handleBlur(e) {
+    const { name, handleChange } = this.props;
+
+    handleChange(name, { blured: true });
   }
 
   getLabel() {
@@ -47,11 +58,12 @@ export default class FormDatePicker extends Component {
         <DatePicker
           className='form-control'
           customInput={
-            this.props.customInput || 
-            <DateInput 
+            this.props.customInput ||
+            <DateInput
               inputClassName={this.props.inputClassName}
               value={this.props.value}
-              onChange={this.changeValue} 
+              handleBlur={this.handleBlur}
+              onChange={this.changeValue}
             />
           }
           minDate={this.props.minDate}

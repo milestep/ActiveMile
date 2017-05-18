@@ -1,26 +1,40 @@
 import WorkspaceActions from '../constants/workspaces';
 
-const initialState = {
-  currentWorkspace: null
-};
-const { 
+const {
   CURRENT_WORKSPACE_SPECIFIED,
-  CURRENT_WORKSPACE_REMOVED
+  CURRENT_WORKSPACE_REMOVED,
+  CURRENT_WORKSPACE_FETCHING
 } = WorkspaceActions;
+
+const initialState = {
+  current: null,
+  fetching: false,
+  resolved: false
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case CURRENT_WORKSPACE_SPECIFIED: {
       return {
         ...state,
-        currentWorkspace: action.payload
+        current: action.payload,
+        fetching: false,
+        resolved: true
       }
     }
 
     case CURRENT_WORKSPACE_REMOVED: {
       return {
         ...state,
-        currentWorkspace: null
+        current: null
+      }
+    }
+
+    case CURRENT_WORKSPACE_FETCHING: {
+      return {
+        ...state,
+        fetching: true,
+        resolved: false
       }
     }
 

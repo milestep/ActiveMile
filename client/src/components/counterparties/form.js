@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react'; 
-import moment from 'moment';
-import FormSelect from '../layout/form/select';
-import FormInput from '../layout/form/input';
-import FormDatePicker from '../layout/form/datePicker.js';
+import React, { Component, PropTypes } from 'react';
+import moment                          from 'moment';
+import FormSelect                      from '../layout/form/select';
+import FormInput                       from '../layout/form/input';
+import FormDatePicker                  from '../layout/form/datePicker';
 
 export default class Form extends Component {
   static propTypes = {
@@ -13,38 +13,46 @@ export default class Form extends Component {
   constructor(props) {
     super(props);
 
-    const { counterparty, types } = props;
-
-    this.counterpartyState = {
-      name: {
-        value: (counterparty && counterparty.name) ? counterparty.name : '',
-        blured: false,
-      },
-      date: '',
-      start_date: moment(),
-      type: {
-        value: (counterparty && counterparty.type) ? {
-          value: counterparty.type,
-          label: counterparty.type
-        } : {
-          value: types[0],
-          label: types[0]
-        },
-        blured: false,
-      }
-    }
-
     this.state = {
-      counterparty: this.counterpartyState,
+      counterparty: this.createCounterpartyState(props),
       canSubmit: true
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.onChangeDueDate = this.onChangeDueDate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(field, values) {
+  createCounterpartyState(props) {
+    if (!props) props = this.props;
+
+    const { counterparty, types } = props;
+
+    let prev = counterparty ? {
+      name: counterparty.name,
+      date: moment(Date.parse(counterparty.date)),
+      type: {
+        value: counterparty.type,
+        label: counterparty.type
+      },
+    } : {
+      name: '',
+      date: moment(),
+      type: {
+        value: types[0],
+        label: types[0]
+      },
+    }, next = {};
+
+    for (let i in prev) {
+      next[i] = {};
+      next[i]['value'] = prev[i];
+      next[i]['blured'] = false;
+    }
+
+    return next;
+  }
+
+  handleChange = (field, values) => {
     this.setState((prevState) => ({
       counterparty: {
         ...prevState.counterparty,
@@ -62,31 +70,33 @@ export default class Form extends Component {
     });
   }
 
-  onChangeDueDate(e) {
-    this.setState((prevState) => ({
-      ...prevState,
-      counterparty: {
-        ...prevState.counterparty,
-        date: e._d,
-        start_date: e
-      }
-    }));
-  }
+  handleSubmit(model) {
+    const { counterparty } = this.props;
 
-  handleSubmit(counterparty) {
-    counterparty.type = counterparty.type.value
-     
-    this.props.handleSubmit(counterparty)
+    if (counterparty) {
+      model.id = counterparty.id;
+    }
+
+    model = {
+      ...model,
+      date: model.date._d,
+      type: model.type.value,
+    }
+
+    this.props.handleSubmit(model)
       .then(res => {
         if (this.refs.form) {
           this.setState({
-            counterparty: this.counterpartyState
+            counterparty: this.createCounterpartyState()
           });
         }
       });
   }
- 
+
   render() {
+    const { counterparty, canSubmit } = this.state;
+    const { editing } = this.props;
+    const buttonCaption = editing ? 'Update' : 'Create Counterparty';
     const typeOptions = this.props.types.map((type, i) => {
       return {
         value: type,
@@ -95,56 +105,51 @@ export default class Form extends Component {
     });
 
     return (
-      <div>
-        <Formsy.Form
-          ref="form"
-          onValidSubmit={this.handleSubmit} 
-          onValid={this.toggleButton.bind(this, true)} 
-          onInvalid={this.toggleButton.bind(this, false)}
-          className="counterpartyForm"
+      <Formsy.Form
+        ref="form"
+        onValidSubmit={this.handleSubmit}
+        onValid={this.toggleButton.bind(this, true)}
+        onInvalid={this.toggleButton.bind(this, false)}
+        className="site-form counterparties-form"
+      >
+        <FormInput
+          name="name"
+          placeholder="Name *"
+          value={counterparty.name.value}
+          handleChange={this.handleChange}
+          isBlured={counterparty.name.blured}
+          inputClassName={editing ? "input-sm" : false}
+          validationErrors={{isRequired: "Title is required"}}
+          required
+        />
+
+        <FormSelect
+          name="type"
+          value={counterparty.type.value}
+          isBlured={counterparty.type.blured}
+          selectClassName={editing ? "select-sm" : false}
+          options={typeOptions}
+          handleChange={this.handleChange}
+          required
+        />
+
+        <FormDatePicker
+          name="date"
+          selected={counterparty.date.value}
+          handleChange={this.handleChange}
+          inputClassName={editing ? "input-sm" : false}
+          dateFormat="YYYY/MM/DD"
+          required
+        />
+
+        <button
+          type="submit"
+          className={`btn btn-success${editing ? ' btn-sm' : ''}`}
+          disabled={!canSubmit}
         >
-
-          <FormInput
-            name="name"
-            placeholder="Name *"
-            value={this.state.counterparty.name.value}
-            handleChange={this.handleChange}
-            isBlured={this.state.counterparty.name.blured}
-            validationErrors={{
-             isRequired: "Title is required"
-            }}
-            required
-          />
-
-          <FormSelect
-            name="type"
-            value={this.state.counterparty.type.value}
-            isBlured={this.state.counterparty.type.blured}
-            options={typeOptions}
-            handleChange={this.handleChange}
-            validationErrors={{
-              isRequired: "Type is required"
-            }}
-            required
-          />
-
-          <FormDatePicker
-            name="date"
-            selected={this.state.counterparty.start_date}
-            handleChange={this.onChangeDueDate}
-            dateFormat="YYYY/MM/DD"
-            required
-          />
- 
-          <button 
-            type="submit" 
-            className="btn btn-success"
-            disabled={!this.state.canSubmit}
-          >
-            Add counterparty
-          </button>
-        </Formsy.Form>
-      </div>
+          {buttonCaption}
+        </button>
+      </Formsy.Form>
     );
   }
 }

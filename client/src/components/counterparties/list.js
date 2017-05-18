@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import Edit                            from './edit';
+import Form                            from './form';
 
 export default class List extends Component {
   static propTypes = {
@@ -12,13 +12,13 @@ export default class List extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       currentType: this.props.types[0]
     };
-  }; 
+  };
 
-  renderItems(type) {  
+  renderItems(type) {
     const { counterparties, handleDestroy, toggleEdited, editedCounterparty } = this.props;
 
     let counterparties_now = counterparties.filter(t => t.type === type)
@@ -30,19 +30,27 @@ export default class List extends Component {
         return (
           <li key={i} className="list-group-item">
             { isEdited ?
-              <Edit
-                handleUpdate={this.props.handleUpdate}
-                types={this.props.types}
-                counterparty={item}
-                toggleEdited={toggleEdited}
-              />
+              <div className="inline-form">
+                <Form
+                  handleSubmit={this.props.handleUpdate}
+                  types={this.props.types}
+                  counterparty={item}
+                  editing={true}
+                />
+                <div className="form-btn-wrap">
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={this.props.toggleEdited.bind(this, item.id, false)}
+                  >
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
             :
-              <div className="counterparty-overlap">
+              <div className="tabs-overlap">
                 <div className="col-md-10">
-                  <div className="counterparty-overlap">
-                    <span className="col-md-9">{ item.name }</span>
-                    <span className="col-md-3">{ item.date }</span>
-                  </div>
+                  <span className="col-md-9">{ item.name }</span>
+                  <span className="col-md-3">{ item.date }</span>
                 </div>
                 <div className="btn-group">
                   <button
@@ -110,7 +118,7 @@ export default class List extends Component {
         </div>
       );
     });
-    
+
     return { list, content }
   }
 
@@ -118,7 +126,7 @@ export default class List extends Component {
     const tabs = this.createTabsTemplate();
 
     return(
-      <div class="articles-tabs">
+      <div class="site-tabs">
         <ul class="nav nav-tabs">
           {tabs.list}
         </ul>

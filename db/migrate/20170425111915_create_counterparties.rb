@@ -4,7 +4,9 @@ class CreateCounterparties < ActiveRecord::Migration[5.0]
       t.string :name
       t.date :date
       t.string :type
-      t.integer :workspace_id
+      t.references :workspace, foreign_key: true
+
+      t.timestamps
     end
   end
 end

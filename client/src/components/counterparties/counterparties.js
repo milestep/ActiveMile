@@ -2,6 +2,7 @@ import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import { actions as counterpartyActions } from '../../resources/counterparty';
+import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
 import List                               from './list';
 import Form                               from './form';
@@ -9,12 +10,12 @@ import Form                               from './form';
 @connect(
   state => ({
     counterparties: state.counterparties.items,
-    isFetching: state.counterparties.isFetching,
-    currentWorkspace: state.workspaces.app.currentWorkspace
+    isFetching: state.counterparties.isFetching
   }),
   dispatch => ({
     actions: bindActionCreators({
       ...counterpartyActions,
+      ...subscriptionActions,
       toaster
     }, dispatch)
   })
@@ -29,6 +30,7 @@ export default class Counterparties extends Component {
     super(props);
 
     this.types = ['Client', 'Vendor', 'Other'];
+    this.subscriptions = ['counterparties'];
 
     this.state = {
       editedCounterparty: null
@@ -41,20 +43,12 @@ export default class Counterparties extends Component {
     this.toaster = props.actions.toaster();
   }
 
-  componentDidMount(){
-    const { actions } = this.props;
-
-    actions.fetchCounterpartys();
+  componentWillMount() {
+    this.props.actions.subscribe(this.subscriptions);
   }
 
-  componentWillReceiveProps(newProps) {
-    const { actions } = this.props;
-    const { currentWorkspace } = newProps;
-    const prevWorkspace = this.props.currentWorkspace;
- 
-    if (currentWorkspace && currentWorkspace !== prevWorkspace) {
-      actions.fetchCounterpartys();
-    }
+  componentWillUnmount() {
+    this.props.actions.unsubscribe(this.subscriptions);
   }
 
   handleDestroy(id) {
@@ -83,22 +77,7 @@ export default class Counterparties extends Component {
     });
   }
 
-  handleUpdate(counterparty, id) {
-    const { actions } = this.props;
-
-    actions.updateCounterparty({ id, counterparty })
-    .then(res => {
-      this.toggleEdited(id, false)
-      this.toaster.success('Counterparty has been updated'); 
-
-      actions.fetchCounterpartys()
-    })
-    .catch(err => {
-      this.toaster.error('Could not update counterparty!');
-    });
-  }
-
-  handleSubmit(counterparty) { 
+  handleSubmit(counterparty) {
     return new Promise((resolve, reject) => {
       const { actions } = this.props;
 
@@ -113,6 +92,26 @@ export default class Counterparties extends Component {
           reject(err);
         });
     })
+  }
+
+  handleUpdate(counterparty) {
+    return new Promise((resolve, reject) => {
+      const { actions } = this.props;
+      const { id } = counterparty;
+
+      delete counterparty.id;
+
+      actions.updateCounterparty({ id, counterparty })
+        .then(res => {
+          this.toggleEdited(id, false)
+          this.toaster.success('Counterparty has been updated');
+
+          actions.fetchCounterpartys()
+        })
+        .catch(err => {
+          this.toaster.error('Could not update counterparty!');
+        });
+    });
   }
 
   render() {

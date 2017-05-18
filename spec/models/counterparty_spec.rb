@@ -1,7 +1,7 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Counterparty, type: :model do
-  context "validation all" do
+  context 'validation all' do
     subject { build(:counterparty) }
 
     context 'validations should' do
@@ -11,32 +11,32 @@ RSpec.describe Counterparty, type: :model do
       it { should be_valid(:workspace_id) }
     end
 
-    context "validation expect" do
+    context 'validation expect' do
       let(:counterparty) { build(:counterparty) }
 
-      it "expect be valid" do
+      it 'expect be valid' do
         expect(counterparty).to be_valid
       end
 
-      it "expect require name" do
+      it 'expect require name' do
         counterparty.name = nil
         expect(counterparty).not_to be_valid
         expect(counterparty).to have(1).error_on(:name)
       end
 
-      it "expect require date" do
+      it 'expect require date' do
         counterparty.date = nil
         expect(counterparty).not_to be_valid
         expect(counterparty).to have(1).error_on(:date)
       end
 
-      it "expect require type" do
+      it 'expect require type' do
         counterparty.type = nil
         expect(counterparty).not_to be_valid
         expect(counterparty).to have(1).error_on(:type)
       end
 
-      it "expect require workspace_id" do
+      it 'expect require workspace_id' do
         counterparty.workspace_id = nil
         expect(counterparty).not_to be_valid
         expect(counterparty).to have(1).error_on(:workspace_id)

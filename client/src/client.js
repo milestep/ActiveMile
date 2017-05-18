@@ -6,7 +6,7 @@ import {
   syncHistoryWithStore, 
   routerMiddleware }       from 'react-router-redux'
 import { setAuthHeader }   from './actions/auth'
-import { getCurrentUser }  from './utils/currentUser';
+import { getCurrentUser }  from './helpers/currentUser';
 import configureStore      from './store/configureStore'
 import Root                from './containers/root';
 import faviconUrl          from 'file-loader!./images/favicon.ico';

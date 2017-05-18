@@ -1,5 +1,7 @@
 class Api::V1::CounterpartiesController < Api::V1::BaseController
-  expose :counterparty, -> { current_workspace.counterparties.find(params[:id]) }
+  expose :counterparty, -> {
+    current_workspace.counterparties.find(params[:id])
+  }
   expose :counterparties, -> {
     current_workspace.counterparties
   }
@@ -27,7 +29,7 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
   end
 
   private
-  
+
   def counterparty_params
     params.require(:counterparty).permit(:name, :date, :type)
   end

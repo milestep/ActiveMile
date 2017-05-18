@@ -110,7 +110,7 @@ export default class Form extends Component {
         onValidSubmit={this.handleSubmit}
         onValid={this.toggleButton.bind(this, true)}
         onInvalid={this.toggleButton.bind(this, false)}
-        className={`site-form counterparty-form${editing ? ' inline-form' : ''}`}
+        className="site-form counterparties-form"
       >
         <FormInput
           name="name"
@@ -119,9 +119,7 @@ export default class Form extends Component {
           handleChange={this.handleChange}
           isBlured={counterparty.name.blured}
           inputClassName={editing ? "input-sm" : false}
-          validationErrors={{
-           isRequired: "Title is required"
-          }}
+          validationErrors={{isRequired: "Title is required"}}
           required
         />
 

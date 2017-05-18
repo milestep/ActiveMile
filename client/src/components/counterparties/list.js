@@ -47,12 +47,10 @@ export default class List extends Component {
                 </div>
               </div>
             :
-              <div className="counterparty-overlap">
+              <div className="tabs-overlap">
                 <div className="col-md-10">
-                  <div className="counterparty-overlap">
-                    <span className="col-md-9">{ item.name }</span>
-                    <span className="col-md-3">{ item.date }</span>
-                  </div>
+                  <span className="col-md-9">{ item.name }</span>
+                  <span className="col-md-3">{ item.date }</span>
                 </div>
                 <div className="btn-group">
                   <button
@@ -128,7 +126,7 @@ export default class List extends Component {
     const tabs = this.createTabsTemplate();
 
     return(
-      <div class="articles-tabs">
+      <div class="site-tabs">
         <ul class="nav nav-tabs">
           {tabs.list}
         </ul>

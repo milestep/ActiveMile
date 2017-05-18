@@ -1,0 +1,24 @@
+.inline-form
+  display flex
+  align-items center
+  justify-content space-between
+  width 100%
+
+  form
+    margin-right 9px
+    margin-bottom 0
+    display inline-flex
+    align-items center
+    justify-content space-between
+    flex-grow 1
+
+  .form-group
+    flex-grow 1
+    margin-right 10px
+    margin-bottom 0
+
+.form-group
+  &.has-error
+    .Select
+      .Select-control, .Select-menu-outer
+        border 1px solid #a94442

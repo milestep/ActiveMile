@@ -41,7 +41,6 @@ export default class WorkspacesListItem extends Component {
     } = this.props;
     const { id, title } = workspace;
 
-    // TODO: fix it (isCurrent doesn't properly work now)
     const isCurrent = currentWorkspace && (currentWorkspace.id === id) ? true : false;
 
     return(
@@ -65,7 +64,7 @@ export default class WorkspacesListItem extends Component {
             </div>
           </div>
         :
-          <div className="workspace-overlap">
+          <div className="tabs-overlap">
             <div className="workspace-info">
               <span className="workspace-title">
                 {title}&nbsp;

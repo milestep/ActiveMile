@@ -45,7 +45,7 @@ export default class ArticlesListItem extends Component {
             </div>
           </div>
           :
-          <div className="articles-overlap">
+          <div className="tabs-overlap">
             <div className="article-info">
               <span className="article-title">
                 {title}

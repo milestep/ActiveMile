@@ -79,12 +79,12 @@ export default class WorkspaceForm extends Component {
     return(
       <Formsy.Form
         ref="form"
-        onValidSubmit={this.handleSubmit} 
-        onValid={this.toggleButton.bind(this, true)} 
+        onValidSubmit={this.handleSubmit}
+        onValid={this.toggleButton.bind(this, true)}
         onInvalid={this.toggleButton.bind(this, false)}
-        className="workspaceForm"
+        className="site-form workspaces-form"
       >
-        <FormInput 
+        <FormInput
           title="Title"
           name="title"
           label={editing ? false : true}
@@ -98,8 +98,8 @@ export default class WorkspaceForm extends Component {
           required
         />
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className={`btn btn-success${editing ? ' btn-sm' : ''}`}
           disabled={!this.state.canSubmit || fetching}
         >
@@ -107,7 +107,7 @@ export default class WorkspaceForm extends Component {
             <span className="spin-wrap">
               <span>{buttonCaption}</span>
               <i class="fa fa-circle-o-notch fa-spin"></i>
-            </span> 
+            </span>
             : buttonCaption
           }
         </button>

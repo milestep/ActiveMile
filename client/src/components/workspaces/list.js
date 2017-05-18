@@ -41,7 +41,7 @@ export default class WorkspacesList extends Component {
     });
 
     return(
-      <ul className="list-group workspaces-container">
+      <ul className="list-group site-tabs">
         {workspacesList}
       </ul>
     );

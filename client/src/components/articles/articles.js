@@ -238,7 +238,7 @@ export default class Articles extends Component {
 
         <div className="row">
           <div className="col-md-8">
-            <div className="articles-tabs">
+            <div className="site-tabs articles-tabs">
               <ul class="nav nav-tabs">
                 {tabs.list}
               </ul>

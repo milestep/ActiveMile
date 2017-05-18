@@ -104,7 +104,7 @@ export default class ArticleForm extends Component {
         onValidSubmit={this.handleSubmit}
         onValid={this.toggleButton.bind(this, true)}
         onInvalid={this.toggleButton.bind(this, false)}
-        className="articleForm"
+        className="site-form articles-form"
       >
         <FormInput
           title="Title"

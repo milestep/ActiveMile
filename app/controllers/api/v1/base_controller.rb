@@ -7,7 +7,7 @@ class Api::V1::BaseController < ActionController::API
   def perform_caching
     Rails.configuration.action_controller.perform_caching
   end
-  
+
   def doorkeeper_unauthorized_render_options(error: nil)
     { json: { error: I18n.t('auth.error.not_authorized') } }
   end

@@ -23,7 +23,7 @@ export default class Header extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       collapsed: true
     };
@@ -75,35 +75,39 @@ export default class Header extends Component {
 
     if (loggedIn) {
       Array.prototype.push.apply(navItems, [{
-        to: '/articles', 
-        title: 'Articles', 
+        to: '/articles',
+        title: 'Articles',
         onClick: this.toggleCollapse
       }, {
-        to: '/counterparties', 
-        title: 'Counterparties', 
+        to: '/counterparties',
+        title: 'Counterparties',
         onClick: this.toggleCollapse
       }, {
-        to: '/registers', 
-        title: 'Registers', 
+        to: '/registers',
+        title: 'Registers',
+        onClick: this.toggleCollapse
+      }, {
+        to: '/reports',
+        title: 'Reports',
         onClick: this.toggleCollapse
       }]);
-      
+
       Array.prototype.push.apply(navItemsRight, [{
-        to: '/workspaces', 
-        title: 'Workspaces', 
+        to: '/workspaces',
+        title: 'Workspaces',
         onClick: this.toggleCollapse
       }, {
         to: '/logout',
         title: 'Logout',
         onClick: (e) => {
-          this.handleLogout(e); 
-          this.toggleCollapse.call(this); 
+          this.handleLogout(e);
+          this.toggleCollapse.call(this);
         }
       }]);
     } else {
       Array.prototype.push.apply(navItemsRight, [{
-        to: '/login', 
-        title: 'Login', 
+        to: '/login',
+        title: 'Login',
         onClick: this.toggleCollapse
       }]);
     }
@@ -115,7 +119,7 @@ export default class Header extends Component {
         <li key={i}>
           <a href="#"
             onClick={e => {
-              e.preventDefault(); 
+              e.preventDefault();
               setupCurrentWorkspace(workspace);
             }}
           >
@@ -129,20 +133,20 @@ export default class Header extends Component {
       <nav className="site-nav">
         { (loggedIn && currentWorkspace) ?
           <ul className="nav navbar-nav navbar-main">
-            <Dropdown 
+            <Dropdown
               title={currentWorkspace.title}
               list={workspacesList}
             />
           </ul>
         : null }
 
-        { navItems ? 
+        { navItems ?
           <ul className="nav navbar-nav">
             { navItems }
           </ul>
         : null }
-        
-        { navItemsRight ? 
+
+        { navItemsRight ?
           <ul className="nav navbar-nav navbar-right">
             { navItemsRight }
           </ul>
@@ -153,7 +157,7 @@ export default class Header extends Component {
 
   render() {
     const { collapsed } = this.state;
-    const { alertsAsync } = this.props; 
+    const { alertsAsync } = this.props;
     const navClass = collapsed ? "collapse" : "";
     let alertsContainer;
 
@@ -172,10 +176,10 @@ export default class Header extends Component {
         <nav className="navbar navbar-inverse" role="navigation">
           <div className="container">
             <div className="navbar-header">
-              <button 
-                type="button" 
-                className="navbar-toggle" 
-                onClick={this.toggleCollapse} 
+              <button
+                type="button"
+                className="navbar-toggle"
+                onClick={this.toggleCollapse}
               >
                 <span className="sr-only">Toggle navigation</span>
                 <span className="icon-bar"></span>
@@ -189,7 +193,7 @@ export default class Header extends Component {
           </div>
         </nav>
 
-        { (alertsAsync && alertsAsync.length) ? 
+        { (alertsAsync && alertsAsync.length) ?
 
           <div className="container">
             <div className="site-notifications">

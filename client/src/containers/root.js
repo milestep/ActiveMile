@@ -14,6 +14,7 @@ import {
   Counterparties,
   Registers,
   RegistersEditor,
+  Reports,
   NotFound }             from '../components';
 import RequireAuth       from '../containers/requireAuth';
 import RequireWorkspace  from '../containers/requireWorkspace';
@@ -33,6 +34,7 @@ const routes = (
       <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
       <Route path="registers" component={RequireWorkspace(Registers)} />
       <Route path="registers/:id/edit" component={RequireWorkspace(RegistersEditor)} />
+      <Route path="reports" component={Reports} />
     </Route>
 
     <Route path='*' component={NotFound} />

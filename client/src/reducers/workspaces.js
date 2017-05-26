@@ -1,9 +1,10 @@
 import WorkspaceActions from '../constants/workspaces';
 
 const {
-  CURRENT_WORKSPACE_SPECIFIED,
-  CURRENT_WORKSPACE_REMOVED,
-  CURRENT_WORKSPACE_FETCHING
+  CURRENT_WORKSPACE_SPECIFIY,
+  CURRENT_WORKSPACE_REMOVE,
+  CURRENT_WORKSPACE_FETCHING,
+  CURRENT_WORKSPACE_RESOLVE
 } = WorkspaceActions;
 
 const initialState = {
@@ -14,16 +15,14 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case CURRENT_WORKSPACE_SPECIFIED: {
+    case CURRENT_WORKSPACE_SPECIFIY: {
       return {
         ...state,
-        current: action.payload,
-        fetching: false,
-        resolved: true
+        current: action.payload
       }
     }
 
-    case CURRENT_WORKSPACE_REMOVED: {
+    case CURRENT_WORKSPACE_REMOVE: {
       return {
         ...state,
         current: null
@@ -35,6 +34,14 @@ export default (state = initialState, action) => {
         ...state,
         fetching: true,
         resolved: false
+      }
+    }
+
+    case CURRENT_WORKSPACE_RESOLVE: {
+      return {
+        ...state,
+        fetching: false,
+        resolved: true
       }
     }
 

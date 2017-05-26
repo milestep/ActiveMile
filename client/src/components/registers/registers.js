@@ -39,10 +39,6 @@ export default class Registers extends Component {
     isCreating: PropTypes.bool
   };
 
-  static contextTypes = {
-    store: React.PropTypes.object
-  };
-
   constructor(props) {
     super(props);
 

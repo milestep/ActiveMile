@@ -55,31 +55,11 @@ export default class App extends Component {
 
   fetchWorkspaces() {
     const currentUser = getCurrentUser();
+    const { actions } = this.props;
 
     if (!currentUser) return;
 
-    const { actions } = this.props;
-    const prevWorkspace = this.props.currentWorkspace;
-
-    actions.moveToPending();
-
-    actions.fetchWorkspaces()
-      .then(res => {
-        const currentWorkspace = actions.getCurrentWorkspace(res.body);
-        const workspaces = res.body[0];
-
-        if (!workspaces) return;
-
-        if (!currentWorkspace) {
-          actions.setupCurrentWorkspace(workspaces);
-        } else if (!prevWorkspace) {
-          actions.specifyCurrentWorkspace(currentWorkspace);
-        }
-      })
-      .catch(err => {
-        if (utils.debug) console.error(err);
-        this.toaster.error('Could not load workspaces!');
-      })
+    actions.loadWorkspaces();
   }
 
   render() {

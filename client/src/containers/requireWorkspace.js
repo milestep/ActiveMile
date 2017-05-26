@@ -11,7 +11,7 @@ export default function (WrappedComponent) {
     })
   )
   class WorkspaceDependencies extends Component {
-    createRenderContent() {
+    createRenderBody() {
       const { currentWorkspace, isResolved, isFetching } = this.props;
 
       if (currentWorkspace && isResolved) {
@@ -24,7 +24,7 @@ export default function (WrappedComponent) {
     }
 
     render() {
-      return this.createRenderContent();
+      return this.createRenderBody();
     }
   }
 

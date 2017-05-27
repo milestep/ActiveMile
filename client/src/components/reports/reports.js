@@ -98,10 +98,10 @@ export default class Reports extends Component {
       let year = date.getFullYear();
       let month = monthsNames[monthIndex]
 
-      // Year
+      // Assign current year to array
       if (!state[year]) state[year] = [];
 
-      // Month
+      // Assign current month to array
       if (!state[year][month]) state[year][month] = [];
 
       // Article type
@@ -144,14 +144,10 @@ export default class Reports extends Component {
     // Create default current
     Object.assign(current, this.state.current);
     current.year = Object.keys(state)[Object.keys(state).length - 1];
-    current.month = function() {
-      let months = state[current.year];
-      for (let i in months) {
-        if (months[i]) return i;
-      }
-    }();
+    current.month = monthsNames.find((month, i) => state[current.year][month]);
     current.type = Object.keys(state[current.year][current.month])[0];
 
+    // Set default component state
     this.setState((prevState) => ({
       ...prevState,
       articles: state,
@@ -180,26 +176,36 @@ export default class Reports extends Component {
   }
 
   handleYearChange(e) {
+    const year = e.value;
+    const monthsNames = moment.monthsShort();
+
     this.setState((prevState) => ({
       current: {
         ...prevState.current,
-        year: e.value
+        year,
+        month: function() {
+          const currentYear = prevState.articles[year];
+          const currentMonth = prevState.current.month;
+
+          if (currentYear[currentMonth]) return currentMonth;
+          return monthsNames.find((month, i) => currentYear[month])
+        }.call(this)
       }
     }));
   }
 
-  handleMonthChange = month => e => {
+  handleCurrentChange = (field, value) => e => {
     e.preventDefault();
     this.setState((prevState) => ({
       current: {
-        ...prevState.current, month
+        ...prevState.current,
+        [field]: value
       }
     }));
   }
 
   render() {
     const { isDataReady } = this.state;
-
     const { articles, current } = this.state;
     const monthsNames = moment.monthsShort();
 
@@ -209,37 +215,105 @@ export default class Reports extends Component {
       yearsOptions.push({ value: i, label: i });
     }
 
-    // Create months list (Tabs)
-    monthsNames.forEach((monthName, i) => {
-      if (!articles[current.year][monthName]) {
-        articles[current.year][monthName] = null;
+    // Create months tabs
+    let monthsTabs = [];
+
+    monthsNames.forEach((month, i) => {
+      const currentMonth = articles[current.year][month];
+      const isCurrent = current.month == month;
+
+      let listClassName = "";
+
+      if (!currentMonth) {
+        listClassName = "disabled";
+      } else if (isCurrent) {
+        listClassName = "active";
       }
+
+      if (currentMonth) {}
+        monthsTabs.push(
+          <li className={listClassName} key={month}>
+            { currentMonth ?
+              <a
+                href="#"
+                onClick={(e) => this.handleCurrentChange('month', month)(e)}
+              >{month}</a>
+            :
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+              >{month}</a>
+            }
+          </li>
+        );
     })
-    let monthsList = [];
-    for (let month in articles[current.year]) {
-      monthsList.push(
-        <li className={current.month == month ? "active": ""} key={month}>
+
+    // Create articles tabs
+    let articlesTabs = {
+      tabs: [], content: []
+    }
+
+    this.types.forEach((typeName, i) => {
+      let isFirst = i === 0;
+      let isCurrent = current.type == typeName;
+      let currentArticles = articles[current.year][current.month][typeName];
+      let articlesList;
+
+      if (currentArticles) {
+        articlesList = currentArticles.map((article, j) => {
+          return <li className="list-group-item" key={j}>{article.title}</li>
+        });
+      } else {
+        articlesList = <li className="list-group-item">No articles found</li>
+      }
+
+      articlesTabs.tabs.push(
+        <li className={isCurrent ? "active": ""} key={typeName}>
           <a
             href="#"
-            onClick={(e) => this.handleMonthChange(month)(e)}
-          >{month}</a>
+            onClick={(e) => this.handleCurrentChange('type', typeName)(e)}
+          >{typeName}</a>
         </li>
       );
-    }
+      articlesTabs.content.push(
+        <div key={typeName}
+          className={`tab-pane fade${
+            isCurrent ? ' active in' : ''}${
+            isCurrent && isFirst ? ' first' : ''
+          }`}
+        >
+          {articlesList}
+        </div>
+      );
+    });
 
     return(
       <div>
-        <div className="registers-filter">
-          <Select
-            name="years"
-            className="registers-filter-select"
-            onChange={this.handleYearChange.bind(this)}
-            options={yearsOptions}
-            value={current.year}
-          />
-          <ul class="nav nav-pills">
-            {monthsList}
-          </ul>
+        <div className="row">
+          <div className="col-md-12 registers-filter">
+            <Select
+              name="years"
+              className="registers-filter-select"
+              onChange={this.handleYearChange.bind(this)}
+              options={yearsOptions}
+              value={current.year}
+            />
+            <ul class="nav nav-pills">
+              {monthsTabs}
+            </ul>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-8">
+            <div className="site-tabs articles-tabs">
+              <ul class="nav nav-tabs">
+                {articlesTabs.tabs}
+              </ul>
+              <div className="tab-content">
+                {articlesTabs.content}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

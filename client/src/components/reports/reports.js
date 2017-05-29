@@ -47,7 +47,7 @@ export default class Reports extends Component {
       current: {
         year: null,
         month: null,
-        type: null,
+        type: this.types[0],
         article: null
       }
     };
@@ -80,10 +80,9 @@ export default class Reports extends Component {
 
     const { articles, registers, counterparties } = props;
 
-    let { state, current, profit, monthsNames } = {
+    let { state, current, monthsNames } = {
       state: {},
       current: {},
-      profit: 0,
       monthsNames: moment.monthsShort()
     };
 
@@ -93,65 +92,60 @@ export default class Reports extends Component {
       const counterparty = counterparties.find((cont, i) => cont.id === counterparty_id);
       const { type } = article;
 
-      let date = new Date(register.date);
-      let monthIndex = date.getMonth();
-      let year = date.getFullYear();
-      let month = monthsNames[monthIndex]
+      let value = type == 'Revenue' ? register.value : -register.value,
+          date = new Date(register.date),
+          monthIndex = date.getMonth(),
+          year = date.getFullYear(),
+          month = monthsNames[monthIndex],
+          isExistsArticle = false,
+          ultimateArticle = Object.assign({}, article, {
+            counterparties: [Object.assign({}, counterparty, { value })],
+            amount: value
+          });
 
-      // Assign current year to array
       if (!state[year]) state[year] = [];
-
-      // Assign current month to array
       if (!state[year][month]) state[year][month] = [];
 
-      // Article type
-      state[year][month]['Revenue'] = state[year][month]['Cost'] = null;
-      if (!state[year][month][type]) state[year][month][type] = [];
-
-      let currentType = state[year][month][type];
-
-      // Set value && increment profit
-      let value = type == 'Revenue' ? register.value : -register.value;
-      profit += value;
-
       // Insert articles into article types
-      if (currentType.length) {
-        currentType.forEach((art, i) => {
+      if (state[year][month][type]) {
+        state[year][month][type].forEach((art, i) => {
           if (art.id === article_id) {
-            let exists = false;
+            let isExistsCounterparty = false;
+            isExistsArticle = true;
 
+            art.amount += value;
             art.counterparties.forEach((c, j) => {
               if (c.id === counterparty_id) {
                 c.value += value;
-                exists = true;
+                isExistsCounterparty = true;
                 return;
               }
             });
 
-            if (!exists) {
+            if (!isExistsCounterparty) {
               counterparty['value'] = value;
               art.counterparties.push(counterparty);
             }
           }
         })
+
+        if (!isExistsArticle) {
+          state[year][month][type].push(ultimateArticle);
+        }
       } else {
-        state[year][month][type].push(Object.assign({}, article, {
-          counterparties: [Object.assign({}, counterparty, { value })]
-        }));
+        state[year][month][type] = [ultimateArticle];
       }
     });
 
     // Create default current
     Object.assign(current, this.state.current);
     current.year = Object.keys(state)[Object.keys(state).length - 1];
-    current.month = monthsNames.find((month, i) => state[current.year][month]);
-    current.type = Object.keys(state[current.year][current.month])[0];
+    current.month = monthsNames[new Date().getMonth()];
 
     // Set default component state
     this.setState((prevState) => ({
       ...prevState,
       articles: state,
-      profit: profit,
       current: {
         ...prevState.current,
         ...current
@@ -181,15 +175,7 @@ export default class Reports extends Component {
 
     this.setState((prevState) => ({
       current: {
-        ...prevState.current,
-        year,
-        month: function() {
-          const currentYear = prevState.articles[year];
-          const currentMonth = prevState.current.month;
-
-          if (currentYear[currentMonth]) return currentMonth;
-          return monthsNames.find((month, i) => currentYear[month])
-        }.call(this)
+        ...prevState.current, year
       }
     }));
   }
@@ -206,6 +192,7 @@ export default class Reports extends Component {
 
   render() {
     const { isDataReady } = this.state;
+
     const { articles, current } = this.state;
     const monthsNames = moment.monthsShort();
 
@@ -221,34 +208,24 @@ export default class Reports extends Component {
     monthsNames.forEach((month, i) => {
       const currentMonth = articles[current.year][month];
       const isCurrent = current.month == month;
+      let listClassNames = [];
 
-      let listClassName = "";
-
-      if (!currentMonth) {
-        listClassName = "disabled";
-      } else if (isCurrent) {
-        listClassName = "active";
-      }
+      if (isCurrent) listClassNames.push('active');
+      if (!currentMonth) listClassNames.push('empty');
 
       if (currentMonth) {}
-        monthsTabs.push(
-          <li className={listClassName} key={month}>
-            { currentMonth ?
-              <a
-                href="#"
-                onClick={(e) => this.handleCurrentChange('month', month)(e)}
-              >{month}</a>
-            :
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >{month}</a>
-            }
-          </li>
-        );
+      monthsTabs.push(
+        <li className={listClassNames.join(' ')} key={month}>
+          <a
+            href="#"
+            onClick={(e) => this.handleCurrentChange('month', month)(e)}
+          >{month}</a>
+        </li>
+      );
     })
 
     // Create articles tabs
+    let profit = 0;
     let articlesTabs = {
       tabs: [], content: []
     }
@@ -256,15 +233,47 @@ export default class Reports extends Component {
     this.types.forEach((typeName, i) => {
       let isFirst = i === 0;
       let isCurrent = current.type == typeName;
-      let currentArticles = articles[current.year][current.month][typeName];
+      let currentMonth = articles[current.year][current.month] || [];
+      let currentArticles = currentMonth[typeName];
       let articlesList;
 
       if (currentArticles) {
         articlesList = currentArticles.map((article, j) => {
-          return <li className="list-group-item" key={j}>{article.title}</li>
+          profit += article.amount;
+
+          const depsList = article.counterparties.map((counterparty, k) => {
+            return(
+              <li key={k}>
+                <div className="left-side">{counterparty.name}</div>
+                <div className="regit-side">{counterparty.value}</div>
+              </li>
+            );
+          });
+
+          return (
+            <li className="list-group-item" key={j}>
+              <div className="article-overlap">
+                <div className="left-side">
+                  {article.title}
+                </div>
+                <div className="regit-side">
+                  <span>{article.amount}</span>
+                </div>
+              </div>
+              <ul className="article-depths-overlap">
+                {depsList}
+              </ul>
+            </li>
+          );
         });
       } else {
-        articlesList = <li className="list-group-item">No articles found</li>
+        articlesList = (
+          <li className="list-group-item">
+            <div className="alert alert-info">
+              <span>There are no articles here</span>
+            </div>
+          </li>
+        );
       }
 
       articlesTabs.tabs.push(
@@ -298,7 +307,7 @@ export default class Reports extends Component {
               options={yearsOptions}
               value={current.year}
             />
-            <ul class="nav nav-pills">
+            <ul class="nav nav-pills registers-filter-months-tabs">
               {monthsTabs}
             </ul>
           </div>
@@ -313,6 +322,9 @@ export default class Reports extends Component {
                 {articlesTabs.content}
               </div>
             </div>
+          </div>
+          <div className="col-md-4">
+            {profit}
           </div>
         </div>
       </div>

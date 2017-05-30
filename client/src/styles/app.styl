@@ -1,10 +1,10 @@
 $icon-font-path = "~bootstrap-styl/fonts/"
 $fa-font-path = "~font-awesome-stylus/fonts"
 @import "~font-awesome-stylus/stylus/index"
-@import 'bootstrap';
-@import './layout';
-@import './elements';
-@import './registers';
+@import 'bootstrap'
+@import './layout'
+@import './elements'
+@import './reports'
 
 html
   font-size 16px
@@ -22,6 +22,12 @@ img,
 textarea
   max-width 100%
 
+.color
+  &-green
+    color green
+  &-red
+    color red
+
 .nav.nav-tabs
   margin-bottom 15px
 
@@ -36,4 +42,4 @@ textarea
       margin 0
 
 .react-datepicker__input-container
-  width: 100%;
+  width 100%

@@ -34,7 +34,7 @@ const routes = (
       <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
       <Route path="registers" component={RequireWorkspace(Registers)} />
       <Route path="registers/:id/edit" component={RequireWorkspace(RegistersEditor)} />
-      <Route path="reports" component={Reports} />
+      <Route path="reports" component={RequireWorkspace(Reports)} />
     </Route>
 
     <Route path='*' component={NotFound} />

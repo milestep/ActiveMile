@@ -17,9 +17,9 @@ export default function (WrappedComponent) {
       if (currentWorkspace && isResolved) {
         return <WrappedComponent {...this.props} />
       } else if (!currentWorkspace && isResolved) {
-        return <div>There is no workspace specified...</div>
+        return <div>There is no any workspace specified...</div>
       } else if (isFetching) {
-        return <div>Fetching...</div>
+        return <div>Fetching workspaces...</div>
       }
     }
 

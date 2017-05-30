@@ -104,11 +104,16 @@ export default class Reports extends Component {
           });
 
       if (!state[year]) state[year] = [];
-      if (!state[year][month]) state[year][month] = [];
+      if (!state[year][month]) state[year][month] = {
+        items: [],
+        profit: 0
+      };
+
+      state[year][month]['profit'] += value;
 
       // Insert articles into article types
-      if (state[year][month][type]) {
-        state[year][month][type].forEach((art, i) => {
+      if (state[year][month]['items'][type]) {
+        state[year][month]['items'][type].forEach((art, i) => {
           if (art.id === article_id) {
             let isExistsCounterparty = false;
             isExistsArticle = true;
@@ -124,16 +129,16 @@ export default class Reports extends Component {
 
             if (!isExistsCounterparty) {
               counterparty['value'] = value;
-              art.counterparties.push(counterparty);
+              art.counterparties.push(Object.assign({}, counterparty, { value }));
             }
           }
         })
 
         if (!isExistsArticle) {
-          state[year][month][type].push(ultimateArticle);
+          state[year][month]['items'][type].push(ultimateArticle);
         }
       } else {
-        state[year][month][type] = [ultimateArticle];
+        state[year][month]['items'][type] = [ultimateArticle];
       }
     });
 
@@ -175,7 +180,32 @@ export default class Reports extends Component {
 
     this.setState((prevState) => ({
       current: {
-        ...prevState.current, year
+        ...prevState.current,
+        article: null,
+        year
+      }
+    }));
+  }
+
+  handleMonthChange = value => e => {
+    e.preventDefault();
+    this.setState((prevState) => ({
+      current: {
+        ...prevState.current,
+        month: value,
+        article: null
+      }
+    }));
+  }
+
+  handleArticleChange = id => e => {
+    let article = id;
+
+    if (this.state.current.article == id) article = null;
+    this.setState((prevState) => ({
+      current: {
+        ...prevState.current,
+        article
       }
     }));
   }
@@ -190,74 +220,91 @@ export default class Reports extends Component {
     }));
   }
 
-  render() {
-    const { isDataReady } = this.state;
-
+  createMonthsTabsTemplate() {
     const { articles, current } = this.state;
     const monthsNames = moment.monthsShort();
 
-    // Create years options
-    let yearsOptions = [];
-    for (let i in articles) {
-      yearsOptions.push({ value: i, label: i });
-    }
-
-    // Create months tabs
-    let monthsTabs = [];
+    let tabs = [];
 
     monthsNames.forEach((month, i) => {
-      const currentMonth = articles[current.year][month];
+      const monthState = articles[current.year][month];
       const isCurrent = current.month == month;
       let listClassNames = [];
 
       if (isCurrent) listClassNames.push('active');
-      if (!currentMonth) listClassNames.push('empty');
+      if (!monthState) listClassNames.push('empty');
 
-      if (currentMonth) {}
-      monthsTabs.push(
+      if (monthState) {}
+      tabs.push(
         <li className={listClassNames.join(' ')} key={month}>
           <a
             href="#"
-            onClick={(e) => this.handleCurrentChange('month', month)(e)}
+            onClick={(e) => this.handleMonthChange(month)(e)}
           >{month}</a>
         </li>
       );
-    })
+    });
 
-    // Create articles tabs
-    let profit = 0;
-    let articlesTabs = {
-      tabs: [], content: []
-    }
+    return tabs;
+  }
+
+  createArticlesTabsTemplate() {
+    const { articles, current } = this.state;
+    const yearItems = articles[current.year];
+    const monthItems = yearItems[current.month] || {
+      items: [], profit: 0
+    };
+
+    let tabs = { tabs: [], content: [] };
 
     this.types.forEach((typeName, i) => {
-      let isFirst = i === 0;
-      let isCurrent = current.type == typeName;
-      let currentMonth = articles[current.year][current.month] || [];
-      let currentArticles = currentMonth[typeName];
-      let articlesList;
+      let isFirst = i === 0,
+          isCurrent = current.type == typeName,
+          currentArticles = monthItems['items'][typeName],
+          articlesList;
 
       if (currentArticles) {
         articlesList = currentArticles.map((article, j) => {
-          profit += article.amount;
-
+          const isExpanded = current.article == article.id;
           const depsList = article.counterparties.map((counterparty, k) => {
+            const { name, value } = counterparty;
+            let valueClassNames = ['dep-value'];
+
+            if (value > 0) valueClassNames.push('color-green');
+            if (value < 0) valueClassNames.push('color-red');
+
             return(
-              <li key={k}>
-                <div className="left-side">{counterparty.name}</div>
-                <div className="regit-side">{counterparty.value}</div>
+              <li className="dep-list-item" key={k}>
+                <div className="left-side">
+                  <span className="dep-title">{name}</span>
+                </div>
+                <div className="right-side">
+                  <span className={valueClassNames.join(' ')}>{value}</span>
+                </div>
               </li>
             );
           });
 
           return (
-            <li className="list-group-item" key={j}>
+            <li className={
+              `list-group-item reports-filter-article${isExpanded ? '': ' expanded'}`
+            } key={j}>
               <div className="article-overlap">
                 <div className="left-side">
-                  {article.title}
+                  <span className="article-title">
+                    {article.title}
+                  </span>
                 </div>
-                <div className="regit-side">
-                  <span>{article.amount}</span>
+                <div className="right-side">
+                  <span className="article-amount">
+                    {article.amount}
+                  </span>
+                  <button
+                    className="btn btn-default article-expand"
+                    onClick={(e) => this.handleArticleChange(article.id)(e)}
+                  >
+                    <i class={`fa fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                  </button>
                 </div>
               </div>
               <ul className="article-depths-overlap">
@@ -276,7 +323,7 @@ export default class Reports extends Component {
         );
       }
 
-      articlesTabs.tabs.push(
+      tabs.tabs.push(
         <li className={isCurrent ? "active": ""} key={typeName}>
           <a
             href="#"
@@ -284,7 +331,7 @@ export default class Reports extends Component {
           >{typeName}</a>
         </li>
       );
-      articlesTabs.content.push(
+      tabs.content.push(
         <div key={typeName}
           className={`tab-pane fade${
             isCurrent ? ' active in' : ''}${
@@ -296,25 +343,52 @@ export default class Reports extends Component {
       );
     });
 
+    return tabs;
+  }
+
+  render() {
+    const { isDataReady } = this.state;
+
+    if (!isDataReady) { return <div>Fetching data for report...</div> }
+
+    const { articles, current } = this.state;
+    const yearItems = articles[current.year];
+    const monthItems = yearItems[current.month] || {
+      items: [], profit: 0
+    };
+    const { profit } = monthItems;
+    const monthsTabs = this.createMonthsTabsTemplate();
+    const articlesTabs = this.createArticlesTabsTemplate();
+
+    let profitClassNames = ['profit-value'];
+    let yearsOptions = [];
+
+    for (let i in articles) {
+      yearsOptions.push({ value: i, label: i });
+    }
+
+    if (profit > 0) profitClassNames.push('color-green');
+    if (profit < 0) profitClassNames.push('color-red');
+
     return(
       <div>
         <div className="row">
-          <div className="col-md-12 registers-filter">
+          <div className="col-md-12 reports-filter">
             <Select
               name="years"
-              className="registers-filter-select"
+              className="reports-filter-select"
               onChange={this.handleYearChange.bind(this)}
               options={yearsOptions}
               value={current.year}
             />
-            <ul class="nav nav-pills registers-filter-months-tabs">
+            <ul class="nav nav-pills reports-filter-months-tabs">
               {monthsTabs}
             </ul>
           </div>
         </div>
         <div className="row">
-          <div className="col-md-8">
-            <div className="site-tabs articles-tabs">
+          <div className="col-md-9">
+            <div className="site-tabs reports-filter-articles-tabs">
               <ul class="nav nav-tabs">
                 {articlesTabs.tabs}
               </ul>
@@ -323,8 +397,11 @@ export default class Reports extends Component {
               </div>
             </div>
           </div>
-          <div className="col-md-4">
-            {profit}
+          <div className="col-md-3">
+            <div className="profit-wrapper">
+              <span className="profit-title">Profit:&nbsp;</span>
+              <span className={profitClassNames.join(' ')}>{profit}</span>
+            </div>
           </div>
         </div>
       </div>

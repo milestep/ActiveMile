@@ -12,7 +12,7 @@ import MonthsTabs                         from './monthsTabs';
   state => ({
     registers: state.registers.items,
     articles: state.articles.items,
-    counterparties: state.counterparties.items
+    counterparties: state.counterparties.items,
     isResolved: {
       registers: state.subscriptions.registers.resolved,
       articles: state.subscriptions.articles.resolved,
@@ -86,9 +86,9 @@ export default class Reports extends Component {
 
     registers.forEach((register, i) => {
       const { article_id, counterparty_id } = register;
-      const article = articles.find((art, i) => art.id === article_id);
-      const counterparty = counterparties.find((cont, i) => cont.id === counterparty_id);
-      const { type } = article;
+      const registerArticle = articles.find((art, i) => art.id === article_id);
+      const registerCounterparty = counterparties.find((cont, i) => cont.id === counterparty_id);
+      const { type } = registerArticle;
 
       let value = type == 'Revenue' ? register.value : -register.value,
           date = new Date(register.date),
@@ -96,47 +96,47 @@ export default class Reports extends Component {
           year = date.getFullYear(),
           month = monthsNames[monthIndex],
           isExistsArticle = false,
-          ultimateArticle = Object.assign({}, article, {
-            counterparties: [Object.assign({}, counterparty, { value })],
+          stateYear = state[year] = state[year] || [],
+          stateMonth = stateYear[month] = stateYear[month] || {
+            items: [],
+            profit: 0
+          },
+          currentArticles = stateMonth['items'][type],
+          ultimateArticle = Object.assign({}, registerArticle, {
+            counterparties: [Object.assign({}, registerCounterparty, { value })],
             amount: value
           });
 
-      if (!state[year]) state[year] = [];
-      if (!state[year][month]) state[year][month] = {
-        items: [],
-        profit: 0
-      };
-
-      state[year][month]['profit'] += value;
+      stateMonth['profit'] += value;
 
       // Insert articles into article types
-      if (state[year][month]['items'][type]) {
-        state[year][month]['items'][type].forEach((art, i) => {
-          if (art.id === article_id) {
+      if (currentArticles) {
+        currentArticles.forEach((article, i) => {
+          if (article.id === article_id) {
             let isExistsCounterparty = false;
             isExistsArticle = true;
 
-            art.amount += value;
-            art.counterparties.forEach((c, j) => {
-              if (c.id === counterparty_id) {
-                c.value += value;
+            article.amount += value;
+            article.counterparties.forEach((counterparty, j) => {
+              if (counterparty.id === counterparty_id) {
+                counterparty.value += value;
                 isExistsCounterparty = true;
                 return;
               }
             });
 
             if (!isExistsCounterparty) {
-              counterparty['value'] = value;
-              art.counterparties.push(Object.assign({}, counterparty, { value }));
+              registerCounterparty['value'] = value;
+              article.counterparties.push(Object.assign({}, registerCounterparty, { value }));
             }
           }
         })
 
         if (!isExistsArticle) {
-          state[year][month]['items'][type].push(ultimateArticle);
+          currentArticles.push(ultimateArticle);
         }
       } else {
-        state[year][month]['items'][type] = [ultimateArticle];
+        stateMonth['items'][type] = [ultimateArticle];
       }
     });
 

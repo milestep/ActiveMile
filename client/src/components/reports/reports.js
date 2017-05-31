@@ -12,7 +12,7 @@ import MonthsTabs                         from './monthsTabs';
   state => ({
     registers: state.registers.items,
     articles: state.articles.items,
-    counterparties: state.counterparties.items,
+    counterparties: state.counterparties.items
     isResolved: {
       registers: state.subscriptions.registers.resolved,
       articles: state.subscriptions.articles.resolved,

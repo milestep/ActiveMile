@@ -19,7 +19,7 @@ export default function (reqireAuth = true) {
       if (reqireAuth && !authenticated) {
         browserHistory.push('/login');
       } else if (!reqireAuth && authenticated) {
-        browserHistory.push('/workspaces');
+        browserHistory.push('/registers');
       }
     }
 

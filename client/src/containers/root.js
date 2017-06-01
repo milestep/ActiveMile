@@ -21,14 +21,14 @@ import RequireWorkspace  from '../containers/requireWorkspace';
 
 const routes = (
   <Route path="/" component={App}>
-    <IndexRedirect to="workspaces" />
+    <IndexRedirect to="registers" />
 
     <Route component={RequireAuth(false)}>
       <Route path="login" component={Login} />
     </Route>
 
     <Route component={RequireAuth()}>
-      <IndexRedirect to="workspaces" />
+      <IndexRedirect to="registers" />
       <Route path="workspaces" component={Workspaces} />
       <Route path="articles" component={RequireWorkspace(Articles)} />
       <Route path="counterparties" component={RequireWorkspace(Counterparties)} />

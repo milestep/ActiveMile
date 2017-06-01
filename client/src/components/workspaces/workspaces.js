@@ -120,7 +120,7 @@ export default class Workspaces extends Component {
       .then(res => {
         const { workspaces } = this.props;
 
-        if (!utils.empty(workspaces) && id === currentWorkspace.id) {
+        if (currentWorkspace && !utils.empty(workspaces) && id === currentWorkspace.id) {
           actions.setupCurrentWorkspace(workspaces[workspaces.length - 1]);
         }
         this.toaster.success('Workspace was deleted!');

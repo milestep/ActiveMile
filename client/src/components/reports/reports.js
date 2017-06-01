@@ -5,7 +5,7 @@ import moment                             from 'moment';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import * as utils                         from '../../utils';
 import Select                             from 'react-select';
-import ArticlesTabs                       from './articlesTabs';
+import ArticlesList                       from './articlesList';
 import MonthsTabs                         from './monthsTabs';
 
 @connect(
@@ -45,7 +45,6 @@ export default class Reports extends Component {
       current: {
         year: null,
         month: null,
-        type: this.types[0],
         article: null
       }
     };
@@ -101,7 +100,7 @@ export default class Reports extends Component {
             items: [],
             profit: 0
           },
-          currentArticles = stateMonth['items'][type],
+          currentItems = stateMonth['items'],
           ultimateArticle = Object.assign({}, registerArticle, {
             counterparties: [Object.assign({}, registerCounterparty, { value })],
             amount: value
@@ -109,9 +108,9 @@ export default class Reports extends Component {
 
       stateMonth['profit'] += value;
 
-      // Insert articles into article types
-      if (currentArticles) {
-        currentArticles.forEach((article, i) => {
+      // Insert articles into months
+      if (currentItems) {
+        currentItems.forEach((article, i) => {
           if (article.id === article_id) {
             let isExistsCounterparty = false;
             isExistsArticle = true;
@@ -133,10 +132,10 @@ export default class Reports extends Component {
         })
 
         if (!isExistsArticle) {
-          currentArticles.push(ultimateArticle);
+          currentItems.push(ultimateArticle);
         }
       } else {
-        stateMonth['items'][type] = [ultimateArticle];
+        stateMonth['items'] = [ultimateArticle];
       }
     });
 
@@ -208,16 +207,6 @@ export default class Reports extends Component {
     }));
   }
 
-  handleChange = (field, value) => e => {
-    e.preventDefault();
-    this.setState((prevState) => ({
-      current: {
-        ...prevState.current,
-        [field]: value
-      }
-    }));
-  }
-
   getProfitClassNames(profit) {
     let classNames = ['profit-value'];
     if (profit > 0) classNames.push('color-green');
@@ -267,12 +256,10 @@ export default class Reports extends Component {
         </div>
         <div className="row">
           <div className="col-md-9">
-            <ArticlesTabs
+            <ArticlesList
               articles={articles}
               current={current}
-              articleTypes={this.types}
               handleArticleChange={this.handleArticleChange.bind(this)}
-              handleChange={this.handleChange.bind(this)}
             />
           </div>
           <div className="col-md-3">

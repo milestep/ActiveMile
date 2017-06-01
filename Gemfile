@@ -15,7 +15,6 @@ gem 'rack-cors', require: 'rack/cors'
 gem 'decent_exposure', github: 'hashrocket/decent_exposure', branch: 'master'
 gem 'figaro'
 gem 'listen', '~> 3.0.5'
-gem 'rubocop', '~> 0.49.1', require: false
 gem 'slim'
 
 group :development, :test do

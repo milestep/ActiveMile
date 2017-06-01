@@ -1,8 +1,6 @@
 test:
   pre:
     - cp config/secrets.yml.example config/secrets.yml
-  # post:
-  #   - bundle exec rubocop
 
 deployment:
   production:

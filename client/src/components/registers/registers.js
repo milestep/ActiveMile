@@ -122,9 +122,19 @@ export default class Registers extends Component {
           counterparties={counterparties}
           handleDestroy={this.handleDestroy}
         />
-      )
+      );
     } else if (!isResolved.registers) {
-      registerList = (<tbody><tr><td rowSpan="6">Fetching...</td></tr></tbody>)
+      registerList = (
+        <tbody>
+          <tr>
+            <td colSpan="6">
+              <span className="spin-wrap">
+                <i class="fa fa-spinner fa-spin fa-2x"></i>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      );
     } else if (isResolved.registers) {
       registerList = (<tbody><tr><td rowSpan="6">There are no registers...</td></tr></tbody>)
     }

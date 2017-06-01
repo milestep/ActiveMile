@@ -19,7 +19,11 @@ export default function (WrappedComponent) {
       } else if (!currentWorkspace && isResolved) {
         return <div>There is no any workspace specified...</div>
       } else if (isFetching) {
-        return <div>Fetching workspaces...</div>
+        return (
+          <span className="spin-wrap main-loader">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+          </span>
+        );
       }
     }
 

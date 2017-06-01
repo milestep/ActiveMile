@@ -228,7 +228,11 @@ export default class Reports extends Component {
   render() {
     const { isDataReady } = this.state;
 
-    if (!isDataReady) { return <div>Fetching data for report...</div> }
+    if (!isDataReady) { return(
+      <span className="spin-wrap main-loader">
+        <i class="fa fa-spinner fa-spin fa-3x"></i>
+      </span>
+    ); }
 
     const { articles, current } = this.state;
     const yearItems = articles[current.year];

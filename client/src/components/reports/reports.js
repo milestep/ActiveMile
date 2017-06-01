@@ -108,7 +108,6 @@ export default class Reports extends Component {
 
       stateMonth['profit'] += value;
 
-      // Insert articles into months
       if (currentItems) {
         currentItems.forEach((article, i) => {
           if (article.id === article_id) {
@@ -139,12 +138,10 @@ export default class Reports extends Component {
       }
     });
 
-    // Create default current
     Object.assign(current, this.state.current);
     current.year = Object.keys(state)[Object.keys(state).length - 1];
     current.month = monthsNames[new Date().getMonth()];
 
-    // Set default component state
     this.setState((prevState) => ({
       ...prevState,
       articles: state,

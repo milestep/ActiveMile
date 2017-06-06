@@ -71,9 +71,9 @@ module.exports = function() {
         title: 'ActiveMile',
         chunksSortMode: 'dependency'
       }),
-      new ExtractTextPlugin({ 
-        filename: '[name]-[hash].css', 
-        allChunks: true 
+      new ExtractTextPlugin({
+        filename: '[name]-[hash].css',
+        allChunks: true
       })
     ]
   };

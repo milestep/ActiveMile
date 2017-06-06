@@ -1,0 +1,26 @@
+general:
+  branches:
+    only:
+      - master
+
+test:
+  pre:
+    - cp config/secrets.yml.example config/secrets.yml
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - bundle exec cap production deploy
+
+machine:
+  ruby:
+    version: 2.3.1
+  node:
+    version: 7.7.4
+
+dependencies:
+  pre:
+    - npm install -g npm
+  post:
+    - npm rebuild

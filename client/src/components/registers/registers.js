@@ -86,8 +86,8 @@ export default class Registers extends Component {
 
     let filter = Object.assign({}, this.state.filter),
         current = Object.assign({}, this.state.current),
-        registers = [],
-        currentMonth = new Date().getMonth();
+        currentMonth = new Date().getMonth(),
+        registers = [];
 
     props.registers.forEach((register, i) => {
       const date = new Date(register.date);

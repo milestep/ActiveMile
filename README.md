@@ -1,5 +1,1 @@
-# ActiveMile
-## Installation
-* create `config/database.yml`, `config/secrets.yml`
-* setup client config `client/src/config/*`
-* install development server `sudo npm install -g webpack-dev-server`
+# ActiveMile [![CircleCI](https://circleci.com/gh/milestep/ActiveMile.svg?style=shield&circle-token=49fc631556200388f2ea7c2a8128245809c0341e)](https://circleci.com/gh/milestep/ActiveMile)

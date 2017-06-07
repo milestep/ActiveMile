@@ -16,11 +16,17 @@ export default class RegistersList extends Component {
     const registersList = registers.map((register, i) => {
       const article = articles.find(a => a.id === register.article_id);
       const counterparty = counterparties.find(c => c.id === register.counterparty_id);
+      const typeName = article.type == "Cost" ? 'revenue' : 'cost';
 
       return(
         <tr key={i}>
           <td>{register.date}</td>
-          <td>{article.title}</td>
+          <td>
+            {article.title}
+            <span className={`register-title-label ${typeName}`}>
+              &nbsp;({typeName})
+            </span>
+          </td>
           <td>{counterparty.name}</td>
           <td>{register.value}</td>
           <td>{register.note}</td>

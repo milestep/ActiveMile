@@ -22,7 +22,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'rspec-collection_matchers'
-  gem 'rspec-rails'
   gem 'foreman'
   gem 'capybara'
   gem 'pry-rails'

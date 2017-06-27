@@ -1,11 +1,12 @@
 lock "3.8.0"
 
 branch = ENV['BRANCH'] || 'master'
+user = ENV['USER'] || 'midnight'
 
 set :application, "activemile"
 set :repo_url, "git@github.com:milestep/ActiveMile.git"
 set :passenger_restart_with_touch, true
-set :deploy_to, "/home/midnight/apps/activemile"
+set :deploy_to, "/home/#{user}/apps/activemile"
 set :linked_files, %w(config/database.yml config/application.yml config/secrets.yml client/config/prod.json)
 set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules)
 set :bundle_binstubs, nil

@@ -1,7 +1,8 @@
 set :stage, :production
 set :node_env, 'production'
 
-server 'activemile.milestep.io', user: 'midnight', roles: %w(web app db)
+user = ENV['USER'] || 'midnight'
+server 'activemile.milestep.io', user: user, roles: %w(web app db)
 
 # server-based syntax
 # ======================

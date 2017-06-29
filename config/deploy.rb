@@ -52,6 +52,7 @@ namespace :npm do
   task :build do
     on roles :app do
       within release_path do
+        execute :mkdir, 'client/dist'
         execute :npm, 'run', 'build'
       end
     end

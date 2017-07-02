@@ -89,7 +89,7 @@ export default class Reports extends Component {
       const registerCounterparty = counterparties.find((cont, i) => cont.id === counterparty_id);
       const { type } = registerArticle;
 
-      let value = type == 'Cost' ? register.value : -register.value,
+      let value = type == 'Revenue' ? register.value : -register.value,
           date = new Date(register.date),
           monthIndex = date.getMonth(),
           year = date.getFullYear(),

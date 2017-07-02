@@ -16,7 +16,7 @@ export default class RegistersList extends Component {
     const registersList = registers.map((register, i) => {
       const article = articles.find(a => a.id === register.article_id);
       const counterparty = counterparties.find(c => c.id === register.counterparty_id);
-      const typeName = article.type == "Cost" ? 'revenue' : 'cost';
+      const typeName = article.type == "Cost" ? 'cost' : 'revenue';
 
       return(
         <tr key={i}>

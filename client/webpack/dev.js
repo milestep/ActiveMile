@@ -1,12 +1,16 @@
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const commonConfig = require('./base.js');
+const path = require('path');
 const API_URL = `http://localhost:${process.env.API_PORT || 3000}`;
 const port = process.env.PORT || 8080;
 
 module.exports = function() {
   return webpackMerge(commonConfig(), {
-    entry: './client.js',
+    entry: [
+      'babel-polyfill', 
+      path.resolve(__dirname, '../src', 'client.js')
+    ],
     devtool: 'inline-sourcemap',
     externals: {
       'app-config': JSON.stringify(require('./../config/dev.json'))

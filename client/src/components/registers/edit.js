@@ -39,7 +39,7 @@ export default class RegistersEditor extends Component {
     super(props);
 
     this.state = {
-      register: null
+      registerFetched: null
     }
 
     this.subscriptions = ['registers', 'articles', 'counterparties'];
@@ -55,6 +55,9 @@ export default class RegistersEditor extends Component {
     actions.subscribe(this.subscriptions);
 
     actions.getRegister(id)
+      .then(res => {
+        this.setState({ registerFetched: true });
+      })
       .catch(err => {
         if (utils.debug) console.error(err);
         this.toaster.error('Could not laod register!');
@@ -68,29 +71,11 @@ export default class RegistersEditor extends Component {
 
   handleUpdate(inputRegister) {
     return new Promise((resolve, reject) => {
-      const { actions, registers, dispatch, params } = this.props;
-      const { store } = this.context;
+      const { actions, dispatch, params } = this.props;
       const id = +params.id;
-
-      let index = 0;
-
-      const register = registers.find((r, i) => {
-        if (r.id === id) {
-          index = i;
-          return true;
-        }
-      });
 
       actions.updateRegister({ id, register: inputRegister })
         .then(res => {
-          const nextRegister = Object.assign({}, register, inputRegister)
-
-          registers.splice(index, 0, nextRegister);
-
-          store.dispatch({ type: '@@resource/REGISTER/FETCH',
-                           status: 'resolved',
-                           body: registers });
-
           dispatch(push('/registers'));
           this.toaster.success('Register has been updated');
           resolve(res);
@@ -107,7 +92,7 @@ export default class RegistersEditor extends Component {
     const { empty } = utils;
     let returnedValue = true;
 
-    if (!this.props['register']) {
+    if (!this.state['registerFetched']) {
       return false;
     }
 

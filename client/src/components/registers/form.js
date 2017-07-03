@@ -29,6 +29,12 @@ export default class RegisterForm extends Component {
     if (!props) props = this.props;
 
     const { register, articles, counterparties } = props;
+    let counterpartyId, counterpartyName;
+
+    if (register && register.counterparty) {
+      counterpartyId = register.counterparty.id;
+      counterpartyName = register.counterparty.name;
+    }
 
     let prev = register ? {
       date: moment(Date.parse(register.date)),
@@ -39,8 +45,8 @@ export default class RegisterForm extends Component {
         label: register.article.title
       },
       counterparty: {
-        value: register.counterparty.id,
-        label: register.counterparty.name
+        value: counterpartyId,
+        label: counterpartyName
       }
     } : {
       date: moment(),
@@ -86,7 +92,7 @@ export default class RegisterForm extends Component {
       note: inputModel.note,
       value: inputModel.value,
       article_id: article.value,
-      counterparty_id: counterparty.value
+      counterparty_id: counterparty ? counterparty.value : null
     }
 
     this.props.handleSubmit(model)

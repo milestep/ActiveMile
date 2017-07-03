@@ -27,7 +27,7 @@ export default class RegistersList extends Component {
               &nbsp;({typeName})
             </span>
           </td>
-          <td>{counterparty.name}</td>
+          <td>{counterparty ? counterparty.name : '-'}</td>
           <td>{register.value}</td>
           <td>{register.note}</td>
           <td>

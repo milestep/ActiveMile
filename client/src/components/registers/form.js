@@ -51,8 +51,8 @@ export default class RegisterForm extends Component {
         label: articles[0].title
       },
       counterparty: {
-        value: counterparties[0].id,
-        label: counterparties[0].name
+        value: null,
+        label: null
       }
     }, next = {};
 
@@ -161,10 +161,6 @@ export default class RegisterForm extends Component {
           isBlured={counterparty.blured}
           options={counterpartyOptions}
           handleChange={this.handleChange}
-          validationErrors={editing ? false : {
-            isRequired: "Counterparty is required"
-          }}
-          required
         />
 
         <FormInput

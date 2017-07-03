@@ -4,7 +4,7 @@ const http = require('http');
 const proxy = require('http-proxy-middleware');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 4000;
 const API_URL = 'http://localhost:' + (process.env.API_PORT || '3000');
 
 app.use('/api', proxy({

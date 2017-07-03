@@ -4,13 +4,11 @@ import { browserHistory }              from 'react-router';
 import RequireAuth                     from './requireAuth';
 
 export default function (WrappedComponent) {
-  @connect(
-    state => ({
-      currentWorkspace: state.workspaces.app.current,
-      isFetching: state.workspaces.app.fetching,
-      isResolved: state.workspaces.app.resolved
-    })
-  )
+  @connect(state => ({
+    currentWorkspace: state.workspaces.app.current,
+    isFetching: state.workspaces.app.fetching,
+    isResolved: state.workspaces.app.resolved
+  }))
   @RequireAuth
   class WorkspaceDependencies extends Component {
     createRenderBody() {

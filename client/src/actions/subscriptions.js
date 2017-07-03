@@ -31,16 +31,16 @@ export const actions = {
 
       if (force) dispatch(actions.reset());
 
-      if (needModel('registers')) {
-        _actions.loadRegisters();
-      }
-
       if (needModel('articles')) {
         _actions.loadArticles();
       }
 
       if (needModel('counterparties')) {
         _actions.loadCounterparties();
+      }
+
+      if (needModel('registers')) {
+        _actions.loadRegisters();
       }
 
       function needModel(inputModel) {

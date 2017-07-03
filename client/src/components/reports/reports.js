@@ -86,7 +86,7 @@ export default class Reports extends Component {
     registers.forEach((register, i) => {
       const { article_id, counterparty_id } = register;
       const registerArticle = articles.find((art, i) => art.id === article_id);
-      const registerCounterparty = counterparties.find((cont, i) => cont.id === counterparty_id);
+      const registerCounterparty = counterparties.find((cont, i) => cont.id === counterparty_id) || { name: '-' };
       const { type } = registerArticle;
 
       let value = type == 'Revenue' ? register.value : -register.value,
@@ -124,7 +124,6 @@ export default class Reports extends Component {
             });
 
             if (!isExistsCounterparty) {
-              registerCounterparty['value'] = value;
               article.counterparties.push(Object.assign({}, registerCounterparty, { value }));
             }
           }

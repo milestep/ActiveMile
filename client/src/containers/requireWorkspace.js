@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { browserHistory }              from 'react-router';
+import RequireAuth                     from './requireAuth';
 
 export default function (WrappedComponent) {
   @connect(
@@ -10,6 +11,7 @@ export default function (WrappedComponent) {
       isResolved: state.workspaces.app.resolved
     })
   )
+  @RequireAuth
   class WorkspaceDependencies extends Component {
     createRenderBody() {
       const { currentWorkspace, isResolved, isFetching } = this.props;

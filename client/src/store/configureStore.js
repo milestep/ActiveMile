@@ -1,12 +1,12 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
-import createLogger from 'redux-logger'
+import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
 import appReducers from '../reducers'
 
 export default function configureStore(initialState, middleware) {
   let middlewares = [thunk, middleware];
-  
+
   if (process.env.NODE_ENV == 'development') {
     const logger = createLogger({ collapsed: true })
     middlewares.push(logger);

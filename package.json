@@ -12,7 +12,7 @@
     "build": "webpack -p --env=prod --colors",
     "dev": "NODE_ENV=development node_modules/.bin/webpack-dev-server --env=dev --content-base client/src --progress"
   },
-  "dependencies": {
+  "devDependencies": {
     "autoprefixer": "^7.1.1",
     "axios": "^0.16.2",
     "babel-core": "^6.22.1",
@@ -27,6 +27,9 @@
     "bootstrap-styl": "^5.0.8",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.4",
+    "eslint": "^4.1.1",
+    "eslint-loader": "^1.6.3",
+    "eslint-plugin-react": "^7.1.0",
     "express": "^4.14.1",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.2",
@@ -36,6 +39,7 @@
     "http-proxy-middleware": "0.17.4",
     "key-mirror": "^1.0.1",
     "moment": "^2.17.1",
+    "nodemon": "^1.11.0",
     "pm2": "^2.3.0",
     "postcss-loader": "^2.0.6",
     "query-string": "^4.3.4",
@@ -45,14 +49,8 @@
     "url-loader": "^0.5.8",
     "webpack": "^3.0.0",
     "webpack-cleanup-plugin": "^0.5.1",
+    "webpack-dev-server": "^2.5.0",
     "webpack-merge": "^4.1.0"
-  },
-  "devDependencies": {
-    "eslint": "^4.1.1",
-    "eslint-loader": "^1.6.3",
-    "eslint-plugin-react": "^7.1.0",
-    "nodemon": "^1.11.0",
-    "webpack-dev-server": "^2.5.0"
   },
   "engines": {
     "node": "8.1.2",

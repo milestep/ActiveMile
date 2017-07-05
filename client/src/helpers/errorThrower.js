@@ -8,7 +8,8 @@ export default class ErrorThrower {
   }
 
   handleError(err, callback) {
-    if (callback && this._performCallback(callback) === false) { return; }
+    if (callback && this._performCallback(callback) === false) return;
+    if (!err.response) this.handleUnknownError(err);
 
     const { response } = err;
     const { toaster } = this;

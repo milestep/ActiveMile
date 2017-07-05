@@ -5,13 +5,7 @@ import React, {
 import { connect }         from 'react-redux';
 import { browserHistory }  from 'react-router';
 
-const ComposedComponent = createClass({
-  render: function() {
-    return this.props.children;
-  }
-});
-
-export default function (reqireAuth = true) {
+export default function (ComposedComponent, reqireAuth = true) {
   class Authentication extends Component {
     componentWillMount() {
       const { authenticated } = this.props;

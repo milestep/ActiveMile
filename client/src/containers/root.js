@@ -23,19 +23,13 @@ const routes = (
   <Route path="/" component={App}>
     <IndexRedirect to="registers" />
 
-    <Route component={RequireAuth(false)}>
-      <Route path="login" component={Login} />
-    </Route>
-
-    <Route component={RequireAuth()}>
-      <IndexRedirect to="registers" />
-      <Route path="workspaces" component={Workspaces} />
-      <Route path="articles" component={RequireWorkspace(Articles)} />
-      <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
-      <Route path="registers" component={RequireWorkspace(Registers)} />
-      <Route path="registers/:id/edit" component={RequireWorkspace(RegistersEditor)} />
-      <Route path="reports" component={RequireWorkspace(Reports)} />
-    </Route>
+    <Route path="login" component={RequireAuth(Login, false)} />
+    <Route path="workspaces" component={RequireAuth(Workspaces)} />
+    <Route path="articles" component={RequireWorkspace(Articles)} />
+    <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
+    <Route path="registers" component={RequireWorkspace(Registers)} />
+    <Route path="registers/:id/edit" component={RequireWorkspace(RegistersEditor)} />
+    <Route path="reports" component={RequireWorkspace(Reports)} />
 
     <Route path='*' component={NotFound} />
   </Route>

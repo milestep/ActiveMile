@@ -38,16 +38,16 @@ RSpec.describe Register, type: :model do
         expect(register).to have(2).errors_on(:value)
       end
 
-      it 'expect require workspace_id' do
+      it 'expect require article_id' do
         register.article_id = nil
         expect(register).not_to be_valid
         expect(register).to have(1).error_on(:article_id)
       end
 
-      it 'expect require workspace_id' do
+      it 'expect require counterparty_id' do
         register.counterparty_id = nil
-        expect(register).not_to be_valid
-        expect(register).to have(1).error_on(:counterparty_id)
+        expect(register).to be_valid
+        expect(register).not_to have(1).error_on(:counterparty_id)
       end
 
       it 'expect require workspace_id' do

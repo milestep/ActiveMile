@@ -71,36 +71,34 @@ export default class FormSelect extends Component {
     return newClassName;
   }
 
-  changeValue(value) {
-    const { name, handleChange, setValue } = this.props;
+  changeValue(inputValue) {
+    const { name, setValue } = this.props;
+    const value = inputValue && inputValue.value || null;
 
-    if (!value || !value.value) {
-      value = this.props.value;
-    }
-
-    setValue(value.value || '');
-    handleChange(name, {value: value});
+    setValue(value || null);
+    this.props.handleChange(name, { value: inputValue });
   }
 
   handleBlur(e) {
-    this.props.handleChange(this.props.name, {blured: true});
+    this.props.handleChange(this.props.name, { blured: true });
   }
 
   render() {
     const className = this.getClassName();
     const errorMessages = this.getAllMessages();
-    const { name, options, value, selectClassName } = this.props;
+    const { props } = this;
 
     return (
       <div className={className}>
         {this.getLabel()}
         <Select
-          name={name}
+          name={props.name}
           onBlur={this.handleBlur}
           onChange={this.changeValue}
-          className={selectClassName || ''}
-          options={options}
-          value={value.value}
+          className={props.selectClassName || ''}
+          options={props.options}
+          value={props.value}
+          searchable={props.searchable || true}
         />
         {errorMessages}
       </div>

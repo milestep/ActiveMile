@@ -116,8 +116,8 @@ export default class Registers extends Component {
 
   handleCreate(register) {
     return new Promise((resolve, reject) => {
-      delete register.article
-      delete register.counterparty
+      delete register.article;
+      delete register.counterparty;
 
       this.props.actions.createRegister({ register })
         .then(res => {

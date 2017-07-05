@@ -6,7 +6,7 @@ deployment:
   production:
     branch: master
     commands:
-      - bundle exec cap production deploy
+      - env USER=midnight bundle exec cap production deploy
 
 machine:
   ruby:

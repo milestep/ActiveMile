@@ -37,8 +37,8 @@ export function setAuthHeader(data) {
   const { access_token, token_type } = data;
 
   if (!defaultHeaders['Authorization']) {
-    Object.assign(defaultHeaders, { 
-      Authorization: `${token_type} ${access_token}` 
+    Object.assign(defaultHeaders, {
+      Authorization: `${token_type} ${access_token}`
     });
   }
 }
@@ -58,7 +58,7 @@ export function login(data, router) {
     const url = `${apiEndpoint}/oauth/token?${stringifiedParams}`;
     const { email, password } = data;
     const body = JSON.stringify(data);
-    const errHandler = new ErrorThrower(dispatch, { 
+    const errHandler = new ErrorThrower(dispatch, {
       type: LOGIN_FAILURE
     });
 
@@ -69,11 +69,11 @@ export function login(data, router) {
           const redirectTo = (query && query.redirectTo) ? query.redirectTo : '/';
           const { data } = res;
 
-          dispatch({ 
-            type: LOGIN_SUCCESS, 
+          dispatch({
+            type: LOGIN_SUCCESS,
             payload: {
               token: data.access_token
-            } 
+            }
           });
 
           saveAuthToken(data);

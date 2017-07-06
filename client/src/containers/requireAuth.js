@@ -1,11 +1,14 @@
-import React, {
-  Component,
-  PropTypes,
-  createClass }            from 'react';
-import { connect }         from 'react-redux';
-import { browserHistory }  from 'react-router';
+import React, { Component }  from 'react';
+import { connect }           from 'react-redux';
+import { browserHistory }    from 'react-router';
 
-export default function (ComposedComponent, reqireAuth = true) {
+class ComposedComponent extends Component {
+  render() {
+    return this.props.children;
+  }
+}
+
+export default function (reqireAuth = true) {
   class Authentication extends Component {
     componentWillMount() {
       const { authenticated } = this.props;

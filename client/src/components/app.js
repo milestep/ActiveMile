@@ -47,8 +47,10 @@ export default class App extends Component {
   componentWillReceiveProps(newProps) {
     const { workspaces, actions } = newProps;
 
-    if (utils.empty(workspaces) && actions.getCurrentWorkspace()) {
-      actions.unsetCurrentWorkspace();
+    if (utils.empty(workspaces)) {
+      if (actions.getCurrentWorkspace()) {
+        actions.unsetCurrentWorkspace();
+      }
       this.fetchWorkspaces();
     }
   }

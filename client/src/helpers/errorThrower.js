@@ -9,15 +9,18 @@ export default class ErrorThrower {
 
   handleError(err, callback) {
     if (callback && this._performCallback(callback) === false) return;
-    if (!err.response) this.handleUnknownError(err);
+    if (!err.response) {
+      this.handleUnknownError(err);
+      return;
+    };
 
     const { response } = err;
     const { toaster } = this;
-    const { 
+    const {
       error,
-      errors, 
-      message, 
-      error_description 
+      errors,
+      message,
+      error_description
     } = response.data;
     const errorFiltered = message || error_description || null;
 

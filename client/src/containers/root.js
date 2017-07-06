@@ -16,15 +16,15 @@ import {
   RegistersEditor,
   Reports,
   NotFound }             from '../components';
-import RequireAuth       from '../containers/requireAuth';
+import requireAuth       from '../containers/requireAuth';
 import RequireWorkspace  from '../containers/requireWorkspace';
 
 const routes = (
   <Route path="/" component={App}>
     <IndexRedirect to="registers" />
 
-    <Route path="login" component={RequireAuth(Login, false)} />
-    <Route path="workspaces" component={RequireAuth(Workspaces)} />
+    <Route path="login" component={requireAuth(Login, false)} />
+    <Route path="workspaces" component={requireAuth(Workspaces)} />
     <Route path="articles" component={RequireWorkspace(Articles)} />
     <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
     <Route path="registers" component={RequireWorkspace(Registers)} />

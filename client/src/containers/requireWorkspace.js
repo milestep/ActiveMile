@@ -1,13 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { browserHistory }              from 'react-router';
-import RequireAuth                     from './requireAuth';
-
-class ComposedComponent extends Component {
-  render() {
-    return this.props.children;
-  }
-}
+import requireAuth                     from './requireAuth';
 
 export default function (WrappedComponent) {
   @connect(state => ({
@@ -16,19 +10,10 @@ export default function (WrappedComponent) {
     isFetching: state.workspaces.app.fetching,
     isResolved: state.workspaces.app.resolved
   }))
+  @requireAuth()
   class WorkspaceDependencies extends Component {
-    componentWillMount() {
-      if (!this.props.authenticated) {
-        browserHistory.push('/login');
-      }
-    }
-
     createRenderBody() {
       const { authenticated, currentWorkspace, isResolved, isFetching } = this.props;
-
-      if (!authenticated) {
-        return <ComposedComponent { ...this.props } />
-      }
 
       if (currentWorkspace && isResolved) {
         return <WrappedComponent {...this.props} />
@@ -49,8 +34,6 @@ export default function (WrappedComponent) {
           </span>
         );
       }
-
-      return <ComposedComponent { ...this.props } />
     }
 
     render() {

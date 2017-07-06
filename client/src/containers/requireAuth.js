@@ -1,14 +1,24 @@
 import React, { Component }  from 'react';
 import { connect }           from 'react-redux';
 import { browserHistory }    from 'react-router';
+import Login             from '../components/auth/login'
 
-class ComposedComponent extends Component {
-  render() {
-    return this.props.children;
+export default function() {
+  const arg = arguments[0];
+
+  if (arg && typeof arg === 'function') {
+    return _requireAuth(arg, arguments[1]);
+  }
+
+  return function(WrappedComponent) {
+    return _requireAuth(WrappedComponent, arg);
   }
 }
 
-export default function (reqireAuth = true) {
+function _requireAuth(WrappedComponent, reqireAuth=true) {
+  @connect(state => ({
+    authenticated: state.auth.token
+  }))
   class Authentication extends Component {
     componentWillMount() {
       const { authenticated } = this.props;
@@ -21,13 +31,18 @@ export default function (reqireAuth = true) {
     }
 
     render() {
-      return <ComposedComponent {...this.props} />;
+      const { authenticated } = this.props;
+
+      return(
+        <div>
+          { authenticated ?
+            <WrappedComponent {...this.props} /> :
+            <Login {...this.props} />
+          }
+        </div>
+      )
     }
   }
 
-  function mapStateToProps(state) {
-    return { authenticated: state.auth.token };
-  }
-
-  return connect(mapStateToProps)(Authentication);
+  return Authentication;
 }

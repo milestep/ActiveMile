@@ -4,4 +4,5 @@ class Counterparty < ApplicationRecord
   belongs_to :workspace
 
   validates :name, :date, :type, :workspace_id, presence: true
+  validates :type, acceptance: { accept: ['Cliфівent', 'Vendor' , 'Other'] }
 end

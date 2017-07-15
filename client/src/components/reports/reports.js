@@ -47,6 +47,11 @@ export default class Reports extends Component {
         month: null,
         article: null
       }
+      currentRegisters: {
+        all: [],
+        cost: [],
+        revenue: []
+      },
     };
   }
 
@@ -207,11 +212,124 @@ export default class Reports extends Component {
     }));
   }
 
-  getProfitClassNames(profit) {
-    let classNames = ['profit-value'];
-    if (profit > 0) classNames.push('color-green');
-    if (profit < 0) classNames.push('color-red');
-    return classNames;
+  filter(current) {
+    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+    this.state.currentRegisters = {
+      all: [],
+      cost: [],
+      revenue: []
+    }
+
+    for (var i = this.props.registers.length - 1; i >= 0; i--) {
+      let year = new Date(this.props.registers[i].date).getFullYear().toString()
+      let month = new Date(this.props.registers[i].date).getMonth()
+
+      if (year === current.year && months[month] === current.month) {
+        let register = this.props.registers[i]
+
+        this.state.currentRegisters.all.push({
+          id: register.id, date: register.date, value: register.value,
+          article_id: register.article_id, counterparty_id: register.counterparty_id,
+          article_title: this.getRegisterData('article_title', register.article_id),
+          article_type: this.getRegisterData('article_type', register.article_id),
+          counterparty_name: this.getRegisterData('counterparty_name', register.counterparty_id),
+          counterparty_type: this.getRegisterData('counterparty_type', register.counterparty_id)
+        })
+      }
+    }
+
+    // розкидаю Cost до Cost
+    for (var i = this.state.currentRegisters.all.length - 1; i >= 0; i--) {
+      let register = this.state.currentRegisters.all[i]
+      if (register.article_type === 'Cost') {
+        this.state.currentRegisters.cost.push(register)
+      } else {
+        this.state.currentRegisters.revenue.push(register)
+      }
+    }
+
+    this.finalStatusRegisters('Cost')
+    this.finalStatusRegisters('Revenue')
+  }
+
+  finalStatusRegisters(model) {
+    let usedStateModel = []
+
+    if (model === 'Cost') {
+      usedStateModel = this.state.currentRegisters.cost
+    } else {
+      usedStateModel = this.state.currentRegisters.revenue
+    }
+
+    // щоб в select не було повторень по article
+    let forModelArr = []
+
+    for (var i = usedStateModel.length - 1; i >= 0; i--) {
+      let register_i = usedStateModel[i]
+      let bool = false
+
+      for (var j = forModelArr.length - 1; j >= 0; j--) {
+        let register_j = forModelArr[j]
+
+        if (register_j.article_id === register_i.article_id) {
+          forModelArr[j].suma_value = forModelArr[j].suma_value + register_i.value
+
+          forModelArr[j].counterparty.push({
+            counterparty_name: register_i.counterparty_name,
+            counterparty_type: register_i.counterparty_type,
+            value: register_i.value
+          })
+
+          bool = true
+          break
+        }
+      }
+
+      if (!bool) {
+        forModelArr.push({
+          article_id: register_i.article_id,
+          article_title: register_i.article_title,
+          article_type: register_i.article_type,
+          suma_value: register_i.value,
+          counterparty: [{
+            counterparty_name: register_i.counterparty_name,
+            counterparty_type: register_i.counterparty_type,
+            value: register_i.value
+          }]
+        })
+      }
+    }
+
+    if (model === 'Cost') {
+      this.state.currentRegisters.cost = forModelArr
+    } else {
+      this.state.currentRegisters.revenue = forModelArr
+    }
+  }
+
+  getRegisterData(model, id) {
+    if (model === "article_title") {
+      for (var i = this.props.articles.length - 1; i >= 0; i--) {
+        if (this.props.articles[i].id === id)
+          return this.props.articles[i].title
+      }
+    } else if (model === "article_type") {
+      for (var i = this.props.articles.length - 1; i >= 0; i--) {
+        if (this.props.articles[i].id === id)
+          return this.props.articles[i].type
+      }
+    } else if (model === "counterparty_name") {
+      for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
+        if (this.props.counterparties[i].id === id)
+          return this.props.counterparties[i].name
+      }
+    } else if (model === "counterparty_type") {
+      for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
+        if (this.props.counterparties[i].id === id)
+          return this.props.counterparties[i].type
+      }
+    }
   }
 
   render() {
@@ -229,12 +347,13 @@ export default class Reports extends Component {
       items: [], profit: 0
     };
 
-    let profitClassNames = this.getProfitClassNames(profit);
     let yearsOptions = [];
 
     for (let i in articles) {
       yearsOptions.push({ value: i, label: i });
     }
+
+    this.filter(current)
 
     return(
       <div>
@@ -254,19 +373,32 @@ export default class Reports extends Component {
             />
           </div>
         </div>
+
         <div className="row">
-          <div className="col-md-9">
+          <div className="col-md-2"><h3>Total:</h3></div>
+          <div className="col-md-10">
+            <h3 className={profit > 0 ? 'color-green' : 'color-red'}>{profit}</h3>
+          </div>
+        </div>
+
+        <hr />
+
+        <div className="row">
+          <div className="col-md-6">
             <ArticlesList
-              articles={articles}
-              current={current}
+              modelRegister="Revenue"
+              currentRegisters={this.state.currentRegisters.revenue}
+              currentArticleId={current.article}
               handleArticleChange={this.handleArticleChange.bind(this)}
             />
           </div>
-          <div className="col-md-3">
-            <div className="profit-wrapper">
-              <span className="profit-title">Profit:&nbsp;</span>
-              <span className={profitClassNames.join(' ')}>{profit}</span>
-            </div>
+          <div className="col-md-6">
+            <ArticlesList
+              modelRegister="Cost"
+              currentRegisters={this.state.currentRegisters.cost}
+              currentArticleId={current.article}
+              handleArticleChange={this.handleArticleChange.bind(this)}
+            />
           </div>
         </div>
       </div>

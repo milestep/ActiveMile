@@ -46,7 +46,7 @@ export default class Reports extends Component {
         year: null,
         month: null,
         article: null
-      }
+      },
       currentRegisters: {
         all: [],
         cost: [],
@@ -231,10 +231,10 @@ export default class Reports extends Component {
         this.state.currentRegisters.all.push({
           id: register.id, date: register.date, value: register.value,
           article_id: register.article_id, counterparty_id: register.counterparty_id,
-          article_title: this.getRegisterData('article_title', register.article_id),
-          article_type: this.getRegisterData('article_type', register.article_id),
-          counterparty_name: this.getRegisterData('counterparty_name', register.counterparty_id),
-          counterparty_type: this.getRegisterData('counterparty_type', register.counterparty_id)
+          article_title: this.getRegisterData('article', 'title', register.article_id),
+          article_type: this.getRegisterData('article', 'type', register.article_id),
+          counterparty_name: this.getRegisterData('counterparty', 'name', register.counterparty_id),
+          counterparty_type: this.getRegisterData('counterparty', 'type', register.counterparty_id)
         })
       }
     }
@@ -308,27 +308,52 @@ export default class Reports extends Component {
     }
   }
 
-  getRegisterData(model, id) {
-    if (model === "article_title") {
-      for (var i = this.props.articles.length - 1; i >= 0; i--) {
-        if (this.props.articles[i].id === id)
-          return this.props.articles[i].title
-      }
-    } else if (model === "article_type") {
-      for (var i = this.props.articles.length - 1; i >= 0; i--) {
-        if (this.props.articles[i].id === id)
-          return this.props.articles[i].type
-      }
-    } else if (model === "counterparty_name") {
-      for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
-        if (this.props.counterparties[i].id === id)
-          return this.props.counterparties[i].name
-      }
-    } else if (model === "counterparty_type") {
-      for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
-        if (this.props.counterparties[i].id === id)
-          return this.props.counterparties[i].type
-      }
+  getRegisterData(model, field, id) {
+    switch (model) {
+      case 'article':
+        switch (field) {
+          case 'title':
+            for (var i = this.props.articles.length - 1; i >= 0; i--) {
+              if (this.props.articles[i].id === id)
+                return this.props.articles[i].title
+            }
+            break;
+
+          case 'type':
+            for (var i = this.props.articles.length - 1; i >= 0; i--) {
+              if (this.props.articles[i].id === id)
+                return this.props.articles[i].type
+            }
+            break;
+
+          default:
+            return undefined;
+        }
+        break;
+
+      case 'counterparty':
+        switch (field) {
+          case 'name':
+            for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
+              if (this.props.counterparties[i].id === id)
+                return this.props.counterparties[i].name
+            }
+            break;
+
+          case 'type':
+            for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
+              if (this.props.counterparties[i].id === id)
+                return this.props.counterparties[i].type
+            }
+            break;
+
+          default:
+            return undefined;
+        }
+        break;
+
+      default:
+        return undefined;
     }
   }
 

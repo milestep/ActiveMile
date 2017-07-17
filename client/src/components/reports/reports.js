@@ -231,10 +231,10 @@ export default class Reports extends Component {
         this.state.currentRegisters.all.push({
           id: register.id, date: register.date, value: register.value,
           article_id: register.article_id, counterparty_id: register.counterparty_id,
-          article_title: this.getRegisterData('article', 'title', register.article_id),
-          article_type: this.getRegisterData('article', 'type', register.article_id),
-          counterparty_name: this.getRegisterData('counterparty', 'name', register.counterparty_id),
-          counterparty_type: this.getRegisterData('counterparty', 'type', register.counterparty_id)
+          article_title: this.getRegisterData('articles', 'title', register.article_id),
+          article_type: this.getRegisterData('articles', 'type', register.article_id),
+          counterparty_name: this.getRegisterData('counterparties', 'name', register.counterparty_id),
+          counterparty_type: this.getRegisterData('counterparties', 'type', register.counterparty_id)
         })
       }
     }
@@ -308,52 +308,10 @@ export default class Reports extends Component {
     }
   }
 
-  getRegisterData(model, field, id) {
-    switch (model) {
-      case 'article':
-        switch (field) {
-          case 'title':
-            for (var i = this.props.articles.length - 1; i >= 0; i--) {
-              if (this.props.articles[i].id === id)
-                return this.props.articles[i].title
-            }
-            break;
-
-          case 'type':
-            for (var i = this.props.articles.length - 1; i >= 0; i--) {
-              if (this.props.articles[i].id === id)
-                return this.props.articles[i].type
-            }
-            break;
-
-          default:
-            return undefined;
-        }
-        break;
-
-      case 'counterparty':
-        switch (field) {
-          case 'name':
-            for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
-              if (this.props.counterparties[i].id === id)
-                return this.props.counterparties[i].name
-            }
-            break;
-
-          case 'type':
-            for (var i = this.props.counterparties.length - 1; i >= 0; i--) {
-              if (this.props.counterparties[i].id === id)
-                return this.props.counterparties[i].type
-            }
-            break;
-
-          default:
-            return undefined;
-        }
-        break;
-
-      default:
-        return undefined;
+  getRegisterData(modelName, field, id) {
+    for (var i = this.props[modelName].length - 1; i >= 0; i--) {
+      if (this.props[modelName][i].id === id)
+        return this.props[modelName][i][field]
     }
   }
 

@@ -55,10 +55,10 @@ export default class TestArticlesList extends Component {
             <div class="panel-heading">
               <div className="row">
                 <div className="col-md-4">{ register.article_title }: </div>
-                <div className="col-md-4">{ register.suma_value }</div>
-                <div className="col-md-4">
+                <div className="col-md-7">{ register.suma_value }</div>
+                <div className="col-md-1">
                   <button
-                    className="btn btn-default article-expand"
+                    className="btn btn-default article-expand btn-xs"
                     onClick={(e) => handleArticleChange(register.article_id)(e)}
                   >
                     <i class={`fa fa-angle-${isExpanded ? 'up' : 'down'}`}></i>

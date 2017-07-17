@@ -18,18 +18,6 @@ export default class List extends Component {
     };
   };
 
-  formatDate(date) {
-    var d = new Date(date),
-      day = '' + d.getDate(),
-      month = '' + (d.getMonth() + 1),
-      year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [day, month, year].join('-');
-  }
-
   renderItems(type) {
     const { counterparties, handleDestroy, toggleEdited, editedCounterparty } = this.props;
 
@@ -62,7 +50,7 @@ export default class List extends Component {
               <div className="tabs-overlap">
                 <div className="col-md-10">
                   <span className="col-md-9">{ item.name }</span>
-                  <span className="col-md-3">{ this.formatDate(item.date) }</span>
+                  <span className="col-md-3">{ moment(Date.parse(register.date)).format("DD-MM-YYYY") }</span>
                 </div>
                 <div className="btn-group">
                   <button

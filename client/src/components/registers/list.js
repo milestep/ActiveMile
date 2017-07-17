@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
+import moment                             from 'moment';
 
 export default class RegistersList extends Component {
   static propTypes = {
@@ -9,18 +10,6 @@ export default class RegistersList extends Component {
     counterparties: PropTypes.array.isRequired,
     handleDestroy: PropTypes.func.isRequired
   };
-
-  formatDate(date) {
-    var d = new Date(date),
-      day = '' + d.getDate(),
-      month = '' + (d.getMonth() + 1),
-      year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [day, month, year].join('-');
-  }
 
   render() {
     const { registers, articles, counterparties, handleDestroy } = this.props;
@@ -32,7 +21,7 @@ export default class RegistersList extends Component {
 
       return(
         <tr key={i}>
-          <td>{ this.formatDate(register.date) }</td>
+          <td>{ moment(Date.parse(register.date)).format("DD-MM-YYYY") }</td>
           <td>
             {article.title}
             <span className={`register-title-label ${typeName}`}>

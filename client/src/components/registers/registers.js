@@ -101,6 +101,20 @@ export default class Registers extends Component {
         filter.years.push(year);
     });
 
+    let bool = false
+    while(!bool) {
+      bool = true
+
+      for (var i = filter.years.length - 1; i >= 0; i--) {
+        if (filter.years[i] <= filter.years[i+1]) {
+          bool = false
+          let less_year = filter.years[i]
+          filter.years[i] = filter.years[i+1]
+          filter.years[i+1] = less_year
+        }
+      }
+    }
+
     Object.assign(current, {
       year: filter.years[0],
       month: monthsNames[currentMonth]

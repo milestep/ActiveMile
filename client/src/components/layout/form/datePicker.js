@@ -71,6 +71,7 @@ export default class FormDatePicker extends Component {
           placeholderText={this.props.placeholderText || null}
           selected={this.props.selected}
           value={this.props.value}
+          dateFormat="DD/MM/YYYY"
           fixedHeight
         />
       </div>

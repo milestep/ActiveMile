@@ -10,6 +10,18 @@ export default class RegistersList extends Component {
     handleDestroy: PropTypes.func.isRequired
   };
 
+  formatDate(date) {
+    var d = new Date(date),
+      day = '' + d.getDate(),
+      month = '' + (d.getMonth() + 1),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [day, month, year].join('-');
+  }
+
   render() {
     const { registers, articles, counterparties, handleDestroy } = this.props;
 
@@ -20,7 +32,7 @@ export default class RegistersList extends Component {
 
       return(
         <tr key={i}>
-          <td>{register.date}</td>
+          <td>{ this.formatDate(register.date) }</td>
           <td>
             {article.title}
             <span className={`register-title-label ${typeName}`}>

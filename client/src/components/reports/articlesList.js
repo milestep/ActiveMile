@@ -3,7 +3,7 @@ import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import * as utils                         from '../../utils';
 
-export default class TestArticlesList extends Component {
+export default class ArticlesList extends Component {
   static propTypes = {
     modelRegister: PropTypes.string.isRequired,
     currentRegisters: PropTypes.array.isRequired,

@@ -36,6 +36,34 @@ export default class RegisterForm extends Component {
       counterpartyName = register.counterparty.name;
     }
 
+    let forDate, forCounterparty, forArticle
+
+    if (this.state === undefined) {
+      forDate = moment()
+
+      forCounterparty = {
+        value: null,
+        label: null
+      }
+
+      forArticle = {
+        value: articles[0].id,
+        label: articles[0].title
+      }
+    } else {
+      forDate = this.state.register.date.value
+
+      forArticle = {
+        value: this.state.register.article.value.value,
+        label: this.state.register.article.value.label
+      }
+
+      forCounterparty = {
+        value: this.state.register.counterparty.value.value,
+        label: this.state.register.counterparty.value.label
+      }
+    }
+
     let prev = register ? {
       date: moment(Date.parse(register.date)),
       value: register.value,
@@ -49,17 +77,11 @@ export default class RegisterForm extends Component {
         label: counterpartyName
       }
     } : {
-      date: moment(),
+      date: forDate,
       value: '',
       note: '',
-      article: {
-        value: articles[0].id,
-        label: articles[0].title
-      },
-      counterparty: {
-        value: null,
-        label: null
-      }
+      article: forArticle,
+      counterparty: forCounterparty
     }, next = {};
 
     for (let i in prev) {

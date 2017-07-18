@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
+import moment                          from 'moment';
 
 export default class RegistersList extends Component {
   static propTypes = {
@@ -20,7 +21,7 @@ export default class RegistersList extends Component {
 
       return(
         <tr key={i}>
-          <td>{register.date}</td>
+          <td>{ moment(register.date).format("DD-MM-YYYY") }</td>
           <td>
             {article.title}
             <span className={`register-title-label ${typeName}`}>

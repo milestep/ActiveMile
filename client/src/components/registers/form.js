@@ -143,7 +143,6 @@ export default class RegisterForm extends Component {
           name="date"
           selected={date.value}
           handleChange={this.handleChange}
-          dateFormat="YYYY/MM/DD"
           required
         />
 

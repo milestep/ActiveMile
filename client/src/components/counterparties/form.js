@@ -138,7 +138,6 @@ export default class Form extends Component {
           selected={counterparty.date.value}
           handleChange={this.handleChange}
           inputClassName={editing ? "input-sm" : false}
-          dateFormat="YYYY/MM/DD"
           required
         />
 

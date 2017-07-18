@@ -102,15 +102,17 @@ export default class Registers extends Component {
     });
 
     let bool = false
+    let { years } = filter
+
     while(!bool) {
       bool = true
 
-      for (var i = filter.years.length - 1; i >= 0; i--) {
-        if (filter.years[i] <= filter.years[i+1]) {
+      for (var i = years.length - 1; i >= 0; i--) {
+        if (years[i] <= years[i+1]) {
           bool = false
-          let less_year = filter.years[i]
-          filter.years[i] = filter.years[i+1]
-          filter.years[i+1] = less_year
+          let less_year = years[i]
+          years[i] = years[i+1]
+          years[i+1] = less_year
         }
       }
     }

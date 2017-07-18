@@ -5,77 +5,98 @@ import * as utils                         from '../../utils';
 
 export default class ArticlesList extends Component {
   static propTypes = {
-    articles: PropTypes.object.isRequired,
-    current: PropTypes.object.isRequired,
+    modelRegister: PropTypes.string.isRequired,
+    currentRegisters: PropTypes.array.isRequired,
     handleArticleChange: PropTypes.func.isRequired
   };
 
-  render() {
-    const { articles, current, handleArticleChange } = this.props;
-    const yearItems = articles[current.year];
-    const currentArticles = (yearItems[current.month] || {
-      items: [], profit: 0
-    })['items'];
+  counterpartyList(article_id) {
+    let counterparties = []
 
-    const articlesList = !utils.empty(currentArticles) ? currentArticles.map((article, j) => {
-      const isExpanded = current.article == article.id;
-      const depsList = article.counterparties.map((counterparty, k) => {
-        const { name, value } = counterparty;
-        let valueClassNames = ['dep-value'];
+    for (var i = this.props.currentRegisters.length - 1; i >= 0; i--) {
+      if (this.props.currentRegisters[i].article_id === article_id) {
+        counterparties = this.props.currentRegisters[i].counterparty
+        break
+      }
+    }
 
-        if (value > 0) valueClassNames.push('color-green');
-        if (value < 0) valueClassNames.push('color-red');
+    return counterparties.map((counterparty, j) => {
+      return (
+        <div key={j}>
+          <div className="row">
+            <div className="col-md-4">{ counterparty.counterparty_name }: </div>
+            <div className="col-md-8">{ counterparty.value }</div>
+          </div>
+        </div>
+      );
+    });
+  }
 
-        return(
-          <li className="dep-list-item" key={k}>
-            <div className="left-side">
-              <span className="dep-title">{name}</span>
-            </div>
-            <div className="right-side">
-              <span className={valueClassNames.join(' ')}>{value}</span>
-            </div>
-          </li>
-        );
-      });
+  total() {
+    let res_suma = 0
+    let register = this.props.currentRegisters
+
+    for (var i = register.length - 1; i >= 0; i--) {
+      res_suma += register[i].suma_value
+    }
+
+    return res_suma
+  }
+
+  articlesList() {
+    const { currentArticleId, handleArticleChange } = this.props;
+
+    return this.props.currentRegisters.map((register, j) => {
+      const isExpanded = currentArticleId == register.article_id;
 
       return (
-        <li className={
-          `list-group-item reports-filter-article${isExpanded ? '': ' expanded'}`
-        } key={j}>
-          <div className="article-overlap">
-            <div className="left-side">
-              <span className="article-title">
-                {article.title}
-              </span>
+        <div key={j}>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div className="row">
+                <div className="col-md-4">{ register.article_title }: </div>
+                <div className="col-md-7">{ register.suma_value }</div>
+                <div className="col-md-1">
+                  <button
+                    className="btn btn-default article-expand btn-xs"
+                    onClick={(e) => handleArticleChange(register.article_id)(e)}
+                  >
+                    <i class={`fa fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="right-side">
-              <span className="article-amount">
-                {article.amount}
-              </span>
-              <button
-                className="btn btn-default article-expand"
-                onClick={(e) => handleArticleChange(article.id)(e)}
-              >
-                <i class={`fa fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
-              </button>
+
+            <div class={ isExpanded ? 'panel-body' : '' }>
+              { isExpanded ? this.counterpartyList(register.article_id) : '' }
             </div>
           </div>
-          <ul className="article-depths-overlap">
-            {depsList}
-          </ul>
-        </li>
-      );
-    }) : (
-      <li className="list-group-item no-exists">
-        <div className="alert alert-info">
-          <span>There are no articles here</span>
         </div>
-      </li>
-    );
+      );
+    });
+  }
 
+  articlesListEmpty() {
+    return (
+      <div className="alert alert-info">
+        <span>There are no articles here</span>
+      </div>
+    );
+  }
+
+  render() {
     return(
-      <div className="reports-filter-articles-list">
-        {articlesList}
+      <div>
+        <div className="row">
+          <div className="col-md-4"><h3>{ this.props.modelRegister }:</h3></div>
+          <div className="col-md-8">
+            <h3 className={this.props.modelRegister === 'Cost' ? 'color-red' : 'color-green'}>
+              { this.total() }
+            </h3>
+          </div>
+        </div>
+
+        { this.props.currentRegisters.length > 0 ? this.articlesList() : this.articlesListEmpty() }
       </div>
     );
   }

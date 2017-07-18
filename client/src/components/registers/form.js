@@ -36,9 +36,7 @@ export default class RegisterForm extends Component {
       counterpartyName = register.counterparty.name;
     }
 
-    let forDate = undefined,
-      forCounterparty = undefined,
-      forArticle = undefined
+    let forDate, forCounterparty, forArticle
 
     if (this.state === undefined) {
       forDate = moment()

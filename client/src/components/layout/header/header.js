@@ -195,7 +195,7 @@ export default class Header extends Component {
 
         { (alertsAsync && alertsAsync.length) ?
 
-          <div className="container">
+          <div className="toaster">
             <div className="site-notifications">
               {alertsContainer || null}
             </div>

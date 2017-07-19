@@ -48,7 +48,6 @@ export default class Reports extends Component {
         article: null
       },
       currentRegisters: {
-        all: [],
         cost: [],
         revenue: []
       },
@@ -212,70 +211,75 @@ export default class Reports extends Component {
     }));
   }
 
-  filter(current) {
-    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  filter() {
+    const { current } = this.state;
+    const monthsNames = moment.monthsShort()
 
-    this.state.currentRegisters = {
-      all: [],
-      cost: [],
-      revenue: []
-    }
+    let registers = this.props.registers
+    let newRegisters = []
 
-    for (var i = this.props.registers.length - 1; i >= 0; i--) {
-      let year = new Date(this.props.registers[i].date).getFullYear().toString()
-      let month = new Date(this.props.registers[i].date).getMonth()
+    // витягую регістри які співпадають з фільтром/датою
+    for (var i = registers.length - 1; i >= 0; i--) {
+      let year = new Date(registers[i].date).getFullYear().toString()
+      let month = new Date(registers[i].date).getMonth()
 
-      if (year === current.year && months[month] === current.month) {
-        let register = this.props.registers[i]
+      if (year === current.year && monthsNames[month] === current.month) {
+        let register = registers[i]
 
-        this.state.currentRegisters.all.push({
-          id: register.id, date: register.date, value: register.value,
-          article_id: register.article_id, counterparty_id: register.counterparty_id,
-          article_title: this.getRegisterData('articles', 'title', register.article_id),
-          article_type: this.getRegisterData('articles', 'type', register.article_id),
-          counterparty_name: this.getRegisterData('counterparties', 'name', register.counterparty_id),
-          counterparty_type: this.getRegisterData('counterparties', 'type', register.counterparty_id)
+        newRegisters.push({
+          id: register.id, value: register.value, date: register.date,
+          article_id: register.article_id, counterparty_id: register.counterparty_id
         })
       }
     }
 
-    // розкидаю Cost до Cost
-    for (var i = this.state.currentRegisters.all.length - 1; i >= 0; i--) {
-      let register = this.state.currentRegisters.all[i]
-      if (register.article_type === 'Cost') {
-        this.state.currentRegisters.cost.push(register)
-      } else {
-        this.state.currentRegisters.revenue.push(register)
+    registers = newRegisters
+    newRegisters = []
+
+    // щоб в articles не було повторень по counterparties
+    for (var i = registers.length - 1; i >= 0; i--) {
+      let bool = false
+      let registerI = registers[i]
+
+      for (var j = newRegisters.length - 1; j >= 0; j--) {
+        let registerJ = newRegisters[j]
+
+        if (registerI.id != registerJ.id && registerI.article_id === registerJ.article_id && registerI.counterparty_id === registerJ.counterparty_id) {
+          let suma_values = registerI.value + registerJ.value
+          newRegisters[j].value = registerJ.value + registerI.value
+          bool = true
+          break
+        }
+      }
+
+      if (!bool) {
+        newRegisters.push({
+          id: registerI.id, value: registerI.value, date: registerI.date,
+          article_id: registerI.article_id, counterparty_id: registerI.counterparty_id,
+          article_title: this.getRegisterData('articles', 'title', registerI.article_id),
+          article_type: this.getRegisterData('articles', 'type', registerI.article_id),
+          counterparty_name: this.getRegisterData('counterparties', 'name', registerI.counterparty_id),
+          counterparty_type: this.getRegisterData('counterparties', 'type', registerI.counterparty_id)
+        })
       }
     }
 
-    this.finalStatusRegisters('Cost')
-    this.finalStatusRegisters('Revenue')
-  }
-
-  finalStatusRegisters(model) {
-    let usedStateModel = []
-
-    if (model === 'Cost') {
-      usedStateModel = this.state.currentRegisters.cost
-    } else {
-      usedStateModel = this.state.currentRegisters.revenue
-    }
+    registers = newRegisters
+    newRegisters = []
 
     // щоб в select не було повторень по article
-    let forModelArr = []
-
-    for (var i = usedStateModel.length - 1; i >= 0; i--) {
-      let register_i = usedStateModel[i]
+    for (var i = registers.length - 1; i >= 0; i--) {
+      let register_i = registers[i]
       let bool = false
 
-      for (var j = forModelArr.length - 1; j >= 0; j--) {
-        let register_j = forModelArr[j]
+      for (var j = newRegisters.length - 1; j >= 0; j--) {
+        let register_j = newRegisters[j]
 
         if (register_j.article_id === register_i.article_id) {
-          forModelArr[j].suma_value = forModelArr[j].suma_value + register_i.value
+          newRegisters[j].suma_value = newRegisters[j].suma_value + register_i.value
 
-          forModelArr[j].counterparty.push({
+          newRegisters[j].counterparty.push({
+            counterparty_id: register_i.counterparty_id,
             counterparty_name: register_i.counterparty_name,
             counterparty_type: register_i.counterparty_type,
             value: register_i.value
@@ -287,12 +291,13 @@ export default class Reports extends Component {
       }
 
       if (!bool) {
-        forModelArr.push({
+        newRegisters.push({
           article_id: register_i.article_id,
           article_title: register_i.article_title,
           article_type: register_i.article_type,
           suma_value: register_i.value,
           counterparty: [{
+            counterparty_id: register_i.counterparty_id,
             counterparty_name: register_i.counterparty_name,
             counterparty_type: register_i.counterparty_type,
             value: register_i.value
@@ -301,11 +306,23 @@ export default class Reports extends Component {
       }
     }
 
-    if (model === 'Cost') {
-      this.state.currentRegisters.cost = forModelArr
-    } else {
-      this.state.currentRegisters.revenue = forModelArr
+    registers = newRegisters
+    newRegisters = {
+      cost: [],
+      revenue: []
     }
+
+    // розкидаю Cost до Cost
+    for (var i = registers.length - 1; i >= 0; i--) {
+      let register = registers[i]
+      if (register.article_type === 'Cost') {
+        newRegisters.cost.push(register)
+      } else {
+        newRegisters.revenue.push(register)
+      }
+    }
+
+    this.state.currentRegisters = newRegisters
   }
 
   getRegisterData(modelName, field, id) {
@@ -336,7 +353,7 @@ export default class Reports extends Component {
       yearsOptions.push({ value: i, label: i });
     }
 
-    this.filter(current)
+    this.filter()
 
     return(
       <div>

@@ -24,7 +24,7 @@ export default class ArticlesList extends Component {
       return (
         <div key={j}>
           <div className="row">
-            <div className="col-md-4">{ counterparty.counterparty_name }: </div>
+            <div className="col-md-4">{ counterparty.counterparty_name }{ counterparty.counterparty_name ? ':' : '-' }</div>
             <div className="col-md-8">{ counterparty.value }</div>
           </div>
         </div>

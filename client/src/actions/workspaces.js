@@ -2,7 +2,7 @@ import { defaultHeaders }                 from 'redux-rest-resource';
 import { bindActionCreators }             from 'redux';
 import cookie                             from 'react-cookie';
 import { Toaster }                        from './alerts';
-import { actions as workspaceActions }    from '../resources/workspace';
+import { actions as workspaceActions }    from '../resources/workspaces';
 import { actions as subscriptionActions } from './subscriptions';
 import WorkspaceActions                   from '../constants/workspaces';
 import * as utils                         from '../utils';

@@ -1,10 +1,8 @@
 import { bindActionCreators }             from 'redux';
 import { defaultHeaders }                 from 'redux-rest-resource';
+import { debug, toTitleCase }             from '../utils';
 import { Toaster }                        from './alerts';
 import SubscriptionActions                from '../constants/subscriptions';
-import { actions as articleActions }      from './articles';
-import { actions as counterpartyActions } from './counterparties';
-import { actions as registerActions }     from './registers';
 
 const {
   SUBSCRIBE,
@@ -14,41 +12,90 @@ const {
   SUBSCRIPTION_RESET
 } = SubscriptionActions;
 
+const getFunctionName = model => {
+  if (model == 'counterparties')
+    model = 'counterpartys'
+  return `fetch${toTitleCase(model)}`
+}
+
+const needModel = model => {
+  return model.qty && !model.resolved && !model.fetching
+}
+
+let queue = {
+  models: [],
+  getCount: () => {
+    return queue.models.length
+  },
+  add: model => {
+    const { models } = queue
+
+    if (models.indexOf(model) === -1) {
+      models.push(model)
+    }
+  },
+  remove: model => {
+    const { models } = queue
+    models.splice(models.indexOf(model), 1)
+  }
+}
+
 export const actions = {
   checkSubscribers(force=false) {
     return function(dispatch, getStore) {
       if (!defaultHeaders['workspace-id']) return;
+      if (force) dispatch(actions.reset())
 
-      const _actions = bindActionCreators({
-        ...articleActions,
-        ...counterpartyActions,
-        ...registerActions
-      }, dispatch);
+      const store = getStore()
+      const toaster = new Toaster(dispatch)
+      const models = ['articles', 'counterparties', 'registers']
+      const { subscriptions, registers, articles, counterparties } = store
 
-      const toaster = new Toaster(dispatch);
-      const store = getStore();
-      const { subscriptions, registers, articles, counterparties } = store;
+      return new Promise(resolve => {
+        models.forEach(model => {
+          if (needModel(subscriptions[model])) {
+            queue.add(model)
 
-      if (force) dispatch(actions.reset());
+            dispatch(actions.loadModel(model)).then(res => {
+              queue.remove(model)
 
-      if (needModel('articles')) {
-        _actions.loadArticles();
-      }
+              if (queue.getCount() === 0)
+                resolve()
+            }).catch(err => {
+              queue.remove(model)
 
-      if (needModel('counterparties')) {
-        _actions.loadCounterparties();
-      }
+              if (queue.getCount() === 0)
+                resolve()
+            })
+          }
+        })
 
-      if (needModel('registers')) {
-        _actions.loadRegisters();
-      }
+        if (queue.getCount() === 0)
+          resolve()
+      })
+    }
+  },
+  loadModel: function(model) {
+    return function(dispatch) {
+      dispatch(actions.moveToPending(model))
 
-      function needModel(inputModel) {
-        const model = subscriptions[inputModel];
-        const { qty, fetching, resolved } = model;
+      const resource = require(`../resources/${model}`)
+      const resourceActions = bindActionCreators(resource.actions, dispatch)
+      const toaster = new Toaster(dispatch)
 
-        return qty && !resolved && !fetching;
-      }
+      return new Promise(resolve => {
+        resourceActions[getFunctionName(model)]()
+          .then(res => {
+            resolve(model)
+            dispatch(actions.resolve(model))
+          })
+          .catch(err => {
+            if (debug) console.error(err)
+            resolve(model)
+            dispatch(actions.resolve(model))
+            toaster.error(`Could not load ${model}!`)
+          })
+        })
     }
   },
   moveToPending: function(model) {
@@ -68,18 +115,21 @@ export const actions = {
       dispatch({ type: SUBSCRIPTION_RESET });
     }
   },
-  subscribe: function(items) {
+  subscribe: function(models) {
     return function(dispatch) {
       dispatch({ type: SUBSCRIBE,
-                 payload: items });
+                 payload: models });
 
-      dispatch(actions.checkSubscribers());
+      return new Promise(resolve => {
+        dispatch(actions.checkSubscribers())
+          .then(() => resolve())
+      })
     }
   },
-  unsubscribe: function(items) {
+  unsubscribe: function(models) {
     return function(dispatch) {
       dispatch({ type: UNSUBSCRIBE,
-                 payload: items });
+                 payload: models });
     }
   }
 }

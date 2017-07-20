@@ -1,390 +1,264 @@
-import React, { Component, PropTypes }    from 'react';
-import { bindActionCreators }             from 'redux';
-import { connect }                        from 'react-redux';
-import moment                             from 'moment';
-import { actions as subscriptionActions } from '../../actions/subscriptions';
-import * as utils                         from '../../utils';
-import Select                             from 'react-select';
-import ArticlesList                       from './articlesList';
-import MonthsTabs                         from './monthsTabs';
+import React, { Component, PropTypes }    from 'react'
+import { bindActionCreators }             from 'redux'
+import { connect }                        from 'react-redux'
+import Select                             from 'react-select'
+import { actions as subscriptionActions } from '../../actions/subscriptions'
+import { setStatePromise, pushUnique }    from '../../utils'
+import ArticlesList                       from './articlesList'
+import MonthsTabs                         from './monthsTabs'
 
-@connect(
-  state => ({
-    registers: state.registers.items,
-    articles: state.articles.items,
-    counterparties: state.counterparties.items,
-    isResolved: {
-      registers: state.subscriptions.registers.resolved,
-      articles: state.subscriptions.articles.resolved,
-      counterparties: state.subscriptions.counterparties.resolved
-    }
-  }),
-  dispatch => ({
-    actions: bindActionCreators({
-      ...subscriptionActions
-    }, dispatch)
-  })
-)
+@connect(state => ({
+  registers: state.registers.items,
+  articles: state.articles.items,
+  counterparties: state.counterparties.items,
+  isResolved: {
+    registers: state.subscriptions.registers.resolved,
+    articles: state.subscriptions.articles.resolved,
+    counterparties: state.subscriptions.counterparties.resolved
+  }
+}), dispatch => ({
+  actions: bindActionCreators({
+    ...subscriptionActions
+  }, dispatch)
+}))
 export default class Reports extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
     isResolved: PropTypes.object.isRequired
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.types = ['Revenue', 'Cost'];
-    this.subscriptions = ['registers', 'articles', 'counterparties'];
+    this.types = ['Revenue', 'Cost']
+    this.subscriptions = ['registers', 'articles', 'counterparties']
 
-    this.state = {
-      articles: null,
-      isDataReady: false,
-      current: {
-        year: null,
-        month: null,
-        article: null
-      },
-      currentRegisters: {
-        all: [],
-        cost: [],
-        revenue: []
-      },
-    };
+    this.state = this.createInitialState()
   }
 
   componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions);
+    this.props.actions.subscribe(this.subscriptions)
+      .then(() => {
+        this.createReportState()
+      })
   }
 
   componentWillUnmount() {
-    this.props.actions.unsubscribe(this.subscriptions);
+    this.props.actions.unsubscribe(this.subscriptions)
   }
 
-  componentWillReceiveProps(newProps) {
-    const isDataReady = this.isModelsFetched(this.subscriptions, newProps);
-
-    if (isDataReady !== this.state.isDataReady) {
-      this.setState({
-        isDataReady: this.isModelsFetched(this.subscriptions, newProps)
-      });
-    }
-
-    if (isDataReady) {
-      this.createArticlesState(newProps);
-    }
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.isStateReady
   }
 
-  createArticlesState(props = false) {
-    if (!props) props = this.props;
-
-    const { articles, registers, counterparties } = props;
-
-    let { state, current, monthsNames } = {
-      state: {},
-      current: {},
-      monthsNames: moment.monthsShort()
-    };
-
-    registers.forEach((register, i) => {
-      const { article_id, counterparty_id } = register;
-      const registerArticle = articles.find((art, i) => art.id === article_id);
-      const registerCounterparty = counterparties
-              .find((cont, i) => cont.id === counterparty_id) ||
-              { id: null, name: '-' }
-      const { type } = registerArticle;
-
-      let value = type == 'Revenue' ? register.value : -register.value,
-          date = new Date(register.date),
-          monthIndex = date.getMonth(),
+  createInitialState() {
+    const date = new Date(),
           year = date.getFullYear(),
-          month = monthsNames[monthIndex],
-          isExistsArticle = false,
-          stateYear = state[year] = state[year] || [],
-          stateMonth = stateYear[month] = stateYear[month] || {
-            items: [],
-            profit: 0
-          },
-          currentItems = stateMonth['items'],
-          ultimateArticle = Object.assign({}, registerArticle, {
-            counterparties: [Object.assign({}, registerCounterparty, { value })],
-            amount: value
-          });
+          month = date.getMonth()
 
-      stateMonth['profit'] += value;
+    return {
+      profit: 0,
+      isStateReady: false,
+      current: { year, month, article: null },
+      available: { years: [], months: [] },
+      report: { Revenue: [], Cost: [] }
+    }
+  }
 
-      if (currentItems) {
-        currentItems.forEach((article, i) => {
-          if (article.id === article_id) {
-            let isExistsCounterparty = false;
-            isExistsArticle = true;
+  createReportState() {
+    const { registers, articles } = this.props
+    const { current } = this.state
 
-            article.amount += value;
-            article.counterparties.forEach((counterparty, j) => {
-              if (counterparty.id === counterparty_id) {
-                counterparty.value += value;
-                isExistsCounterparty = true;
-                return;
-              }
-            });
+    let reportState = { Revenue: [], Cost: [] }
+    let years = [ new Date().getFullYear() ]
+    let months = []
+    let profit = 0
 
-            if (!isExistsCounterparty) {
-              article.counterparties.push(
-                Object.assign({}, registerCounterparty, { value })
-              );
-            }
-          }
-        })
+    registers.forEach(register => {
+      const registerDate = new Date(register.date),
+            registerYear = registerDate.getFullYear(),
+            registerMonth = registerDate.getMonth()
 
-        if (!isExistsArticle) {
-          currentItems.push(ultimateArticle);
-        }
+      pushUnique(years, registerYear)
+      if (registerYear === current.year)
+        pushUnique(months, registerMonth)
+
+      if (!(registerYear === current.year && registerMonth === current.month)) return
+
+      const article = Object.assign({}, articles.find(article => article.id === register.article_id))
+      const reportType = reportState[article.type]
+
+      let reportArticle = reportType.length ?
+          reportType.find(article => article.id === register.article_id) : null
+
+      profit += this.getRegisterValue(article.type, register.value)
+
+      if (reportArticle) {
+        Object.assign(
+          reportArticle,
+          this.getArticleCounterparties(register, reportArticle)
+        )
       } else {
-        stateMonth['items'] = [ultimateArticle];
+        reportType.push({
+          ...article,
+          ...this.getEmptyArticleCounterparties(register, article)
+        })
       }
-    });
-
-    Object.assign(current, this.state.current);
-    current.year = Object.keys(state)[Object.keys(state).length - 1];
-    current.month = monthsNames[new Date().getMonth()];
+    })
 
     this.setState((prevState) => ({
       ...prevState,
-      articles: state,
-      current: {
-        ...prevState.current,
-        ...current
+      report: reportState,
+      isStateReady: true,
+      profit,
+      available: {
+        years: years.sort((a, b) => b - a),
+        months: months.sort()
       }
-    }));
+    }))
   }
 
-  isModelsFetched(models, inputProps = false) {
-    const props = inputProps || this.props;
-    const { isResolved } = props;
-    const { empty } = utils;
-    let returnedValue = true;
+  getArticleCounterparties(register, article) {
+    const registerValue = this.getRegisterValue(article.type, register.value)
+    let articleCounterparties = (article.counterparties).slice()
+    let registerCounterparty = this.findRegisterCounterparty(register)
 
-    models.forEach((model, i) => {
-      if (!isResolved[model]) {
-        returnedValue = false;
-        return;
+    for (let i = 0; i < articleCounterparties.length; i++) {
+      let counterparty = articleCounterparties[i]
+
+      if (registerCounterparty.id !== counterparty.id) continue
+
+      counterparty.value = registerValue + counterparty.value
+
+      return {
+        value: article.value + registerValue,
+        counterparties: articleCounterparties
       }
-    });
+    }
 
-    return returnedValue;
+    articleCounterparties.push({
+      ...registerCounterparty,
+      value: registerValue
+    })
+
+    return {
+      value: article.value + registerValue,
+      counterparties: articleCounterparties
+    }
   }
 
-  handleYearChange(e) {
-    const year = e.value;
-    const monthsNames = moment.monthsShort();
+  getEmptyArticleCounterparties(register, article) {
+    const registerValue = this.getRegisterValue(article.type, register.value)
+    let registerCounterparty = this.findRegisterCounterparty(register)
 
-    this.setState((prevState) => ({
-      current: {
-        ...prevState.current,
-        article: null,
-        year
-      }
-    }));
+    return {
+      value: registerValue,
+      counterparties: [
+        Object.assign({}, registerCounterparty, { value: registerValue })
+      ]
+    }
   }
 
-  handleMonthChange = value => e => {
-    e.preventDefault();
-    this.setState((prevState) => ({
+  findRegisterCounterparty(register) {
+    const { counterparties } = this.props
+
+    return register.counterparty_id ? counterparties
+        .find(counterparty => counterparty.id === register.counterparty_id) : { id: 0 }
+  }
+
+  getRegisterValue(type, value) {
+    return type == 'Cost' ? -value : value
+  }
+
+  handleYearChange = e => {
+    const year = e.value
+
+    setStatePromise(this, (prevState => ({
       current: {
-        ...prevState.current,
-        month: value,
-        article: null
+        ...prevState.current, year
       }
-    }));
+    }))).then(() => this.createReportState())
+  }
+
+  handleMonthChange = month => {
+    setStatePromise(this, (prevState => ({
+      current: {
+        ...prevState.current, month
+      }
+    }))).then(() => this.createReportState())
   }
 
   handleArticleChange = id => e => {
-    let article = id;
+    const { current } = this.state
 
-    if (this.state.current.article == id) article = null;
     this.setState((prevState) => ({
       current: {
         ...prevState.current,
-        article
+        article: id !== current.article ? id : null
       }
-    }));
-  }
-
-  filter(current) {
-    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-    this.state.currentRegisters = {
-      all: [],
-      cost: [],
-      revenue: []
-    }
-
-    for (var i = this.props.registers.length - 1; i >= 0; i--) {
-      let year = new Date(this.props.registers[i].date).getFullYear().toString()
-      let month = new Date(this.props.registers[i].date).getMonth()
-
-      if (year === current.year && months[month] === current.month) {
-        let register = this.props.registers[i]
-
-        this.state.currentRegisters.all.push({
-          id: register.id, date: register.date, value: register.value,
-          article_id: register.article_id, counterparty_id: register.counterparty_id,
-          article_title: this.getRegisterData('articles', 'title', register.article_id),
-          article_type: this.getRegisterData('articles', 'type', register.article_id),
-          counterparty_name: this.getRegisterData('counterparties', 'name', register.counterparty_id),
-          counterparty_type: this.getRegisterData('counterparties', 'type', register.counterparty_id)
-        })
-      }
-    }
-
-    // розкидаю Cost до Cost
-    for (var i = this.state.currentRegisters.all.length - 1; i >= 0; i--) {
-      let register = this.state.currentRegisters.all[i]
-      if (register.article_type === 'Cost') {
-        this.state.currentRegisters.cost.push(register)
-      } else {
-        this.state.currentRegisters.revenue.push(register)
-      }
-    }
-
-    this.finalStatusRegisters('Cost')
-    this.finalStatusRegisters('Revenue')
-  }
-
-  finalStatusRegisters(model) {
-    let usedStateModel = []
-
-    if (model === 'Cost') {
-      usedStateModel = this.state.currentRegisters.cost
-    } else {
-      usedStateModel = this.state.currentRegisters.revenue
-    }
-
-    // щоб в select не було повторень по article
-    let forModelArr = []
-
-    for (var i = usedStateModel.length - 1; i >= 0; i--) {
-      let register_i = usedStateModel[i]
-      let bool = false
-
-      for (var j = forModelArr.length - 1; j >= 0; j--) {
-        let register_j = forModelArr[j]
-
-        if (register_j.article_id === register_i.article_id) {
-          forModelArr[j].suma_value = forModelArr[j].suma_value + register_i.value
-
-          forModelArr[j].counterparty.push({
-            counterparty_name: register_i.counterparty_name,
-            counterparty_type: register_i.counterparty_type,
-            value: register_i.value
-          })
-
-          bool = true
-          break
-        }
-      }
-
-      if (!bool) {
-        forModelArr.push({
-          article_id: register_i.article_id,
-          article_title: register_i.article_title,
-          article_type: register_i.article_type,
-          suma_value: register_i.value,
-          counterparty: [{
-            counterparty_name: register_i.counterparty_name,
-            counterparty_type: register_i.counterparty_type,
-            value: register_i.value
-          }]
-        })
-      }
-    }
-
-    if (model === 'Cost') {
-      this.state.currentRegisters.cost = forModelArr
-    } else {
-      this.state.currentRegisters.revenue = forModelArr
-    }
-  }
-
-  getRegisterData(modelName, field, id) {
-    for (var i = this.props[modelName].length - 1; i >= 0; i--) {
-      if (this.props[modelName][i].id === id)
-        return this.props[modelName][i][field]
-    }
+    }))
   }
 
   render() {
-    const { isDataReady } = this.state;
+    const { report, profit, current, available } = this.state
 
-    if (!isDataReady) { return(
-      <span className="spin-wrap main-loader">
-        <i class="fa fa-spinner fa-spin fa-3x"></i>
+    if (!this.state.isStateReady) { return(
+      <span className='spin-wrap main-loader'>
+        <i class='fa fa-spinner fa-spin fa-3x'></i>
       </span>
-    ); }
-
-    const { articles, current } = this.state;
-    const yearItems = articles[current.year];
-    const { profit } = yearItems[current.month] || {
-      items: [], profit: 0
-    };
-
-    let yearsOptions = [];
-
-    for (let i in articles) {
-      yearsOptions.push({ value: i, label: i });
-    }
-
-    this.filter(current)
+    ) }
 
     return(
       <div>
-        <div className="row">
-          <div className="col-md-12 reports-filter">
+        <div className='row'>
+          <div className='col-md-12 reports-filter'>
             <Select
-              name="years"
-              className="reports-filter-select"
+              name='years'
+              className='reports-filter-select'
               onChange={this.handleYearChange.bind(this)}
-              options={yearsOptions}
+              options={available.years.map(year => ({ value: year, label: year.toString() }))}
               value={current.year}
             />
             <MonthsTabs
-              articles={articles}
-              current={current}
+              current={current.month}
+              available={available.months}
               handleMonthChange={this.handleMonthChange.bind(this)}
             />
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-md-2"><h3>Total:</h3></div>
-          <div className="col-md-10">
+        <div className='row'>
+          <div className='col-md-2'><h3>Total:</h3></div>
+          <div className='col-md-10'>
             <h3 className={profit > 0 ? 'color-green' : 'color-red'}>{profit}</h3>
           </div>
         </div>
 
         <hr />
 
-        <div className="row">
-          <div className="col-md-6">
+         <div className='row'>
+          <div className='col-md-6'>
+            <h4>Revenue</h4>
             <ArticlesList
-              modelRegister="Revenue"
-              currentRegisters={this.state.currentRegisters.revenue}
-              currentArticleId={current.article}
+              type='Revenue'
+              articles={report['Revenue']}
+              current={current.article}
               handleArticleChange={this.handleArticleChange.bind(this)}
             />
           </div>
-          <div className="col-md-6">
+          <div className='col-md-6'>
+            <h4>Cost</h4>
             <ArticlesList
-              modelRegister="Cost"
-              currentRegisters={this.state.currentRegisters.cost}
-              currentArticleId={current.article}
+              type='Cost'
+              articles={report['Cost']}
+              current={current.article}
               handleArticleChange={this.handleArticleChange.bind(this)}
             />
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { bindActionCreators }          from 'redux';
-import { actions as workspaceActions } from '../../resources/workspace';
+import { actions as workspaceActions } from '../../resources/workspaces';
 import FormInput                       from '../layout/form/input';
 import * as utils                      from '../../utils';
 

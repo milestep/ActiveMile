@@ -4,42 +4,43 @@ import { connect }                        from 'react-redux';
 import moment                             from 'moment';
 import * as utils                         from '../../utils';
 
+const monthsNames = moment.monthsShort()
+
 export default class MonthsTabs extends Component {
   static propTypes = {
-    articles: PropTypes.object.isRequired,
-    current: PropTypes.object.isRequired,
+    current: PropTypes.number.isRequired,
+    available: PropTypes.array.isRequired,
     handleMonthChange: PropTypes.func.isRequired
   };
 
   render() {
-    const { articles, current, handleMonthChange } = this.props;
-    const monthsNames = moment.monthsShort();
+    const { current, available, handleMonthChange } = this.props
 
     let tabs = [];
 
-    monthsNames.forEach((month, i) => {
-      const monthState = articles[current.year][month];
-      const isCurrent = current.month == month;
+    monthsNames.forEach((month, index) => {
+      const isCurrent = current == month;
       let listClassNames = [];
 
       if (isCurrent) listClassNames.push('active');
-      if (!monthState) listClassNames.push('empty');
+      if (available.indexOf(index) === -1)
+        listClassNames.push('empty');
 
-      if (monthState) {}
       tabs.push(
         <li className={listClassNames.join(' ')} key={month}>
           <a
-            href="#"
-            onClick={(e) => handleMonthChange(month)(e)}
+            href='#'
+            onClick={(e) => {
+              e.preventDefault()
+              handleMonthChange(index)
+            }}
           >{month}</a>
         </li>
       );
     });
 
     return(
-      <ul class="nav nav-pills reports-filter-months-tabs">
-        {tabs}
-      </ul>
-    );
+      <ul class='nav nav-pills reports-filter-months-tabs'>{tabs}</ul>
+    )
   }
 }

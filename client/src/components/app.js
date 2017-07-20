@@ -2,7 +2,7 @@ import React, { Component, PropTypes }    from 'react';
 import { connect }                        from 'react-redux';
 import { bindActionCreators }             from 'redux';
 import { getCurrentUser }                 from '../helpers/currentUser';
-import { actions as workspaceActions }    from '../resources/workspace';
+import { actions as workspaceActions }    from '../resources/workspaces';
 import { actions as workspaceAppActions } from '../actions/workspaces';
 import { toaster }                        from '../actions/alerts';
 import { logout }                         from '../actions/auth';

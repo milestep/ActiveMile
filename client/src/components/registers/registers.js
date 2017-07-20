@@ -1,15 +1,17 @@
-import React, { Component, PropTypes }    from 'react';
-import { bindActionCreators }             from 'redux';
-import { connect }                        from 'react-redux';
-import Select                             from 'react-select';
-import moment                             from 'moment';
-import { toaster }                        from '../../actions/alerts';
-import { actions as registerActions }     from '../../resources/register';
-import { actions as subscriptionActions } from '../../actions/subscriptions';
-import RegisterForm                       from './form';
-import RegistersList                      from './list';
-import RegistersFilter                    from './filter';
-import * as utils                         from '../../utils';
+import React, { Component, PropTypes }      from 'react';
+import { bindActionCreators }               from 'redux';
+import { connect }                          from 'react-redux';
+import Select                               from 'react-select';
+import moment                               from 'moment';
+import { toaster }                          from '../../actions/alerts';
+import { actions as registerActions }       from '../../resources/register';
+import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import RegisterForm                         from './form';
+import RegistersList                        from './list';
+import RegistersFilter                      from './filter';
+import * as utils                           from '../../utils';
+import ReactConfirmAlert, { confirmAlert }  from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 const monthsNames = moment.monthsShort();
 
@@ -89,8 +91,6 @@ export default class Registers extends Component {
         currentMonth,
         registers = [];
 
-    console.log(current)
-
     if (current.year === null)
       currentMonth = new Date().getMonth()
     else
@@ -162,17 +162,35 @@ export default class Registers extends Component {
     })
   }
 
-  handleDestroy(id) {
-    const { actions } = this.props;
+  handleDestroy(register) {
+    const { articles, counterparties } = this.props;
+    const article = articles.find(a => a.id === register.article_id);
+    const counterparty = counterparties.find(c => c.id === register.counterparty_id);
 
-    actions.deleteRegister(id)
-      .then(res => {
-        this.toaster.success('Register was successfully deleted!');
-      })
-      .catch(err => {
-        if (utils.debug) console.error(err);
-        this.toaster.error('Could not delete register!');
-      })
+    confirmAlert({
+      title: 'Are you sure?',
+      message: '',
+      childrenElement: () => <div>
+        <br />Date: {register.date}
+        <br />Article: {article.title}
+        <br />Counterparty: {counterparty ? counterparty.name : '-'}
+        <br />Value: {register.value}
+      </div>,
+      confirmLabel: 'Confirm',
+      cancelLabel: 'Cancel',
+      onConfirm: () => {
+        const { actions } = this.props;
+
+        actions.deleteRegister(register.id)
+          .then(res => {
+            this.toaster.success('Register was successfully deleted!');
+          })
+          .catch(err => {
+            if (utils.debug) console.error(err);
+            this.toaster.error('Could not delete register!');
+          })
+      }
+    })
   }
 
   handleFilterChange = field => e => {

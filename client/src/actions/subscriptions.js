@@ -51,21 +51,17 @@ export const actions = {
       const models = ['articles', 'counterparties', 'registers']
       const { subscriptions, registers, articles, counterparties } = store
 
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         models.forEach(model => {
           if (needModel(subscriptions[model])) {
             queue.add(model)
 
             dispatch(actions.loadModel(model)).then(res => {
               queue.remove(model)
-
-              if (queue.getCount() === 0)
-                resolve()
+              if (queue.getCount() === 0) resolve()
             }).catch(err => {
               queue.remove(model)
-
-              if (queue.getCount() === 0)
-                resolve()
+              reject(err)
             })
           }
         })
@@ -83,7 +79,7 @@ export const actions = {
       const resourceActions = bindActionCreators(resource.actions, dispatch)
       const toaster = new Toaster(dispatch)
 
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         resourceActions[getFunctionName(model)]()
           .then(res => {
             resolve(model)
@@ -91,7 +87,7 @@ export const actions = {
           })
           .catch(err => {
             if (debug) console.error(err)
-            resolve(model)
+            reject({ ...err, model })
             dispatch(actions.resolve(model))
             toaster.error(`Could not load ${model}!`)
           })
@@ -120,9 +116,10 @@ export const actions = {
       dispatch({ type: SUBSCRIBE,
                  payload: models });
 
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         dispatch(actions.checkSubscribers())
           .then(() => resolve())
+          .catch(err => reject(err))
       })
     }
   },

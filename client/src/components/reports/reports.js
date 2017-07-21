@@ -2,6 +2,7 @@ import React, { Component, PropTypes }    from 'react'
 import { bindActionCreators }             from 'redux'
 import { connect }                        from 'react-redux'
 import Select                             from 'react-select'
+import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ArticlesList                       from './articlesList'
@@ -18,7 +19,7 @@ import MonthsTabs                         from './monthsTabs'
   }
 }), dispatch => ({
   actions: bindActionCreators({
-    ...subscriptionActions
+    ...subscriptionActions, toaster
   }, dispatch)
 }))
 export default class Reports extends Component {
@@ -34,15 +35,19 @@ export default class Reports extends Component {
 
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['registers', 'articles', 'counterparties']
-
+    this.toaster = props.actions.toaster()
     this.state = this.createInitialState()
   }
 
   componentWillMount() {
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
+        if (this.props.registers.length === 0) {
+          this.toaster.warning('There is no data for reports')
+        }
         this.createReportState()
       })
+      .catch(err => this.handleSubscriptionsError(err))
   }
 
   componentWillUnmount() {
@@ -50,7 +55,7 @@ export default class Reports extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.isStateReady
+    return nextState.isStateReady || nextState.isError
   }
 
   createInitialState() {
@@ -60,6 +65,7 @@ export default class Reports extends Component {
 
     return {
       profit: 0,
+      isError: false,
       isStateReady: false,
       current: { year, month, article: null },
       available: { years: [], months: [] },
@@ -172,7 +178,21 @@ export default class Reports extends Component {
     return type == 'Cost' ? -value : value
   }
 
+  handleSubscriptionsError(error) {
+    this.setState((prevState) => ({
+      ...prevState,
+      isError: true,
+      isStateReady: false,
+      available: {
+        years: [ new Date().getFullYear() ],
+        months: []
+      }
+    }))
+  }
+
   handleYearChange = e => {
+    if (this.state.isError) return
+
     const year = e.value
 
     setStatePromise(this, (prevState => ({
@@ -183,6 +203,8 @@ export default class Reports extends Component {
   }
 
   handleMonthChange = month => {
+    if (this.state.isError) return
+
     setStatePromise(this, (prevState => ({
       current: {
         ...prevState.current, month
@@ -191,6 +213,8 @@ export default class Reports extends Component {
   }
 
   handleArticleChange = id => e => {
+    if (this.state.isError) return
+
     const { current } = this.state
 
     this.setState((prevState) => ({
@@ -204,11 +228,13 @@ export default class Reports extends Component {
   render() {
     const { report, profit, current, available } = this.state
 
-    if (!this.state.isStateReady) { return(
-      <span className='spin-wrap main-loader'>
-        <i class='fa fa-spinner fa-spin fa-3x'></i>
-      </span>
-    ) }
+    if (!this.state.isStateReady && !this.state.isError) {
+      return(
+        <span className='spin-wrap main-loader'>
+          <i class='fa fa-spinner fa-spin fa-3x'></i>
+        </span>
+      )
+    }
 
     return(
       <div>

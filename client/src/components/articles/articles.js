@@ -2,7 +2,7 @@ import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import { toaster }                        from '../../actions/alerts';
-import { actions as articleActions }      from '../../resources/article';
+import { actions as articleActions }      from '../../resources/articles';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import ArticlesList                       from './list';
 import ArticleForm                        from './form';

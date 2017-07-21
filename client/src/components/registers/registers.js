@@ -1,10 +1,10 @@
-import React, { Component, PropTypes }      from 'react';
-import { bindActionCreators }               from 'redux';
-import { connect }                          from 'react-redux';
+import React, { Component, PropTypes }    from 'react';
+import { bindActionCreators }             from 'redux';
+import { connect }                        from 'react-redux';
 import Select                               from 'react-select';
 import moment                               from 'moment';
 import { toaster }                          from '../../actions/alerts';
-import { actions as registerActions }       from '../../resources/register';
+import { actions as registerActions }       from '../../resources/registers';
 import { actions as subscriptionActions }   from '../../actions/subscriptions';
 import RegisterForm                         from './form';
 import RegistersList                        from './list';

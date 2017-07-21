@@ -1,7 +1,7 @@
 import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
-import { actions as counterpartyActions } from '../../resources/counterparty';
+import { actions as counterpartyActions } from '../../resources/counterparties';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
 import List                               from './list';

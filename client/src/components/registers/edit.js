@@ -5,7 +5,7 @@ import { push }                           from 'react-router-redux';
 import { defaultHeaders }                 from 'redux-rest-resource';
 import { toaster }                        from '../../actions/alerts';
 import * as utils                         from '../../utils';
-import { actions as registerActions }     from '../../resources/register';
+import { actions as registerActions }     from '../../resources/registers';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import RegisterForm                       from './form';
 

@@ -4,7 +4,7 @@ import { connect }                        from 'react-redux';
 import { getCurrentUser }                 from '../../helpers/currentUser';
 import { toaster }                        from '../../actions/alerts';
 import { setupCurrentWorkspace }          from '../../actions/workspaces';
-import { actions as workspaceActions }    from '../../resources/workspace';
+import { actions as workspaceActions }    from '../../resources/workspaces';
 import { actions as workspaceAppActions } from '../../actions/workspaces';
 import WorkspacesList                     from './list';
 import WorkspaceForm                      from './form';

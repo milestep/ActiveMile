@@ -116,7 +116,7 @@ export default class Counterparties extends Component {
 
   render() {
     return(
-      <div className="container">
+      <div>
         <h3>Counterparties</h3>
 
         <div className="row">

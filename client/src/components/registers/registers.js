@@ -9,9 +9,8 @@ import { actions as subscriptionActions }   from '../../actions/subscriptions';
 import RegisterForm                         from './form';
 import RegistersList                        from './list';
 import RegistersFilter                      from './filter';
-import * as utils                           from '../../utils';
 import ReactConfirmAlert, { confirmAlert }  from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css'
+import * as utils                           from '../../utils';
 
 const monthsNames = moment.monthsShort();
 

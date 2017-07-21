@@ -5,17 +5,17 @@ import * as utils                       from '../../utils';
 
 export default class ArticlesList extends Component {
   static propTypes = {
-    current: PropTypes.number,
+    collapsedArticles: PropTypes.array,
     type: PropTypes.string.isRequired,
     articles: PropTypes.array.isRequired,
     handleArticleChange: PropTypes.func.isRequired
   }
 
   createArticlesList() {
-    const { articles, current } = this.props
+    const { articles, collapsedArticles } = this.props
 
     return articles.map((article, index) => {
-      const isExpanded = current == article.id
+      const isCollapsed = collapsedArticles.indexOf(article.id) === -1
       const { counterparties } = article
 
       return(
@@ -27,15 +27,15 @@ export default class ArticlesList extends Component {
               <div className='col-md-1'>
                 <button
                   className='btn btn-default article-expand btn-xs'
-                  onClick={(e) => this.props.handleArticleChange(article.id)(e)}
+                  onClick={(e) => this.props.handleArticleChange(article.id, article.type)(e)}
                 >
-                  <i class={`fa fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                  <i class={`fa fa-angle-${isCollapsed ? 'up' : 'down'}`}></i>
                 </button>
               </div>
             </div>
           </div>
 
-          { isExpanded ?
+          { isCollapsed ?
             <div className='panel-body'>
               { this.createCounterpartiesList(counterparties) }
             </div>

@@ -67,9 +67,10 @@ export default class Reports extends Component {
       profit: 0,
       isError: false,
       isStateReady: false,
-      current: { year, month, article: null },
+      current: { year, month },
       available: { years: [], months: [] },
-      report: { Revenue: [], Cost: [] }
+      report: { Revenue: [], Cost: [] },
+      collapsedArticles: { Revenue: [], Cost: [] },
     }
   }
 
@@ -212,21 +213,29 @@ export default class Reports extends Component {
     }))).then(() => this.createReportState())
   }
 
-  handleArticleChange = id => e => {
+  handleArticleChange = (id, type) => e => {
     if (this.state.isError) return
 
-    const { current } = this.state
+    this.setState((prevState) => {
+      const { collapsedArticles } = prevState
+      const index = collapsedArticles[type].indexOf(id)
+      let newCollapsedArticles = collapsedArticles[type].slice()
 
-    this.setState((prevState) => ({
-      current: {
-        ...prevState.current,
-        article: id !== current.article ? id : null
+      if (index > -1) {
+        newCollapsedArticles.splice(index, 1)
+      } else {
+        newCollapsedArticles.push(id)
       }
-    }))
+
+      return { collapsedArticles: {
+        ...collapsedArticles,
+        [type]: newCollapsedArticles
+      } }
+    })
   }
 
   render() {
-    const { report, profit, current, available } = this.state
+    const { report, profit, current, available, collapsedArticles } = this.state
 
     if (!this.state.isStateReady && !this.state.isError) {
       return(
@@ -264,22 +273,23 @@ export default class Reports extends Component {
 
         <hr />
 
-         <div className='row'>
-          <div className='col-md-6'>
+        <div className='row'>
+          <div className='col-md-12'>
             <h4>Revenue</h4>
             <ArticlesList
               type='Revenue'
               articles={report['Revenue']}
-              current={current.article}
+              collapsedArticles={collapsedArticles['Revenue']}
               handleArticleChange={this.handleArticleChange.bind(this)}
             />
           </div>
-          <div className='col-md-6'>
+
+          <div className='col-md-12'>
             <h4>Cost</h4>
             <ArticlesList
               type='Cost'
               articles={report['Cost']}
-              current={current.article}
+              collapsedArticles={collapsedArticles['Cost']}
               handleArticleChange={this.handleArticleChange.bind(this)}
             />
           </div>

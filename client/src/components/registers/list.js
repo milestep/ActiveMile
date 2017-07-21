@@ -41,7 +41,7 @@ export default class RegistersList extends Component {
               </Link>
               <button
                 className="btn btn-sm btn-danger"
-                onClick={handleDestroy.bind(this, register.id)}
+                onClick={handleDestroy.bind(this, register)}
               >
                 <i class="fa fa-times" aria-hidden="true"></i>
               </button>

@@ -1,15 +1,17 @@
 import React, { Component, PropTypes }    from 'react';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
-import Select                             from 'react-select';
-import moment                             from 'moment';
-import { toaster }                        from '../../actions/alerts';
-import { actions as registerActions }     from '../../resources/registers';
-import { actions as subscriptionActions } from '../../actions/subscriptions';
-import RegisterForm                       from './form';
-import RegistersList                      from './list';
-import RegistersFilter                    from './filter';
-import * as utils                         from '../../utils';
+import Select                               from 'react-select';
+import moment                               from 'moment';
+import { toaster }                          from '../../actions/alerts';
+import { actions as registerActions }       from '../../resources/registers';
+import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import RegisterForm                         from './form';
+import RegistersList                        from './list';
+import RegistersFilter                      from './filter';
+import * as utils                           from '../../utils';
+import ReactConfirmAlert, { confirmAlert }  from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 const monthsNames = moment.monthsShort();
 
@@ -86,8 +88,13 @@ export default class Registers extends Component {
 
     let filter = Object.assign({}, this.state.filter),
         current = Object.assign({}, this.state.current),
-        currentMonth = new Date().getMonth(),
+        currentMonth,
         registers = [];
+
+    if (current.year === null)
+      currentMonth = new Date().getMonth()
+    else
+      currentMonth = new Date(Date.parse(`${current.month} ${current.year}`)).getMonth()
 
     props.registers.forEach((register, i) => {
       const date = new Date(register.date);
@@ -101,10 +108,33 @@ export default class Registers extends Component {
         filter.years.push(year);
     });
 
-    Object.assign(current, {
-      year: filter.years[0],
-      month: monthsNames[currentMonth]
-    });
+    let bool = false
+    let { years } = filter
+
+    while(!bool) {
+      bool = true
+
+      for (var i = years.length - 1; i >= 0; i--) {
+        if (years[i] <= years[i+1]) {
+          bool = false
+          let less_year = years[i]
+          years[i] = years[i+1]
+          years[i+1] = less_year
+        }
+      }
+    }
+
+    if (current.year === null) {
+      Object.assign(current, {
+        year: filter.years[0],
+        month: monthsNames[currentMonth]
+      });
+    } else {
+      Object.assign(current, {
+        year: current.year,
+        month: current.month
+      });
+    }
 
     this.setState((prevState) => ({
       ...prevState,
@@ -132,17 +162,35 @@ export default class Registers extends Component {
     })
   }
 
-  handleDestroy(id) {
-    const { actions } = this.props;
+  handleDestroy(register) {
+    const { articles, counterparties } = this.props;
+    const article = articles.find(a => a.id === register.article_id);
+    const counterparty = counterparties.find(c => c.id === register.counterparty_id);
 
-    actions.deleteRegister(id)
-      .then(res => {
-        this.toaster.success('Register was successfully deleted!');
-      })
-      .catch(err => {
-        if (utils.debug) console.error(err);
-        this.toaster.error('Could not delete register!');
-      })
+    confirmAlert({
+      title: 'Are you sure?',
+      message: '',
+      childrenElement: () => <div>
+        <br />Date: {register.date}
+        <br />Article: {article.title}
+        <br />Counterparty: {counterparty ? counterparty.name : '-'}
+        <br />Value: {register.value}
+      </div>,
+      confirmLabel: 'Confirm',
+      cancelLabel: 'Cancel',
+      onConfirm: () => {
+        const { actions } = this.props;
+
+        actions.deleteRegister(register.id)
+          .then(res => {
+            this.toaster.success('Register was successfully deleted!');
+          })
+          .catch(err => {
+            if (utils.debug) console.error(err);
+            this.toaster.error('Could not delete register!');
+          })
+      }
+    })
   }
 
   handleFilterChange = field => e => {

@@ -64,24 +64,36 @@ export default class Reports extends Component {
           month = date.getMonth()
 
     return {
-      profit: 0,
       isError: false,
       isStateReady: false,
       current: { year, month },
-      available: { years: [], months: [] },
-      report: { Revenue: [], Cost: [] },
-      collapsedArticles: { Revenue: [], Cost: [] },
+      report: {
+        Revenue: [],
+        Cost: []
+      },
+      available: {
+        years: [ year ],
+        months: []
+      },
+      profit: {
+        common: 0,
+        Revenue: 0,
+        Cost: 0
+      },
+      collapsedArticles: {
+        Revenue: [],
+        Cost: []
+      },
     }
   }
 
   createReportState() {
+    const fakeState = this.createInitialState()
     const { registers, articles } = this.props
     const { current } = this.state
 
-    let reportState = { Revenue: [], Cost: [] }
-    let years = [ new Date().getFullYear() ]
-    let months = []
-    let profit = 0
+    let { report, profit } = fakeState
+    let { years, months } = fakeState.available
 
     registers.forEach(register => {
       const registerDate = new Date(register.date),
@@ -95,12 +107,13 @@ export default class Reports extends Component {
       if (!(registerYear === current.year && registerMonth === current.month)) return
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
-      const reportType = reportState[article.type]
+      const reportType = report[article.type]
 
       let reportArticle = reportType.length ?
           reportType.find(article => article.id === register.article_id) : null
 
-      profit += this.getRegisterValue(article.type, register.value)
+      profit.common += this.getRegisterValue(article.type, register.value)
+      profit[article.type] += register.value
 
       if (reportArticle) {
         Object.assign(
@@ -117,9 +130,9 @@ export default class Reports extends Component {
 
     this.setState((prevState) => ({
       ...prevState,
-      report: reportState,
-      isStateReady: true,
+      report,
       profit,
+      isStateReady: true,
       available: {
         years: years.sort((a, b) => b - a),
         months: months.sort()
@@ -128,7 +141,7 @@ export default class Reports extends Component {
   }
 
   getArticleCounterparties(register, article) {
-    const registerValue = this.getRegisterValue(article.type, register.value)
+    const { value } = register
     let articleCounterparties = (article.counterparties).slice()
     let registerCounterparty = this.findRegisterCounterparty(register)
 
@@ -137,34 +150,31 @@ export default class Reports extends Component {
 
       if (registerCounterparty.id !== counterparty.id) continue
 
-      counterparty.value = registerValue + counterparty.value
+      counterparty.value = value + counterparty.value
 
       return {
-        value: article.value + registerValue,
+        value: article.value + value,
         counterparties: articleCounterparties
       }
     }
 
     articleCounterparties.push({
-      ...registerCounterparty,
-      value: registerValue
+      ...registerCounterparty, value
     })
 
     return {
-      value: article.value + registerValue,
+      value: article.value + value,
       counterparties: articleCounterparties
     }
   }
 
   getEmptyArticleCounterparties(register, article) {
-    const registerValue = this.getRegisterValue(article.type, register.value)
-    let registerCounterparty = this.findRegisterCounterparty(register)
+    const { value } = register
 
     return {
-      value: registerValue,
       counterparties: [
-        Object.assign({}, registerCounterparty, { value: registerValue })
-      ]
+        Object.assign({}, this.findRegisterCounterparty(register), { value })
+      ], value
     }
   }
 
@@ -180,14 +190,13 @@ export default class Reports extends Component {
   }
 
   handleSubscriptionsError(error) {
+    const { available } = this.createInitialState()
+
     this.setState((prevState) => ({
       ...prevState,
       isError: true,
       isStateReady: false,
-      available: {
-        years: [ new Date().getFullYear() ],
-        months: []
-      }
+      available
     }))
   }
 
@@ -213,7 +222,7 @@ export default class Reports extends Component {
     }))).then(() => this.createReportState())
   }
 
-  handleArticleChange = (id, type) => e => {
+  handleArticleChange = (id, type) => {
     if (this.state.isError) return
 
     this.setState((prevState) => {
@@ -264,35 +273,61 @@ export default class Reports extends Component {
           </div>
         </div>
 
-        <div className='row'>
-          <div className='col-md-2'><h3>Total:</h3></div>
-          <div className='col-md-10'>
-            <h3 className={profit > 0 ? 'color-green' : 'color-red'}>{profit}</h3>
-          </div>
-        </div>
+        <div className='reports-list'>
 
-        <hr />
+          <div className='row'>
 
-        <div className='row'>
-          <div className='col-md-12'>
-            <h4>Revenue</h4>
-            <ArticlesList
-              type='Revenue'
-              articles={report['Revenue']}
-              collapsedArticles={collapsedArticles['Revenue']}
-              handleArticleChange={this.handleArticleChange.bind(this)}
-            />
+            <div className='col-md-12'>
+              <div className='reports-list-heading'>
+                <h4 className='reports-list-title'>Revenue</h4>
+                <h4 className='reports-list-value'>{ profit['Revenue'] }</h4>
+              </div>
+
+              <hr className='reports-list-separator' />
+
+              <ArticlesList
+                type='Revenue'
+                articles={report['Revenue']}
+                collapsedArticles={collapsedArticles['Revenue']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+              />
+            </div>
+
           </div>
 
-          <div className='col-md-12'>
-            <h4>Cost</h4>
-            <ArticlesList
-              type='Cost'
-              articles={report['Cost']}
-              collapsedArticles={collapsedArticles['Cost']}
-              handleArticleChange={this.handleArticleChange.bind(this)}
-            />
+          <div className='row'>
+
+            <div className='col-md-12'>
+              <div className='reports-list-heading'>
+                <h4 className='reports-list-title'>Cost</h4>
+                <h4 className='reports-list-value'>{ profit['Cost'] }</h4>
+              </div>
+
+              <hr className='reports-list-separator' />
+
+              <ArticlesList
+                type='Cost'
+                articles={report['Cost']}
+                collapsedArticles={collapsedArticles['Cost']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+              />
+            </div>
+
           </div>
+
+          <div className='row'>
+
+            <div className='col-md-12'>
+              <div className='reports-list-heading profit'>
+                <h4 className='reports-list-title'>Profit</h4>
+                <h4 className={`reports-list-value ${profit.common > 0 ? 'color-green' : 'color-red'}`}>
+                  {profit.common}
+                </h4>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     )

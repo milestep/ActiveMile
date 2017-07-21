@@ -19,15 +19,15 @@ export default class ArticlesList extends Component {
       const { counterparties } = article
 
       return(
-        <div className='panel panel-default' key={index}>
-          <div class="panel-heading">
+        <div className='panel panel-default article-panel' key={index}>
+          <div class='panel-heading'>
             <div className='row'>
-              <div className='col-md-9'>{ article.title }</div>
-              <div className='col-md-2'>{ article.value }</div>
-              <div className='col-md-1'>
+              <div className='col-md-9 article-title'>{ article.title }</div>
+              <div className='col-md-2 article-value'>{ article.value }</div>
+              <div className='col-md-1 article-expand-wrapper'>
                 <button
-                  className='btn btn-default article-expand btn-xs'
-                  onClick={(e) => this.props.handleArticleChange(article.id, article.type)(e)}
+                  className='btn btn-default article-expand-btn btn-xs'
+                  onClick={(e) => this.props.handleArticleChange(article.id, article.type)}
                 >
                   <i class={`fa fa-angle-${isCollapsed ? 'up' : 'down'}`}></i>
                 </button>
@@ -47,12 +47,14 @@ export default class ArticlesList extends Component {
   }
 
   createCounterpartiesList(counterparties) {
+    const { type } = this.props
+
     return counterparties.map((counterparty, index) => {
       return(
-        <div key={index}>
+        <div className={`counterparty-wrapper type-${type}`} key={index}>
           <div className='row'>
-            <div className='col-md-9'>{ counterparty.name || '-' }</div>
-            <div className='col-md-3'>{ counterparty.value }</div>
+            <div className='col-md-9 counterparty-name'>{ counterparty.name || '-' }</div>
+            <div className='col-md-3 counterparty-value'>{ counterparty.value }</div>
           </div>
         </div>
       )
@@ -61,7 +63,7 @@ export default class ArticlesList extends Component {
 
   renderEmptyList() {
     return (
-      <div className="alert alert-info">
+      <div className='alert alert-info'>
         <span>There are no articles here</span>
       </div>
     )
@@ -71,7 +73,9 @@ export default class ArticlesList extends Component {
     const { articles } = this.props
 
     return (
-      <div>{ articles.length ? this.createArticlesList() : this.renderEmptyList() }</div>
+      <div className='reports-list-item'>
+        { articles.length ? this.createArticlesList() : this.renderEmptyList() }
+      </div>
     )
   }
 }

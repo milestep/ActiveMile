@@ -81,7 +81,7 @@ export const actions = {
       dispatch({ type: CURRENT_WORKSPACE_SPECIFIY,
                  payload: workspace });
       dispatch(actions.resolve());
-      _actions.checkSubscribers(true);
+      _actions.fetchSubscriptions(true);
     }
   },
   setupCurrentWorkspace: function(workspace) {

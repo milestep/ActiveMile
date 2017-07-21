@@ -9,7 +9,6 @@ import { actions as subscriptionActions }   from '../../actions/subscriptions';
 import RegisterForm                         from './form';
 import RegistersList                        from './list';
 import RegistersFilter                      from './filter';
-import ReactConfirmAlert, { confirmAlert }  from 'react-confirm-alert';
 import * as utils                           from '../../utils';
 
 const monthsNames = moment.monthsShort();
@@ -161,35 +160,19 @@ export default class Registers extends Component {
     })
   }
 
-  handleDestroy(register) {
-    const { articles, counterparties } = this.props;
-    const article = articles.find(a => a.id === register.article_id);
-    const counterparty = counterparties.find(c => c.id === register.counterparty_id);
+  handleDestroy(id) {
+    if (confirm("Are you sure?")) {
+      const { actions } = this.props;
 
-    confirmAlert({
-      title: 'Are you sure?',
-      message: '',
-      childrenElement: () => <div>
-        <br />Date: {register.date}
-        <br />Article: {article.title}
-        <br />Counterparty: {counterparty ? counterparty.name : '-'}
-        <br />Value: {register.value}
-      </div>,
-      confirmLabel: 'Confirm',
-      cancelLabel: 'Cancel',
-      onConfirm: () => {
-        const { actions } = this.props;
-
-        actions.deleteRegister(register.id)
-          .then(res => {
-            this.toaster.success('Register was successfully deleted!');
-          })
-          .catch(err => {
-            if (utils.debug) console.error(err);
-            this.toaster.error('Could not delete register!');
-          })
-      }
-    })
+      actions.deleteRegister(id)
+        .then(res => {
+          this.toaster.success('Register was successfully deleted!');
+        })
+        .catch(err => {
+          if (utils.debug) console.error(err);
+          this.toaster.error('Could not delete register!');
+        })
+    }
   }
 
   handleFilterChange = field => e => {

@@ -17,52 +17,42 @@
         a
           color #fff
 
-  &-articles-list
-    .article-overlap
-      display flex
-      align-items center
-      justify-content space-between
-      margin-bottom 10px
+.reports-list
+  &-item
+    margin-bottom 30px
 
-    .article-title
-      font-weight bold
+  &-heading
+    display flex
+    align-items center
+    justify-content space-between
+    &.profit
+      margin-bottom 40px
 
-    .article-expand
-      margin-left 10px
-      font-size 24px
-      line-height 0
-      padding 7px 8.5px 7px 8px
-      i
-        line-height 0.75
+  &-value
+    font-weight 600
 
-    .list-group-item.no-exists
-      .alert
-        margin 5px 0
+  &-separator
+    margin-top 2px
+    margin-bottom 18px
 
-    .article-depths-overlap
-      list-style-type none
-      padding-left 15px
+  .article-panel
+    margin-bottom 0
+    border-radius 0
+    &:not(:last-child)
+      border-bottom: 0
 
+    .panel-body
+      padding 13px 15px
 
-      li.dep-list-item
-        display flex
-        align-items center
-        justify-content space-between
-        padding 3px 0
+    .article-value
+      font-weight 600
 
-        .right-side
-          margin-right 44px
+  .counterparty-wrapper
+    padding 2px 0
+    font-size 13px
 
-  &-article
-    &.expanded
-      .article-overlap
-        margin-bottom 0
-
-      .article-depths-overlap
-        display none
-
-  .Select-menu-outer
-    z-index 1000
-
-.profit-wrapper
-  font-size 17px
+    &.type
+      &-Revenue
+        color green
+      &-Cost
+        color red

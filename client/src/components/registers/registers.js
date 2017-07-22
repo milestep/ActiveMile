@@ -272,39 +272,45 @@ export default class Registers extends Component {
           Registers
         </h3>
 
-        <div className="row">
-          <div className="col-md-8">
-            <RegistersFilter
-              filter={this.state.filter}
-              current={this.state.current}
-              handleFilterChange={this.handleFilterChange}
-            />
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Article</th>
-                  <th>Counterparty</th>
-                  <th>Value</th>
-                  <th>Notes</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              { registerList }
-            </table>
-          </div>
-
-          { isFormDataReady ?
-            <div className="col-md-4">
-              <RegisterForm
-                isFetching={isCreating}
-                handleSubmit={this.handleCreate}
-                articles={articles}
-                counterparties={counterparties}
+        { articles.length ?
+          <div className="row">
+            <div className="col-md-9">
+              <RegistersFilter
+                filter={this.state.filter}
+                current={this.state.current}
+                handleFilterChange={this.handleFilterChange}
               />
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Article</th>
+                    <th>Counterparty</th>
+                    <th>Value</th>
+                    <th>Notes</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                { registerList }
+              </table>
             </div>
-          : null }
-        </div>
+
+            { isFormDataReady ?
+              <div className="col-md-3">
+                <RegisterForm
+                  isFetching={isCreating}
+                  handleSubmit={this.handleCreate}
+                  articles={articles}
+                  counterparties={counterparties}
+                />
+              </div>
+            : null }
+          </div>
+        :
+          <div className='alert alert-info'>
+            <span>You must create articles before you can add records to the Register</span>
+          </div>
+        }
       </div>
     );
   }

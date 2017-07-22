@@ -1,6 +1,6 @@
-import React, { Component, PropTypes }    from 'react';
-import { bindActionCreators }             from 'redux';
-import { connect }                        from 'react-redux';
+import React, { Component, PropTypes }      from 'react';
+import { bindActionCreators }               from 'redux';
+import { connect }                          from 'react-redux';
 import Select                               from 'react-select';
 import moment                               from 'moment';
 import { toaster }                          from '../../actions/alerts';

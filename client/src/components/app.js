@@ -78,7 +78,7 @@ export default class App extends Component {
         />
 
         <div className="site-container">
-          <div className="container">
+          <div className="container-fluid">
             { this.props.children }
           </div>
         </div>

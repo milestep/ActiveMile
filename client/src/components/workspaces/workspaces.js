@@ -114,21 +114,23 @@ export default class Workspaces extends Component {
   }
 
   deleteWorkspace(id) {
-    const { actions, workspaces, currentWorkspace } = this.props;
+    if (confirm("Are you sure?")) {
+      const { actions, workspaces, currentWorkspace } = this.props;
 
-    actions.deleteWorkspace(id)
-      .then(res => {
-        const { workspaces } = this.props;
+      actions.deleteWorkspace(id)
+        .then(res => {
+          const { workspaces } = this.props;
 
-        if (currentWorkspace && !utils.empty(workspaces) && id === currentWorkspace.id) {
-          actions.setupCurrentWorkspace(workspaces[workspaces.length - 1]);
-        }
-        this.toaster.success('Workspace was deleted!');
-      })
-      .catch(err => {
-        if (utils.debug) console.error(err);
-        this.toaster.error('Could not delete workspace!');
-      })
+          if (currentWorkspace && !utils.empty(workspaces) && id === currentWorkspace.id) {
+            actions.setupCurrentWorkspace(workspaces[workspaces.length - 1]);
+          }
+          this.toaster.success('Workspace was deleted!');
+        })
+        .catch(err => {
+          if (utils.debug) console.error(err);
+          this.toaster.error('Could not delete workspace!');
+        })
+    }
   }
 
   toggleEdited(id, status) {

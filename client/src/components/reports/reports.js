@@ -4,6 +4,7 @@ import { connect }                        from 'react-redux'
 import Select                             from 'react-select'
 import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
+import { actions as workspaceActions }    from '../../actions/workspaces'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
@@ -12,6 +13,7 @@ import MonthsTabs                         from './monthsTabs'
   registers: state.registers.items,
   articles: state.articles.items,
   counterparties: state.counterparties.items,
+  nextWorkspace: state.workspaces.app.next,
   isResolved: {
     registers: state.subscriptions.registers.resolved,
     articles: state.subscriptions.articles.resolved,
@@ -19,7 +21,9 @@ import MonthsTabs                         from './monthsTabs'
   }
 }), dispatch => ({
   actions: bindActionCreators({
-    ...subscriptionActions, toaster
+    ...subscriptionActions,
+    ...workspaceActions,
+    toaster
   }, dispatch)
 }))
 export default class Reports extends Component {
@@ -27,6 +31,7 @@ export default class Reports extends Component {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
+    nextWorkspace: PropTypes.object.isRequired,
     isResolved: PropTypes.object.isRequired
   }
 
@@ -50,12 +55,24 @@ export default class Reports extends Component {
       .catch(err => this.handleSubscriptionsError(err))
   }
 
+  componentWillReceiveProps(nextProps, nextState) {
+    if (this.isNextWorkspaceChanged()) {
+      this.createReportState()
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.isStateReady || nextState.isError) return true
+    if (this.isNextWorkspaceChanged()) return true
+    return false
+  }
+
   componentWillUnmount() {
     this.props.actions.unsubscribe(this.subscriptions)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.isStateReady || nextState.isError
+  isNextWorkspaceChanged() {
+    return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 
   createInitialState() {

@@ -4,10 +4,12 @@ const {
   CURRENT_WORKSPACE_SPECIFIY,
   CURRENT_WORKSPACE_REMOVE,
   CURRENT_WORKSPACE_FETCHING,
-  CURRENT_WORKSPACE_RESOLVE
+  CURRENT_WORKSPACE_RESOLVE,
+  CURRENT_WORKSPACE_NEXT
 } = WorkspaceActions;
 
 const initialState = {
+  next: {},
   current: null,
   fetching: false,
   resolved: false
@@ -42,6 +44,13 @@ export default (state = initialState, action) => {
         ...state,
         fetching: false,
         resolved: true
+      }
+    }
+
+    case CURRENT_WORKSPACE_NEXT: {
+      return {
+        ...state,
+        next: action.payload
       }
     }
 

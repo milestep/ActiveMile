@@ -12,8 +12,9 @@ const {
   CURRENT_WORKSPACE_SPECIFIY,
   CURRENT_WORKSPACE_REMOVE,
   CURRENT_WORKSPACE_FETCHING,
-  CURRENT_WORKSPACE_RESOLVE
-} = WorkspaceActions;
+  CURRENT_WORKSPACE_RESOLVE,
+  CURRENT_WORKSPACE_NEXT
+} = WorkspaceActions
 
 export const actions = {
   loadWorkspaces: function() {
@@ -25,7 +26,7 @@ export const actions = {
       const toaster = new Toaster(dispatch);
       const _actions = bindActionCreators({
         ...workspaceActions
-      }, dispatch);
+      }, dispatch)
 
       _actions.fetchWorkspaces()
         .then(res => {
@@ -76,12 +77,15 @@ export const actions = {
     return function(dispatch) {
       const _actions = bindActionCreators({
         ...subscriptionActions
-      }, dispatch);
+      }, dispatch)
 
-      dispatch({ type: CURRENT_WORKSPACE_SPECIFIY,
-                 payload: workspace });
-      dispatch(actions.resolve());
-      _actions.fetchSubscriptions(true);
+      dispatch({ type: CURRENT_WORKSPACE_SPECIFIY, payload: workspace })
+
+      dispatch(actions.resolve())
+
+      _actions.fetchSubscriptions(true)
+        .then(res => dispatch({ type: CURRENT_WORKSPACE_NEXT, payload: workspace }))
+        .catch(err => dispatch({ type: CURRENT_WORKSPACE_NEXT, payload: workspace }))
     }
   },
   setupCurrentWorkspace: function(workspace) {
@@ -106,6 +110,14 @@ export const actions = {
   resolve: function() {
     return function(dispatch) {
       dispatch({ type: CURRENT_WORKSPACE_RESOLVE });
+    }
+  },
+  isNextWorkspaceChanged(prevId) {
+    return function(dispatch, getStore) {
+      const store = getStore()
+      const nextId = store.workspaces.app.next.id
+
+      return prevId && nextId && prevId !== nextId
     }
   }
 }

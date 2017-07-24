@@ -174,7 +174,7 @@ export default class Header extends Component {
     return(
       <header className="site-header">
         <nav className="navbar navbar-inverse" role="navigation">
-          <div className="container">
+          <div className="container-fluid">
             <div className="navbar-header">
               <button
                 type="button"

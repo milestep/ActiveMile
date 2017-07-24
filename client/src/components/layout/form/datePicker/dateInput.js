@@ -25,7 +25,7 @@ export default class DateInput extends Component {
         type="text"
         className={className}
         onBlur={this.handleBlur.bind(this)}
-        onChange={this.onChange}
+        onChange={this.onChange.bind(this)}
         onClick={onClick}
         value={value}
         defaultValue={defaultValue}

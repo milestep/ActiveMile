@@ -6,6 +6,7 @@ import moment                               from 'moment';
 import { toaster }                          from '../../actions/alerts';
 import { actions as registerActions }       from '../../resources/registers';
 import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import { actions as workspaceActions }      from '../../actions/workspaces'
 import RegisterForm                         from './form';
 import RegistersList                        from './list';
 import RegistersFilter                      from './filter';
@@ -18,6 +19,7 @@ const monthsNames = moment.monthsShort();
     registers: state.registers.items,
     articles: state.articles.items,
     counterparties: state.counterparties.items,
+    nextWorkspace: state.workspaces.app.next,
     isCreating: state.registers.isCreating,
     isResolved: {
       registers: state.subscriptions.registers.resolved,
@@ -29,6 +31,7 @@ const monthsNames = moment.monthsShort();
     actions: bindActionCreators({
       ...registerActions,
       ...subscriptionActions,
+      ...workspaceActions,
       toaster
     }, dispatch)
   })
@@ -39,6 +42,7 @@ export default class Registers extends Component {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
+    nextWorkspace: PropTypes.object.isRequired,
     isResolved: PropTypes.object.isRequired,
     isCreating: PropTypes.bool
   };
@@ -74,11 +78,15 @@ export default class Registers extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const isDataReady = this.isModelsFetched(this.subscriptions, newProps);
+    const isDataReady = this.isModelsFetched(this.subscriptions, newProps)
 
-    if (isDataReady) {
-      this.createRegistersState(newProps);
+    if (isDataReady || this.isNextWorkspaceChanged()) {
+      this.createRegistersState(newProps)
     }
+  }
+
+  isNextWorkspaceChanged() {
+    return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 
   createRegistersState(props = false) {
@@ -86,20 +94,15 @@ export default class Registers extends Component {
 
     let filter = Object.assign({}, this.state.filter),
         current = Object.assign({}, this.state.current),
-        currentMonth,
+        currentMonth = current.year ? current.month : monthsNames[new Date().getMonth()],
         registers = [];
-
-    if (current.year === null)
-      currentMonth = new Date().getMonth()
-    else
-      currentMonth = new Date(Date.parse(`${current.month} ${current.year}`)).getMonth()
 
     props.registers.forEach((register, i) => {
       const date = new Date(register.date);
       const year = date.getFullYear();
       const month = date.getMonth();
 
-      if (month == currentMonth)
+      if (month == monthsNames.indexOf(currentMonth))
         registers.push(register);
 
       if (!filter.years.includes(year))
@@ -122,10 +125,10 @@ export default class Registers extends Component {
       }
     }
 
-    if (current.year === null) {
+    if (!current.year) {
       Object.assign(current, {
         year: filter.years[0],
-        month: monthsNames[currentMonth]
+        month: currentMonth
       });
     } else {
       Object.assign(current, {
@@ -204,7 +207,6 @@ export default class Registers extends Component {
   isModelsFetched(models, inputProps = false) {
     const props = inputProps || this.props;
     const { isResolved } = props;
-    const { empty } = utils;
     let returnedValue = true;
 
     models.forEach((model, i) => {
@@ -219,22 +221,33 @@ export default class Registers extends Component {
 
   createRegisterList() {
     const { registers } = this.state;
-    const { articles, counterparties, isResolved } = this.props;
-    const isFormDataReady = this.isModelsFetched(['articles', 'counterparties']);
-    const isListDataReady = this.isModelsFetched(['registers']) && isFormDataReady;
+    const { articles, counterparties } = this.props;
+    const isListDataReady = this.isModelsFetched(this.subscriptions);
 
     let registerList;
 
-    if (isListDataReady && isResolved.registers) {
-      registerList = (
-        <RegistersList
-          registers={registers}
-          articles={articles}
-          counterparties={counterparties}
-          handleDestroy={this.handleDestroy}
-        />
-      );
-    } else if (!isResolved.registers) {
+    if (isListDataReady) {
+      if (registers.length) {
+        registerList = (
+          <RegistersList
+            registers={registers}
+            articles={articles}
+            counterparties={counterparties}
+            handleDestroy={this.handleDestroy}
+          />
+        )
+      } else {
+        registerList = (
+          <tbody>
+            <tr>
+              <td rowSpan="6">
+                There are no registers...
+              </td>
+            </tr>
+          </tbody>
+        )
+      }
+    } else {
       registerList = (
         <tbody>
           <tr>
@@ -242,16 +255,6 @@ export default class Registers extends Component {
               <span className="spin-wrap">
                 <i class="fa fa-spinner fa-spin fa-2x"></i>
               </span>
-            </td>
-          </tr>
-        </tbody>
-      );
-    } else if (isResolved.registers) {
-      registerList = (
-        <tbody>
-          <tr>
-            <td rowSpan="6">
-              There are no registers...
             </td>
           </tr>
         </tbody>

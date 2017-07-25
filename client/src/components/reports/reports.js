@@ -55,7 +55,7 @@ export default class Reports extends Component {
       .catch(err => this.handleSubscriptionsError(err))
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
       this.createReportState()
     }

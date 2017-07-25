@@ -49,11 +49,18 @@ export default class RegistersList extends Component {
           </td>
         </tr>
       )
-    }).reverse();
+    }).reverse()
 
     return(
       <tbody>
-        {registersList}
+        { articles.length ?
+          registersList :
+          <tr>
+            <td rowSpan="6">
+              There are no registers...
+            </td>
+          </tr>
+        }
       </tbody>
     );
   }

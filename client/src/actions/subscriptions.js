@@ -15,9 +15,9 @@ const {
 export const actions = {
   subscribe: function(models) {
     return function(dispatch) {
-      dispatch({ type: SUBSCRIBE, payload: models });
-
       return new Promise((resolve, reject) => {
+        dispatch({ type: SUBSCRIBE, payload: models })
+
         dispatch(actions.fetchSubscriptions())
           .then(() => resolve())
           .catch(err => reject(err))

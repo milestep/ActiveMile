@@ -53,7 +53,7 @@ export default class RegistersList extends Component {
 
     return(
       <tbody>
-        { articles.length ?
+        { registers.length ?
           registersList :
           <tr>
             <td rowSpan="6">

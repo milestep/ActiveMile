@@ -13,65 +13,9 @@ const {
 } = SubscriptionActions
 
 export const actions = {
-  fetchSubscriptions(force=false) {
-    return function(dispatch, getStore) {
-      if (!defaultHeaders['workspace-id']) return
-      if (force) dispatch(actions.reset())
-
-      const store = getStore()
-      const models = ['articles', 'counterparties', 'registers']
-
-      return Promise.all(models.map(model => {
-        if (needModel(store.subscriptions[model])) {
-          return dispatch(actions.loadModel(model))
-        }
-      }))
-    }
-  },
-  loadModel: function(model) {
-    return function(dispatch) {
-      dispatch(actions.moveToPending(model))
-
-      const resource = require(`../resources/${model}`)
-      const resourceActions = bindActionCreators(resource.actions, dispatch)
-      const toaster = new Toaster(dispatch)
-
-      return new Promise((resolve, reject) => {
-        resourceActions[getFunctionName(model)]()
-          .then(res => {
-            resolve(model)
-            dispatch(actions.resolve(model))
-          })
-          .catch(err => {
-            if (debug) console.error(err)
-            reject({ ...err, model })
-            dispatch(actions.resolve(model))
-            toaster.error(`Could not load ${model}!`)
-          })
-        })
-    }
-  },
-  moveToPending: function(model) {
-    return function(dispatch) {
-      dispatch({ type: SUBSCRIPTION_FETCHING,
-                 payload: model });
-    }
-  },
-  resolve: function(model) {
-    return function(dispatch) {
-      dispatch({ type: SUBSCRIPTION_RESOLVE,
-                 payload: model });
-    }
-  },
-  reset: function() {
-    return function(dispatch) {
-      dispatch({ type: SUBSCRIPTION_RESET });
-    }
-  },
   subscribe: function(models) {
     return function(dispatch) {
-      dispatch({ type: SUBSCRIBE,
-                 payload: models });
+      dispatch({ type: SUBSCRIBE, payload: models });
 
       return new Promise((resolve, reject) => {
         dispatch(actions.fetchSubscriptions())
@@ -82,18 +26,76 @@ export const actions = {
   },
   unsubscribe: function(models) {
     return function(dispatch) {
-      dispatch({ type: UNSUBSCRIBE,
-                 payload: models });
+      dispatch({ type: UNSUBSCRIBE, payload: models });
+    }
+  },
+  fetchSubscriptions(force=false) {
+    return function(dispatch, getStore) {
+      if (!defaultHeaders['workspace-id']) return
+      if (force) dispatch(resetSubscriptions())
+
+      const store = getStore()
+      const models = ['articles', 'counterparties', 'registers']
+
+      return Promise.all(models.map(model => {
+        if (needModel(store.subscriptions[model])) {
+          return dispatch(loadModel(model))
+        }
+      }))
     }
   }
+}
+
+// Hidden Actions
+function loadModel(model) {
+  return function(dispatch) {
+    dispatch(moveToPending(model))
+
+    const resource = require(`../resources/${model}`)
+    const resourceActions = bindActionCreators(resource.actions, dispatch)
+    const toaster = new Toaster(dispatch)
+
+    return new Promise((resolve, reject) => {
+      resourceActions[getFunctionName(model)]()
+        .then(res => {
+          resolve(model)
+          dispatch(resolveSubscriptions(model))
+        })
+        .catch(err => {
+          if (debug) console.error(err)
+          reject({ ...err, model })
+          dispatch(resolveSubscriptions(model))
+          toaster.error(`Could not load ${model}!`)
+        })
+      })
+  }
+}
+
+function moveToPending(model) {
+  return function(dispatch) {
+    dispatch({ type: SUBSCRIPTION_FETCHING, payload: model })
+  }
+}
+
+function resolveSubscriptions(model) {
+  return function(dispatch) {
+    dispatch({ type: SUBSCRIPTION_RESOLVE, payload: model });
+  }
+}
+
+function resetSubscriptions() {
+  return function(dispatch) {
+    dispatch({ type: SUBSCRIPTION_RESET });
+  }
+}
+
+// Helpers
+function needModel(model) {
+  return model.qty && !model.resolved && !model.fetching
 }
 
 function getFunctionName(model) {
   if (model == 'counterparties')
     model = 'counterpartys'
   return `fetch${toTitleCase(model)}`
-}
-
-function needModel(model) {
-  return model.qty && !model.resolved && !model.fetching
 }

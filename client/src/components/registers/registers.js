@@ -225,7 +225,7 @@ export default class Registers extends Component {
 
     let registerList;
 
-    if (isListDataReady && isResolved.registers) {
+    if (isListDataReady) {
       registerList = (
         <RegistersList
           registers={registers}

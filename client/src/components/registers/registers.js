@@ -204,7 +204,6 @@ export default class Registers extends Component {
   isModelsFetched(models, inputProps = false) {
     const props = inputProps || this.props;
     const { isResolved } = props;
-    const { empty } = utils;
     let returnedValue = true;
 
     models.forEach((model, i) => {
@@ -219,22 +218,33 @@ export default class Registers extends Component {
 
   createRegisterList() {
     const { registers } = this.state;
-    const { articles, counterparties, isResolved } = this.props;
-    const isFormDataReady = this.isModelsFetched(['articles', 'counterparties']);
-    const isListDataReady = this.isModelsFetched(['registers']) && isFormDataReady;
+    const { articles, counterparties } = this.props;
+    const isListDataReady = this.isModelsFetched(this.subscriptions);
 
     let registerList;
 
     if (isListDataReady) {
-      registerList = (
-        <RegistersList
-          registers={registers}
-          articles={articles}
-          counterparties={counterparties}
-          handleDestroy={this.handleDestroy}
-        />
-      );
-    } else if (!isResolved.registers) {
+      if (registers.length) {
+        registerList = (
+          <RegistersList
+            registers={registers}
+            articles={articles}
+            counterparties={counterparties}
+            handleDestroy={this.handleDestroy}
+          />
+        )
+      } else {
+        registerList = (
+          <tbody>
+            <tr>
+              <td rowSpan="6">
+                There are no registers...
+              </td>
+            </tr>
+          </tbody>
+        )
+      }
+    } else {
       registerList = (
         <tbody>
           <tr>
@@ -242,16 +252,6 @@ export default class Registers extends Component {
               <span className="spin-wrap">
                 <i class="fa fa-spinner fa-spin fa-2x"></i>
               </span>
-            </td>
-          </tr>
-        </tbody>
-      );
-    } else if (isResolved.registers) {
-      registerList = (
-        <tbody>
-          <tr>
-            <td rowSpan="6">
-              There are no registers...
             </td>
           </tr>
         </tbody>

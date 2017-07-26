@@ -92,7 +92,7 @@ export default class Registers extends Component {
   createRegistersState(props = false) {
     if (!props) props = this.props;
 
-    let filter = Object.assign({}, this.state.filter),
+    let filter = { years: [] },
         current = Object.assign({}, this.state.current),
         currentMonth = current.year ? current.month : monthsNames[new Date().getMonth()],
         registers = [];
@@ -108,6 +108,8 @@ export default class Registers extends Component {
       if (!filter.years.includes(year))
         filter.years.push(year);
     });
+
+    if (!filter.years.length) filter.years = [ new Date().getFullYear() ]
 
     let bool = false
     let { years } = filter

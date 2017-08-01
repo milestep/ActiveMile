@@ -83,7 +83,7 @@ export default class Reports extends Component {
     return {
       isError: false,
       isStateReady: false,
-      current: { year, month },
+      current: { year, month: [month] },
       report: {
         Revenue: [],
         Cost: []
@@ -121,7 +121,7 @@ export default class Reports extends Component {
       if (registerYear === current.year)
         pushUnique(months, registerMonth)
 
-      if (!(registerYear === current.year && registerMonth === current.month)) return
+      if (!(registerYear === current.year && current.month.includes(registerMonth))) return
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
       const reportType = report[article.type]
@@ -231,10 +231,17 @@ export default class Reports extends Component {
 
   handleMonthChange = month => {
     if (this.state.isError) return
+    let currentMonths = Object.assign([], this.state.current.month)
+    let index = currentMonths.indexOf(month)
+
+    if (index != -1)
+      currentMonths.splice([index], 1)
+    else
+      currentMonths.push(month)
 
     setStatePromise(this, (prevState => ({
       current: {
-        ...prevState.current, month
+        ...prevState.current, month: currentMonths
       }
     }))).then(() => this.createReportState())
   }

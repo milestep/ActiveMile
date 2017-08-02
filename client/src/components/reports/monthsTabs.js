@@ -8,21 +8,22 @@ const monthsNames = moment.monthsShort()
 
 export default class MonthsTabs extends Component {
   static propTypes = {
-    current: PropTypes.number.isRequired,
+    current: PropTypes.array.isRequired,
     available: PropTypes.array.isRequired,
     handleMonthChange: PropTypes.func.isRequired
   };
 
   render() {
     const { current, available, handleMonthChange } = this.props
-
     let tabs = [];
 
     monthsNames.forEach((month, index) => {
-      const isCurrent = current == month;
-      let listClassNames = [];
+      const isCurrent = current.includes(monthsNames.indexOf(month))
+      let listClassNames = []
 
-      if (isCurrent) listClassNames.push('active');
+      if (isCurrent)
+        listClassNames.push('active');
+
       if (available.indexOf(index) === -1)
         listClassNames.push('empty');
 

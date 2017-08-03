@@ -8,6 +8,11 @@ import { actions as workspaceActions }    from '../../actions/workspaces'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
+import moment                             from 'moment';
+
+import TESTArticlesList                       from './TESTarticlesList'
+const monthsNames = moment.monthsShort()
+
 
 @connect(state => ({
   registers: state.registers.items,
@@ -80,23 +85,34 @@ export default class Reports extends Component {
           year = date.getFullYear(),
           month = date.getMonth()
 
+    let report = {}
+
+    monthsNames.forEach(monthName => report[monthName] = {
+      Revenue: [],
+      Cost: [],
+      sumaProfit: 0,
+      sumaRevenue: 0,
+      sumaCost: 0
+    })
+
     return {
       isError: false,
       isStateReady: false,
       current: { year, month: [month] },
-      report: {
-        Revenue: [],
-        Cost: []
-      },
+      report: report,
+      // report: {
+      //   Revenue: [],
+      //   Cost: []
+      // },
       available: {
         years: [ year ],
         months: []
       },
-      profit: {
-        common: 0,
-        Revenue: 0,
-        Cost: 0
-      },
+      // profit: {
+      //   common: 0,
+      //   Revenue: 0,
+      //   Cost: 0
+      // },
       collapsedArticles: {
         Revenue: [],
         Cost: []
@@ -109,7 +125,7 @@ export default class Reports extends Component {
     const { registers, articles } = this.props
     const { current } = this.state
 
-    let { report, profit } = fakeState
+    let { report/*, profit */} = fakeState
     let { years, months } = fakeState.available
 
     registers.forEach(register => {
@@ -124,13 +140,11 @@ export default class Reports extends Component {
       if (!(registerYear === current.year && current.month.includes(registerMonth))) return
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
-      const reportType = report[article.type]
+      const reportType = report[monthsNames[registerMonth]][article.type]
+      let reportArticle = reportType.length ? reportType.find(article => article.id === register.article_id) : null
 
-      let reportArticle = reportType.length ?
-          reportType.find(article => article.id === register.article_id) : null
-
-      profit.common += this.getRegisterValue(article.type, register.value)
-      profit[article.type] += register.value
+      report[monthsNames[registerMonth]]['suma' + article.type] += register.value
+      report[monthsNames[registerMonth]]['sumaProfit'] += this.getRegisterValue(article.type, register.value)
 
       if (reportArticle) {
         Object.assign(
@@ -148,7 +162,7 @@ export default class Reports extends Component {
     this.setState((prevState) => ({
       ...prevState,
       report,
-      profit,
+      // profit,
       isStateReady: true,
       available: {
         years: years.sort((a, b) => b - a),
@@ -267,6 +281,27 @@ export default class Reports extends Component {
     })
   }
 
+  printCurrentMonths() {
+    const { current } = this.state
+
+    const monthsNames = moment.monthsShort()
+    let printCurrentMonths = [];
+
+    monthsNames.forEach((month, index) => {
+      const isCurrent = current.month.includes(monthsNames.indexOf(month))
+
+      if (isCurrent) {
+        printCurrentMonths.push(
+          <div className='col-md-1' key={month}>
+            { month }
+          </div>
+        )
+      }
+    });
+
+    return printCurrentMonths
+  }
+
   render() {
     const { report, profit, current, available, collapsedArticles } = this.state
 
@@ -297,10 +332,56 @@ export default class Reports extends Component {
           </div>
         </div>
 
-        <div className='reports-list'>
+        <div className='row'>
+          <div className='col-md-2'></div>
+          <div className='col-md-10'>
+            {this.printCurrentMonths()}
+          </div>
+        </div>
+
+
+
+
+
+
 
           <div className='row'>
+            <div className='col-md-12'>
+              <TESTArticlesList
+                currentMonths={current.month}
+                type='Revenue'
+                articles={report}
+                collapsedArticles={collapsedArticles['Revenue']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+              />
+            </div>
+          </div>
 
+        {/*  <div className='row'>
+            <div className='col-md-12'>
+              <TESTArticlesList
+                currentMonths={current.month}
+                type='Cost'
+                articles={report}
+                collapsedArticles={collapsedArticles['Cost']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+              />
+            </div>
+          </div>*/}
+
+
+{/*              <hr className='reports-list-separator' />
+*/}
+             {/* <div className='reports-list-heading'>
+                <h4 className='reports-list-title'>Revenue</h4>
+                <h4 className='reports-list-value'>{ profit['Revenue'] }</h4>
+              </div>*/}
+
+
+
+        {/*<div className='reports-list'>
+
+          <div className='row'>
             <div className='col-md-12'>
               <div className='reports-list-heading'>
                 <h4 className='reports-list-title'>Revenue</h4>
@@ -316,11 +397,9 @@ export default class Reports extends Component {
                 handleArticleChange={this.handleArticleChange.bind(this)}
               />
             </div>
-
           </div>
 
           <div className='row'>
-
             <div className='col-md-12'>
               <div className='reports-list-heading'>
                 <h4 className='reports-list-title'>Cost</h4>
@@ -336,11 +415,9 @@ export default class Reports extends Component {
                 handleArticleChange={this.handleArticleChange.bind(this)}
               />
             </div>
-
           </div>
 
           <div className='row'>
-
             <div className='col-md-12'>
               <div className='reports-list-heading profit'>
                 <h4 className='reports-list-title'>Profit</h4>
@@ -349,10 +426,18 @@ export default class Reports extends Component {
                 </h4>
               </div>
             </div>
-
           </div>
 
         </div>
+*/}
+
+
+
+
+
+
+
+
       </div>
     )
   }

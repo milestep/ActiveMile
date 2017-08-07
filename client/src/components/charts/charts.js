@@ -66,6 +66,7 @@ export default class Charts extends Component {
 
   createInitialState() {
     let chartsData = []
+    let YearNow = new Date().getFullYear()
 
     for (var i = monthsNames.length - 1; i >= 0; i--) {
       chartsData.unshift(
@@ -79,19 +80,26 @@ export default class Charts extends Component {
     }
 
     return {
-      currentYear: 2017,
+      allDateForFilter: [],
+      currentYear: YearNow,
       chartsData: chartsData
     }
   }
 
   createReportState() {
+    console.log(this.state)
     const { registers, articles } = this.props
     const { currentYear } = this.state
+    this.state = this.createInitialState()
+
     let chartsData = Object.assign([], this.state.chartsData);
+    let allDateForFilter =[]
 
     for (var i = registers.length - 1; i >= 0; i--) {
       let register = registers[i]
       let dataNow = new Date(register.date)
+      const registerYear = dataNow.getFullYear()
+      pushUnique(allDateForFilter, registerYear)
 
       if (currentYear === dataNow.getFullYear()) {
         const article = articles.find(article => article.id === register.article_id)
@@ -108,14 +116,32 @@ export default class Charts extends Component {
     }
 
     this.setState({
+      allDateForFilter,
       chartsData: chartsData
     });
+  }
+
+ handleYearChange = e => {
+    if (this.state.isError) return
+
+    const year = e.value
+
+    setStatePromise(this, (prevState => ({
+      currentYear: year
+    }))).then(() => this.createReportState())
   }
 
   render() {
     return(
       <div>
         <h3>Charts</h3>
+          <Select
+            name='years'
+            className='reports-filter-select'
+            onChange={this.handleYearChange.bind(this)}
+            options={this.state.allDateForFilter.map(year => ({ value: year, label: year.toString() }))}
+            value={this.state.currentYear}
+          />
           <BarChart width={900} height={450} data={this.state.chartsData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
             <XAxis dataKey="name"/>
             <YAxis/>

@@ -8,6 +8,9 @@ import { actions as workspaceActions }    from '../../actions/workspaces'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
+import moment                             from 'moment';
+
+const monthsNames = moment.monthsShort()
 
 @connect(state => ({
   registers: state.registers.items,
@@ -85,17 +88,17 @@ export default class Reports extends Component {
       isStateReady: false,
       current: { year, month: [month] },
       report: {
-        Revenue: [],
-        Cost: []
+        Revenue: {},
+        Cost: {}
       },
       available: {
         years: [ year ],
         months: []
       },
       profit: {
-        common: 0,
-        Revenue: 0,
-        Cost: 0
+        common: {},
+        Revenue: {},
+        Cost: {}
       },
       collapsedArticles: {
         Revenue: [],
@@ -112,6 +115,13 @@ export default class Reports extends Component {
     let { report, profit } = fakeState
     let { years, months } = fakeState.available
 
+    const currentTitlesMonths = []
+    current.month.forEach(numMonth => currentTitlesMonths[monthsNames[numMonth]] = 0)
+
+    for(let model in profit) {
+      profit[model] =  Object.assign({}, currentTitlesMonths)
+    }
+
     registers.forEach(register => {
       const registerDate = new Date(register.date),
             registerYear = registerDate.getFullYear(),
@@ -125,25 +135,39 @@ export default class Reports extends Component {
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
       const reportType = report[article.type]
+      const articleTitle = article.title
+      let fakeCurrentTitlesMonths = Object.assign({}, currentTitlesMonths)
+      let counterpartyName = this.findRegisterCounterparty(register)
 
-      let reportArticle = reportType.length ?
-          reportType.find(article => article.id === register.article_id) : null
+      profit[article.type][monthsNames[registerMonth]] += register.value
+      profit['common'][monthsNames[registerMonth]] += this.getRegisterValue(article.type, register.value)
 
-      profit.common += this.getRegisterValue(article.type, register.value)
-      profit[article.type] += register.value
-
-      if (reportArticle) {
-        Object.assign(
-          reportArticle,
-          this.getArticleCounterparties(register, reportArticle)
-        )
+      if (reportType[articleTitle]) {
+        if (reportType[articleTitle]['counterparties'][counterpartyName]) {
+          reportType[articleTitle]['counterparties'][counterpartyName][monthsNames[registerMonth]] += register.value
+        } else {
+          fakeCurrentTitlesMonths[monthsNames[registerMonth]] = register.value
+          reportType[articleTitle]['counterparties'][counterpartyName] = fakeCurrentTitlesMonths
+        }
       } else {
-        reportType.push({
-          ...article,
-          ...this.getEmptyArticleCounterparties(register, article)
-        })
+        reportType[articleTitle] = {}
+        reportType[articleTitle]["counterparties"] = {}
+        fakeCurrentTitlesMonths[monthsNames[registerMonth]] = register.value
+        reportType[articleTitle]["counterparties"][counterpartyName] = fakeCurrentTitlesMonths
       }
     })
+
+    for(let model in report) {
+      for(let articleTitle in report[model]) {
+        report[model][articleTitle]['values'] = Object.assign({}, currentTitlesMonths)
+
+        for(let counterpartyName in report[model][articleTitle]['counterparties']) {
+          for(let month in report[model][articleTitle]['counterparties'][counterpartyName]) {
+            report[model][articleTitle]['values'][month] += report[model][articleTitle]['counterparties'][counterpartyName][month]
+          }
+        }
+      }
+    }
 
     this.setState((prevState) => ({
       ...prevState,
@@ -157,49 +181,12 @@ export default class Reports extends Component {
     }))
   }
 
-  getArticleCounterparties(register, article) {
-    const { value } = register
-    let articleCounterparties = (article.counterparties).slice()
-    let registerCounterparty = this.findRegisterCounterparty(register)
-
-    for (let i = 0; i < articleCounterparties.length; i++) {
-      let counterparty = articleCounterparties[i]
-
-      if (registerCounterparty.id !== counterparty.id) continue
-
-      counterparty.value = value + counterparty.value
-
-      return {
-        value: article.value + value,
-        counterparties: articleCounterparties
-      }
-    }
-
-    articleCounterparties.push({
-      ...registerCounterparty, value
-    })
-
-    return {
-      value: article.value + value,
-      counterparties: articleCounterparties
-    }
-  }
-
-  getEmptyArticleCounterparties(register, article) {
-    const { value } = register
-
-    return {
-      counterparties: [
-        Object.assign({}, this.findRegisterCounterparty(register), { value })
-      ], value
-    }
-  }
-
   findRegisterCounterparty(register) {
     const { counterparties } = this.props
+    let counterpartyName =  register.counterparty_id ? counterparties
+        .find(counterparty => counterparty.id === register.counterparty_id) : { name: '-' }
 
-    return register.counterparty_id ? counterparties
-        .find(counterparty => counterparty.id === register.counterparty_id) : { id: 0 }
+    return counterpartyName.name
   }
 
   getRegisterValue(type, value) {
@@ -241,7 +228,7 @@ export default class Reports extends Component {
 
     setStatePromise(this, (prevState => ({
       current: {
-        ...prevState.current, month: currentMonths
+        ...prevState.current, month: currentMonths.sort((a, b) => a - b)
       }
     }))).then(() => this.createReportState())
   }
@@ -265,6 +252,41 @@ export default class Reports extends Component {
         [type]: newCollapsedArticles
       } }
     })
+  }
+
+  printCurrentMonths() {
+    const { current } = this.state
+
+    const monthsNames = moment.monthsShort()
+    let printCurrentMonths = [];
+
+    monthsNames.forEach((month, index) => {
+      const isCurrent = current.month.includes(monthsNames.indexOf(month))
+
+      if (isCurrent) {
+        printCurrentMonths.push(
+          <div className='col-md-1' key={month}>
+            { month }
+          </div>
+        )
+      }
+    });
+
+    return printCurrentMonths
+  }
+
+  profitValues(months, model) {
+    let res = [];
+
+    for(let month in months) {
+      { model === 'common' ?
+        res.push( <div key={month} className={`col-md-1 ${months[month] >= 0 ? 'color-green' : 'color-red'}`}>{ months[month] }</div> )
+      :
+        res.push( <div key={month} className={`col-md-1 ${model === 'Revenue' ? 'color-green' : 'color-red'}`}>{ months[month] }</div> )
+      }
+    }
+
+    return res
   }
 
   render() {
@@ -297,61 +319,66 @@ export default class Reports extends Component {
           </div>
         </div>
 
+        <div className='row'>
+          <div className='col-md-2'></div>
+          <div className='col-md-10'>
+            {this.printCurrentMonths()}
+          </div>
+        </div>
+
         <div className='reports-list'>
-
           <div className='row'>
-
             <div className='col-md-12'>
-              <div className='reports-list-heading'>
-                <h4 className='reports-list-title'>Revenue</h4>
-                <h4 className='reports-list-value'>{ profit['Revenue'] }</h4>
+              <div className='row reports-list-heading'>
+                <h4 className='col-md-2 reports-list-title'>Revenue</h4>
+                <div className='col-md-10 reports-list-value'>
+                  { this.profitValues(profit['Revenue'], 'Revenue') }
+                </div>
               </div>
 
               <hr className='reports-list-separator' />
 
               <ArticlesList
+                currentMonths={current.month}
                 type='Revenue'
                 articles={report['Revenue']}
                 collapsedArticles={collapsedArticles['Revenue']}
                 handleArticleChange={this.handleArticleChange.bind(this)}
               />
             </div>
-
           </div>
 
           <div className='row'>
-
             <div className='col-md-12'>
-              <div className='reports-list-heading'>
-                <h4 className='reports-list-title'>Cost</h4>
-                <h4 className='reports-list-value'>{ profit['Cost'] }</h4>
+              <div className='row reports-list-heading'>
+                <h4 className='col-md-2 reports-list-title'>Cost</h4>
+                <div className='col-md-10 reports-list-value'>
+                  { this.profitValues(profit['Cost'], 'Cost') }
+                </div>
               </div>
 
               <hr className='reports-list-separator' />
 
               <ArticlesList
+                currentMonths={current.month}
                 type='Cost'
                 articles={report['Cost']}
                 collapsedArticles={collapsedArticles['Cost']}
                 handleArticleChange={this.handleArticleChange.bind(this)}
               />
             </div>
-
           </div>
 
           <div className='row'>
-
             <div className='col-md-12'>
-              <div className='reports-list-heading profit'>
-                <h4 className='reports-list-title'>Profit</h4>
-                <h4 className={`reports-list-value ${profit.common > 0 ? 'color-green' : 'color-red'}`}>
-                  {profit.common}
-                </h4>
+              <div className='row reports-list-heading profit'>
+                <h4 className='col-md-2 reports-list-title'>Profit</h4>
+                <div className='col-md-10 reports-list-value'>
+                  { this.profitValues(profit['common'], 'common') }
+                </div>
               </div>
             </div>
-
           </div>
-
         </div>
       </div>
     )

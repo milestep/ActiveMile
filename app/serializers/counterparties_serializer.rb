@@ -1,3 +1,6 @@
 class CounterpartiesSerializer < ActiveModel::Serializer
-  attributes :id, :name, :date, :type, :created_at, :updated_at
+  attributes :id, :name, :date, :type
+=begin
+, :created_at, :updated_at
+=end
 end

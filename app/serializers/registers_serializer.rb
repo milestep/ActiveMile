@@ -1,3 +1,6 @@
 class RegistersSerializer < ActiveModel::Serializer
-  attributes :id, :date, :value, :article_id, :counterparty_id, :created_at, :note, :updated_at
+  attributes :id, :date, :value, :article_id, :counterparty_id, :note
+=begin
+:created_at, , :updated_at
+=end
 end

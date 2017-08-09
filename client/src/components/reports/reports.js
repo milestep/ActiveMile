@@ -275,15 +275,11 @@ export default class Reports extends Component {
     return printCurrentMonths
   }
 
-  profitValues(months, model) {
+  profitValues(months) {
     let res = [];
 
     for(let month in months) {
-      { model === 'common' ?
-        res.push( <div key={month} className={`col-md-1 ${months[month] >= 0 ? 'color-green' : 'color-red'}`}>{ months[month] }</div> )
-      :
-        res.push( <div key={month} className={`col-md-1 ${model === 'Revenue' ? 'color-green' : 'color-red'}`}>{ months[month] }</div> )
-      }
+      res.push( <div key={month} className={'col-md-1'}>{ months[month] }</div> )
     }
 
     return res
@@ -319,20 +315,22 @@ export default class Reports extends Component {
           </div>
         </div>
 
-        <div className='row'>
-          <div className='col-md-2'></div>
-          <div className='col-md-10'>
-            {this.printCurrentMonths()}
-          </div>
-        </div>
-
         <div className='reports-list'>
+          <div className='row'>
+            <div className='col-md-2'></div>
+            <div className='col-md-10 reports-list-align-right'>
+              <div className='reports-list-months'>
+                {this.printCurrentMonths()}
+              </div>
+            </div>
+          </div>
+
           <div className='row'>
             <div className='col-md-12'>
               <div className='row reports-list-heading'>
                 <h4 className='col-md-2 reports-list-title'>Revenue</h4>
-                <div className='col-md-10 reports-list-value'>
-                  { this.profitValues(profit['Revenue'], 'Revenue') }
+                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                  { this.profitValues(profit['Revenue']) }
                 </div>
               </div>
 
@@ -352,8 +350,8 @@ export default class Reports extends Component {
             <div className='col-md-12'>
               <div className='row reports-list-heading'>
                 <h4 className='col-md-2 reports-list-title'>Cost</h4>
-                <div className='col-md-10 reports-list-value'>
-                  { this.profitValues(profit['Cost'], 'Cost') }
+                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                  { this.profitValues(profit['Cost']) }
                 </div>
               </div>
 
@@ -373,8 +371,8 @@ export default class Reports extends Component {
             <div className='col-md-12'>
               <div className='row reports-list-heading profit'>
                 <h4 className='col-md-2 reports-list-title'>Profit</h4>
-                <div className='col-md-10 reports-list-value'>
-                  { this.profitValues(profit['common'], 'common') }
+                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                  { this.profitValues(profit['common']) }
                 </div>
               </div>
             </div>

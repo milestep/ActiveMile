@@ -29,33 +29,32 @@ export default class TestArticlesList extends Component {
             <div className='row'>
               <div className='col-md-2'>
                 <div className='row'>
-                 <div className='col-md-3'>
-                  <div className='col-md-1 article-expand-wrapper'>
-                     <button
+                  <div className='col-md-3 article-expand-wrapper'>
+                    <button
                       className='btn btn-default article-expand-btn btn-xs'
                       onClick={(e) => this.props.handleArticleChange(articleTitle, type)}
                     >
-                      <i class={`fa fa-angle-${isCollapsed ? 'up' : 'down'}`}></i>
+                      <i class={`fa fa-angle-${isCollapsed ? 'down' : 'up'}`}></i>
                     </button>
                   </div>
-                </div>
-                <div className='col-md-9'>
-                  { articleTitle }
+                  <div className='col-md-9'>
+                    { articleTitle }
+                  </div>
                 </div>
               </div>
-
-              </div>
-              <div className='col-md-10'>
-                {this.createValuesByMonths(articles[articleTitle]['values'])}
+              <div className='col-md-10 reports-list-align-right'>
+                { this.createValuesByMonths(articles[articleTitle]['values']) }
               </div>
             </div>
           </div>
 
           { isCollapsed ?
+            null
+          :
             <div className='panel-body'>
               { this.createCounterpartiesList(counterparties) }
             </div>
-          : null }
+          }
         </div>
       )
     }
@@ -72,7 +71,7 @@ export default class TestArticlesList extends Component {
         <div className={`counterparty-wrapper type-${type}`} key={name}>
           <div className='row'>
             <div className='col-md-2 counterparty-name'>{ name || '-' }</div>
-              <div className='col-md-10'>
+              <div className='col-md-10 reports-list-align-right'>
                 {this.createValuesByMonths(counterparties[name])}
               </div>
           </div>

@@ -5,6 +5,7 @@ import Select                             from 'react-select'
 import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
+import { index as fetchRegisters }        from '../../actions/registers'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
@@ -16,9 +17,9 @@ const monthsNames = moment.monthsShort()
   registers: state.registers.items,
   articles: state.articles.items,
   counterparties: state.counterparties.items,
+  filter_years: state.registers.years,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
-    registers: state.subscriptions.registers.resolved,
     articles: state.subscriptions.articles.resolved,
     counterparties: state.subscriptions.counterparties.resolved
   }
@@ -26,7 +27,8 @@ const monthsNames = moment.monthsShort()
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
-    toaster
+    toaster,
+    fetchRegisters
   }, dispatch)
 }))
 export default class Reports extends Component {
@@ -34,6 +36,7 @@ export default class Reports extends Component {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
+    filter_years: PropTypes.array.isRequired,
     nextWorkspace: PropTypes.object.isRequired,
     isResolved: PropTypes.object.isRequired
   }
@@ -42,25 +45,59 @@ export default class Reports extends Component {
     super(props)
 
     this.types = ['Revenue', 'Cost']
-    this.subscriptions = ['registers', 'articles', 'counterparties']
+    this.subscriptions = ['articles', 'counterparties']
     this.toaster = props.actions.toaster()
     this.state = this.createInitialState()
   }
 
+  createInitialState() {
+    const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth()
+
+    return {
+      isError: false,
+      isStateReady: false,
+      current: { year, month: [month] },
+      report: {
+        Revenue: {},
+        Cost: {}
+      },
+      available: {
+        years: [ year ]
+      },
+      profit: {
+        common: {},
+        Revenue: {},
+        Cost: {}
+      },
+      collapsedArticles: {
+        Revenue: [],
+        Cost: []
+      },
+    }
+  }
+
   componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions)
+    this.props.actions.fetchRegisters(this.state.current)
       .then(() => {
-        if (this.props.registers.length === 0) {
-          this.toaster.warning('There is no data for reports')
-        }
-        this.createReportState()
+        this.props.actions.subscribe(this.subscriptions)
+          .then(() => {
+            if (this.props.registers.length === 0) {
+              this.toaster.warning('There is no data for reports')
+            }
+            this.createReportState()
+          })
+          .catch(err => this.handleSubscriptionsError(err))
       })
-      .catch(err => this.handleSubscriptionsError(err))
   }
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.createReportState()
+      this.props.actions.fetchRegisters(this.state.current)
+        .then(() => {
+          this.createReportState()
+        })
     }
   }
 
@@ -78,42 +115,12 @@ export default class Reports extends Component {
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 
-  createInitialState() {
-    const date = new Date(),
-          year = date.getFullYear(),
-          month = date.getMonth()
-
-    return {
-      isError: false,
-      isStateReady: false,
-      current: { year, month: [month] },
-      report: {
-        Revenue: {},
-        Cost: {}
-      },
-      available: {
-        years: [ year ],
-        months: []
-      },
-      profit: {
-        common: {},
-        Revenue: {},
-        Cost: {}
-      },
-      collapsedArticles: {
-        Revenue: [],
-        Cost: []
-      },
-    }
-  }
-
   createReportState() {
     const fakeState = this.createInitialState()
     const { registers, articles } = this.props
     const { current } = this.state
 
     let { report, profit } = fakeState
-    let { years, months } = fakeState.available
 
     const currentTitlesMonths = []
     current.month.forEach(numMonth => currentTitlesMonths[monthsNames[numMonth]] = 0)
@@ -124,14 +131,7 @@ export default class Reports extends Component {
 
     registers.forEach(register => {
       const registerDate = new Date(register.date),
-            registerYear = registerDate.getFullYear(),
             registerMonth = registerDate.getMonth()
-
-      pushUnique(years, registerYear)
-      if (registerYear === current.year)
-        pushUnique(months, registerMonth)
-
-      if (!(registerYear === current.year && current.month.includes(registerMonth))) return
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
       const reportType = report[article.type]
@@ -175,8 +175,7 @@ export default class Reports extends Component {
       profit,
       isStateReady: true,
       available: {
-        years: years.sort((a, b) => b - a),
-        months: months.sort()
+        years: this.props.filter_years
       }
     }))
   }
@@ -213,7 +212,12 @@ export default class Reports extends Component {
       current: {
         ...prevState.current, year
       }
-    }))).then(() => this.createReportState())
+    }))).then(() => {
+      this.props.actions.fetchRegisters(this.state.current)
+        .then(() => {
+          this.createReportState()
+        })
+    })
   }
 
   handleMonthChange = month => {
@@ -230,7 +234,12 @@ export default class Reports extends Component {
       current: {
         ...prevState.current, month: currentMonths.sort((a, b) => a - b)
       }
-    }))).then(() => this.createReportState())
+    }))).then(() => {
+      this.props.actions.fetchRegisters(this.state.current)
+        .then(() => {
+          this.createReportState()
+        })
+    })
   }
 
   handleArticleChange = (id, type) => {
@@ -309,7 +318,6 @@ export default class Reports extends Component {
             />
             <MonthsTabs
               current={current.month}
-              available={available.months}
               handleMonthChange={this.handleMonthChange.bind(this)}
             />
           </div>

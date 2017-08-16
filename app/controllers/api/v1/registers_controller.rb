@@ -7,7 +7,24 @@ class Api::V1::RegistersController < Api::V1::BaseController
   }
 
   def index
-    render_api(registers, :ok, each_serializer: RegistersSerializer)
+    year = Integer(request.headers['year'])
+    month = request.headers['month'].split(/,/)
+
+    for i in 0...month.length
+      month[i] = Integer(month[i]) + 1
+    end
+
+    items = []
+    years = []
+
+    registers.each do |item|
+      years.push(item.date.year) unless years.include?(item.date.year)
+      if item.date.year == year && month.include?(item.date.mon)
+        items.push(item)
+      end
+    end
+
+    render_api({ items: items, years: years.to_a.sort { |x, y| y.to_i <=> x.to_i } }, :ok, each_serializer: RegistersSerializer)
   end
 
   def show

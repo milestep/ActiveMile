@@ -1,4 +1,4 @@
 class CounterpartySerializer < ActiveModel::Serializer
-  attributes :id, :name, :date, :type, :created_at, :updated_at
+  attributes :id, :name, :date, :type, :active
   belongs_to :workspace
 end

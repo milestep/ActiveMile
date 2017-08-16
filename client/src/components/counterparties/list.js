@@ -19,10 +19,10 @@ export default class List extends Component {
     };
   };
 
-  renderItems(type) {
+  renderItems(type, active) {
     const { counterparties, handleDestroy, toggleEdited, editedCounterparty } = this.props;
-
-    let counterparties_now = counterparties.filter(t => t.type === type)
+    console.log(active)
+    let counterparties_now = counterparties.filter(t => t.type === type && t.active === active)
 
     if (counterparties_now && counterparties_now.length) {
       return counterparties_now.map((item, i) => {
@@ -51,6 +51,7 @@ export default class List extends Component {
               <div className="tabs-overlap">
                 <div className="col-md-10">
                   <span className="col-md-9">{ item.name }</span>
+                  <span className="col-md-9">{ item.active ? 'true' : 'false' }</span>
                   <span className="col-md-3">{ moment(item.date).format("DD-MM-YYYY") }</span>
                 </div>
                 <div className="btn-group">
@@ -95,7 +96,8 @@ export default class List extends Component {
 
   createTabsTemplate() {
     let list    = [],
-        content = [];
+        content = [],
+        contentNotActive = [];
 
     this.props.types.forEach((type, i) => {
       const isCurrent = type === this.state.currentType ? true : false;
@@ -115,16 +117,30 @@ export default class List extends Component {
             isCurrent && isFirst ? ' first' : ''
           }`}
         >
-          {this.renderItems(type)}
+          {this.renderItems(type, false)}
+        </div>
+      );
+
+      contentNotActive.push(
+        <div key={i+10}
+          className={`tab-pane fade ${
+            isCurrent ? ' active in' : ''
+          }${
+            isCurrent && isFirst ? ' first' : ''
+          }`}
+        >
+          {this.renderItems(type, true)}
         </div>
       );
     });
 
-    return { list, content }
+    return { list, content, contentNotActive }
   }
 
   render() {
     const tabs = this.createTabsTemplate();
+    console.log(tabs.content)
+    console.log(tabs.contentNotActive)
 
     return(
       <div class="site-tabs">
@@ -133,6 +149,10 @@ export default class List extends Component {
         </ul>
         <div className="tab-content">
           {tabs.content}
+
+          <br /><p>Not active</p>
+
+          {tabs.contentNotActive}
         </div>
       </div>
     );

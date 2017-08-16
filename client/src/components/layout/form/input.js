@@ -1,12 +1,12 @@
 import React, { Component }      from 'react';
-import Formsy, 
+import Formsy,
   { Decorator as FormsyElement } from 'formsy-react';
 
 @FormsyElement()
 export default class FormInput extends Component {
   constructor(props) {
     super(props);
-    
+
     this.handleBlur = this.handleBlur.bind(this)
     this.changeValue = this.changeValue.bind(this)
   }
@@ -24,12 +24,12 @@ export default class FormInput extends Component {
   }
 
   getRequiredMessage() {
-    const { 
-      value, 
-      isBlured, 
+    const {
+      value,
+      isBlured,
       validationErrors,
-      showRequired, 
-      showError 
+      showRequired,
+      showError
     } = this.props;
 
     if (isBlured && (!value && showRequired() && !showError())) {
@@ -58,7 +58,7 @@ export default class FormInput extends Component {
   }
 
   getClassName() {
-    const { 
+    const {
       isBlured, className, showError, showRequired
     } = this.props;
     let newClassName = 'form-group' + (className || '');
@@ -91,8 +91,8 @@ export default class FormInput extends Component {
   render() {
     const className = this.getClassName();
     const errorMessages = this.getAllMessages();
-    const { 
-      inputClassName, placeholder, type, value, getValue 
+    const {
+      inputClassName, placeholder, type, value, getValue
     } = this.props;
 
     return (

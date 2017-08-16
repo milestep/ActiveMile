@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170720125444) do
+ActiveRecord::Schema.define(version: 20170801171942) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,8 +29,9 @@ ActiveRecord::Schema.define(version: 20170720125444) do
     t.date     "date"
     t.string   "type"
     t.integer  "workspace_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "active",       default: true
     t.index ["workspace_id"], name: "index_counterparties_on_workspace_id", using: :btree
   end
 

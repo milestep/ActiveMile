@@ -9,7 +9,7 @@ import { actions as workspaceActions }    from '../../actions/workspaces'
 import { toaster }                        from '../../actions/alerts';
 import moment                             from 'moment';
 import { setStatePromise, pushUnique }    from '../../utils'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
+import { HighchartsChart, Chart, XAxis, YAxis, Title, Legend, ColumnSeries, SplineSeries, PieSeries} from 'react-jsx-highcharts';
 
 const monthsNames = moment.monthsShort();
 
@@ -65,29 +65,25 @@ export default class Charts extends Component {
   }
 
   createInitialState() {
-    let chartsData = []
     let YearNow = new Date().getFullYear()
+    let array = []
 
-    for (var i = monthsNames.length - 1; i >= 0; i--) {
-      chartsData.unshift(
-        {
-          name: monthsNames[i],
-          Revenue: 0,
-          Cost: 0,
-          Profit: 0
-        }
-      );
+    for (var i = 12 - 1; i >= 0; i--) {
+      array[i] = 0
     }
 
     return {
       allDateForFilter: [],
       currentYear: YearNow,
-      chartsData: chartsData
+      chartsData: {
+        Revenue: Object.assign([], array),
+        Cost: Object.assign([], array),
+        Profit: Object.assign([], array)
+      }
     }
   }
 
   createReportState() {
-    console.log(this.state)
     const { registers, articles } = this.props
     const { currentYear } = this.state
     this.state = this.createInitialState()
@@ -95,25 +91,20 @@ export default class Charts extends Component {
     let chartsData = Object.assign([], this.state.chartsData);
     let allDateForFilter =[]
 
-    for (var i = registers.length - 1; i >= 0; i--) {
-      let register = registers[i]
+    registers.forEach(register => {
       let dataNow = new Date(register.date)
       const registerYear = dataNow.getFullYear()
       pushUnique(allDateForFilter, registerYear)
 
-      if (currentYear === dataNow.getFullYear()) {
+      if (!(registerYear === currentYear /*&& current.month.includes(registerMonth)*/)) return
+        let modelMoun = monthsNames[dataNow.getMonth()]
+        let numModelMoun = dataNow.getMonth()
         const article = articles.find(article => article.id === register.article_id)
         let modelTypeArticle = article.type
-        let modelMoun = monthsNames[dataNow.getMonth()]
 
-        for (var j = chartsData.length - 1; j >= 0; j--) {
-          if (chartsData[j].name === modelMoun) {
-            chartsData[j][modelTypeArticle] += register.value
-            chartsData[j].Profit = chartsData[j].Revenue - chartsData[j].Cost
-          }
-        }
-      }
-    }
+        chartsData[modelTypeArticle][numModelMoun] += register.value
+        chartsData['Profit'][numModelMoun] = chartsData['Revenue'][numModelMoun] - chartsData['Cost'][numModelMoun]
+    })
 
     this.setState({
       allDateForFilter,
@@ -132,26 +123,36 @@ export default class Charts extends Component {
   }
 
   render() {
+    let {Revenue, Cost, Profit} = this.state.chartsData
+
     return(
       <div>
-        <h3>Charts</h3>
-          <Select
-            name='years'
-            className='reports-filter-select'
-            onChange={this.handleYearChange.bind(this)}
-            options={this.state.allDateForFilter.map(year => ({ value: year, label: year.toString() }))}
-            value={this.state.currentYear}
-          />
-          <BarChart width={900} height={450} data={this.state.chartsData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-            <XAxis dataKey="name"/>
-            <YAxis/>
-            <CartesianGrid strokeDasharray="3 3"/>
-            <Tooltip/>
-            <Legend />
-            <Bar dataKey="Revenue" fill="#8884d8" />
-            <Bar dataKey="Cost" fill="#82ca9d" />
-            <Bar dataKey="Profit" fill="Orange" />
-          </BarChart>
+        <div className='row'>
+          <div className='col-md-2 select_year'>
+            <Select
+              name='years'
+              className='reports-filter-select'
+              onChange={this.handleYearChange.bind(this)}
+              options={this.state.allDateForFilter.map(year => ({ value: year, label: year.toString() }))}
+              value={this.state.currentYear}
+            />
+          </div>
+        </div>
+
+        <br />
+        <br />
+        <br />
+
+        <HighchartsChart>
+          <Chart />
+          <Legend />
+          <XAxis id="x" categories={monthsNames} title={{text:'Місяць'}}/>
+          <YAxis id="number" title={{text:'Сума'}}>
+            <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
+            <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
+            <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>
+          </YAxis>
+        </HighchartsChart>
       </div>
     );
   };

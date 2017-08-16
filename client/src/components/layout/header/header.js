@@ -33,7 +33,6 @@ export default class Header extends Component {
 
   handleLogout = e => {
     const { logout, router } = this.props;
-
     e.preventDefault();
     logout(router);
   }
@@ -89,6 +88,10 @@ export default class Header extends Component {
       }, {
         to: '/reports',
         title: 'Reports',
+        onClick: this.toggleCollapse
+      }, {
+        to: '/charts',
+        title: 'Charts',
         onClick: this.toggleCollapse
       }]);
 

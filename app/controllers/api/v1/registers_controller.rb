@@ -3,28 +3,18 @@ class Api::V1::RegistersController < Api::V1::BaseController
     current_workspace.registers.find(params[:id])
   }
   expose :registers, -> {
-    current_workspace.registers.order(id: :asc)
+    current_workspace.registers.order(date: :desc)
   }
 
   def index
     year = Integer(request.headers['year'])
     month = request.headers['month'].split(/,/)
 
-    for i in 0...month.length
-      month[i] = Integer(month[i]) + 1
-    end
+    month.each_with_index{|value, key|
+      month[key] = Integer(month[key]) + 1
+    }
 
-    items = []
-    years = []
-
-    registers.each do |item|
-      years.push(item.date.year) unless years.include?(item.date.year)
-      if item.date.year == year && month.include?(item.date.mon)
-        items.push(item)
-      end
-    end
-
-    render_api({ items: items, years: years.to_a.sort { |x, y| y.to_i <=> x.to_i } }, :ok, each_serializer: RegistersSerializer)
+    render_api({ items: registers.get_registers_by_date(year, month), years: registers.years}, :ok, each_serializer: RegistersSerializer)
   end
 
   def show

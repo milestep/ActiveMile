@@ -308,20 +308,26 @@ export default class Reports extends Component {
     return(
       <div>
         <div className='row'>
-          <div className='col-xs-12 reports-filter'>
-            <Select
-              name='years'
-              className='reports-filter-select'
-              onChange={this.handleYearChange.bind(this)}
-              options={available.years.map(year => ({ value: year, label: year.toString() }))}
-              value={current.year}
-            />
-            <MonthsTabs
-              current={current.month}
-              handleMonthChange={this.handleMonthChange.bind(this)}
-            />
+          <div className='reports-filter'>
+            <div className='reports-filter-block'>
+              <Select
+                name='years'
+                className='reports-filter-select'
+                onChange={this.handleYearChange.bind(this)}
+                options={available.years.map(year => ({ value: year, label: year.toString() }))}
+                value={current.year}
+              />
+            </div>
+            <div className='reports-filter-block'>
+              <MonthsTabs
+                current={current.month}
+                handleMonthChange={this.handleMonthChange.bind(this)}
+              />
+            </div>
           </div>
         </div>
+
+        <hr />
 
         <div className='reports-list'>
           <div className='row'>
@@ -342,8 +348,6 @@ export default class Reports extends Component {
                 </div>
               </div>
 
-              <hr className='reports-list-separator' />
-
               <ArticlesList
                 currentMonths={current.month}
                 type='Revenue'
@@ -362,8 +366,6 @@ export default class Reports extends Component {
                   { this.profitValues(profit['Cost']) }
                 </div>
               </div>
-
-              <hr className='reports-list-separator' />
 
               <ArticlesList
                 currentMonths={current.month}

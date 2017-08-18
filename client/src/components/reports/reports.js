@@ -274,7 +274,7 @@ export default class Reports extends Component {
 
       if (isCurrent) {
         printCurrentMonths.push(
-          <div className='col-md-1' key={month}>
+          <div className='col-xs-1' key={month}>
             { month }
           </div>
         )
@@ -288,7 +288,7 @@ export default class Reports extends Component {
     let res = [];
 
     for(let month in months) {
-      res.push( <div key={month} className={'col-md-1'}>{ months[month] }</div> )
+      res.push( <div key={month} className={'col-xs-1'}>{ months[month] }</div> )
     }
 
     return res
@@ -308,7 +308,7 @@ export default class Reports extends Component {
     return(
       <div>
         <div className='row'>
-          <div className='col-md-12 reports-filter'>
+          <div className='col-xs-12 reports-filter'>
             <Select
               name='years'
               className='reports-filter-select'
@@ -325,8 +325,8 @@ export default class Reports extends Component {
 
         <div className='reports-list'>
           <div className='row'>
-            <div className='col-md-2'></div>
-            <div className='col-md-10 reports-list-align-right'>
+            <div className='col-xs-2'></div>
+            <div className='col-xs-10 reports-list-align-right'>
               <div className='reports-list-months'>
                 {this.printCurrentMonths()}
               </div>
@@ -334,10 +334,10 @@ export default class Reports extends Component {
           </div>
 
           <div className='row'>
-            <div className='col-md-12'>
+            <div className='col-xs-12'>
               <div className='row reports-list-heading'>
-                <h4 className='col-md-2 reports-list-title'>Revenue</h4>
-                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                <h4 className='col-xs-2 reports-list-title'>Revenue</h4>
+                <div className='col-xs-10 reports-list-value reports-list-align-right'>
                   { this.profitValues(profit['Revenue']) }
                 </div>
               </div>
@@ -355,10 +355,10 @@ export default class Reports extends Component {
           </div>
 
           <div className='row'>
-            <div className='col-md-12'>
+            <div className='col-xs-12'>
               <div className='row reports-list-heading'>
-                <h4 className='col-md-2 reports-list-title'>Cost</h4>
-                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                <h4 className='col-xs-2 reports-list-title'>Cost</h4>
+                <div className='col-xs-10 reports-list-value reports-list-align-right'>
                   { this.profitValues(profit['Cost']) }
                 </div>
               </div>
@@ -376,10 +376,10 @@ export default class Reports extends Component {
           </div>
 
           <div className='row'>
-            <div className='col-md-12'>
+            <div className='col-xs-12'>
               <div className='row reports-list-heading profit'>
-                <h4 className='col-md-2 reports-list-title'>Profit</h4>
-                <div className='col-md-10 reports-list-value reports-list-align-right'>
+                <h4 className='col-xs-2 reports-list-title'>Profit</h4>
+                <div className='col-xs-10 reports-list-value reports-list-align-right'>
                   { this.profitValues(profit['common']) }
                 </div>
               </div>

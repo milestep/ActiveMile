@@ -9,7 +9,7 @@ import { actions as workspaceActions }    from '../../actions/workspaces'
 import { toaster }                        from '../../actions/alerts';
 import moment                             from 'moment';
 import { setStatePromise, pushUnique }    from '../../utils'
-import { HighchartsChart, Chart, XAxis, YAxis, Title, Legend, ColumnSeries, SplineSeries, PieSeries} from 'react-jsx-highcharts';
+import { HighchartsChart, Chart, XAxis, YAxis, Title, Legend, ColumnSeries, SplineSeries, PieSeries, Tooltip} from 'react-jsx-highcharts';
 
 const monthsNames = moment.monthsShort();
 
@@ -144,6 +144,7 @@ export default class Charts extends Component {
         <br />
 
         <HighchartsChart>
+          <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
           <Chart />
           <Legend />
           <XAxis id="x" categories={monthsNames} title={{text:'Місяць'}}/>

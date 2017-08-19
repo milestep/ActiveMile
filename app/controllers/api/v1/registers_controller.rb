@@ -3,7 +3,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
     current_workspace.registers.find(params[:id])
   }
   expose :registers, -> {
-    current_workspace.registers.order(date: :desc)
+    current_workspace.registers.order(id: :asc)
   }
 
   def index
@@ -14,7 +14,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
       month[key] = Integer(month[key]) + 1
     }
 
-    render_api({ items: registers.get_registers_by_date(year, month), years: registers.years}, :ok, each_serializer: RegistersSerializer)
+    render_api({ items: registers.by_date(year, month), years: Register.years}, :ok, each_serializer: RegistersSerializer)
   end
 
   def show

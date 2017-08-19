@@ -7,26 +7,10 @@ class Register < ApplicationRecord
   validates :value, numericality: true
 
   scope :years, -> {
-    arr_years = []
-
-    (pluck(:date).map { |d|
-      unless arr_years.include?(d.year)
-        arr_years.push(d.year)
-      end
-    })
-
-    arr_years
+    distinct.pluck('cast(extract(year from date) as integer)').sort { |a,b| b.to_i <=> a.to_i }
   }
 
-  scope :get_registers_by_date, -> (year, month) {
-    items = []
-
-    all.map { |item|
-      if item.date.year == year && month.include?(item.date.mon)
-        items.push(item)
-      end
-    }
-
-    items
+  scope :by_date, -> (year, month) {
+    where("cast(extract(year from date) as integer) = ? AND cast(extract(month from date) as integer) IN (?)", year, month)
   }
 end

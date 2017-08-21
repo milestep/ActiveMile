@@ -117,7 +117,7 @@ export default class List extends Component {
             isCurrent && isFirst ? ' first' : ''
           }`}
         >
-          {this.renderItems(type, false)}
+          {this.renderItems(type, true)}
         </div>
       );
 
@@ -129,7 +129,7 @@ export default class List extends Component {
             isCurrent && isFirst ? ' first' : ''
           }`}
         >
-          {this.renderItems(type, true)}
+          {this.renderItems(type, false)}
         </div>
       );
     });

@@ -96,11 +96,11 @@ export default class FormInput extends Component {
     } = this.props;
 
     return (
-      <div className={className}>
+      <div className={this.isCheckbox() ? 'input-checkbox' : className}>
         {this.getLabel()}
         <input
           checked={this.isCheckbox() && getValue() ? 'checked' : null}
-          className={`form-control${inputClassName ? ' ' + inputClassName : ''}`}
+          className={this.isCheckbox() ? 'form-check-input' : `form-control${inputClassName ? ' ' + inputClassName : ''}`}
           name={this.props.name}
           onBlur={this.handleBlur}
           onChange={this.changeValue}

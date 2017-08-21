@@ -51,7 +51,6 @@ export default class List extends Component {
               <div className="tabs-overlap">
                 <div className="col-md-10">
                   <span className="col-md-9">{ item.name }</span>
-                  <span className="col-md-9">{ item.active ? 'true' : 'false' }</span>
                   <span className="col-md-3">{ moment(item.date).format("DD-MM-YYYY") }</span>
                 </div>
                 <div className="btn-group">

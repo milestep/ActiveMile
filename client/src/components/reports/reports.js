@@ -295,6 +295,7 @@ export default class Reports extends Component {
 
   render() {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
+    let printTotal = current.month.length > 1
 
     if (!this.state.isStateReady && !this.state.isError) {
       return(
@@ -331,16 +332,16 @@ export default class Reports extends Component {
 
         <div className='reports-list'>
           <div className='fake-panel'>
-          <div className='row reports-list-align-right'>
-            <div className='col-md-offset-2 col-xs-9'>
-              <div className='reports-list-months'>
-                {this.printCurrentMonths()}
+            <div className='row reports-list-align-right'>
+              <div className='col-md-offset-2 col-xs-9'>
+                <div className='reports-list-months'>
+                  {this.printCurrentMonths()}
+                </div>
+              </div>
+              <div className='col-xs-1 reports-list-title'>
+                { printTotal ? 'Total' : null }
               </div>
             </div>
-            <div className='col-xs-1 reports-list-title'>
-              Total
-            </div>
-          </div>
           </div>
 
           <div className='row'>
@@ -352,7 +353,7 @@ export default class Reports extends Component {
                     { this.profitValues(profit['Revenue']) }
                   </div>
                   <div className='col-xs-1 reports-list-value reports-list-align-right'>
-                    { totalProfit['Revenue'] }
+                    { printTotal ? totalProfit['Revenue'] : null }
                   </div>
                 </div>
               </div>
@@ -376,7 +377,7 @@ export default class Reports extends Component {
                     { this.profitValues(profit['Cost']) }
                   </div>
                   <div className='col-xs-1 reports-list-value reports-list-align-right'>
-                    { totalProfit['Cost'] }
+                    { printTotal ? totalProfit['Cost'] : null }
                   </div>
                 </div>
               </div>
@@ -400,7 +401,7 @@ export default class Reports extends Component {
                     { this.profitValues(profit['common']) }
                   </div>
                   <div className='col-xs-1 reports-list-value reports-list-align-right'>
-                    { totalProfit['common'] }
+                    { printTotal ? totalProfit['common'] : null }
                   </div>
                 </div>
               </div>

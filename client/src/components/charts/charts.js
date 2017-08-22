@@ -65,19 +65,17 @@ export default class Charts extends Component {
   }
 
   createInitialState() {
-    let yearNow = new Date().getFullYear()
-    let months = []
-    for (var i = 11; i >= 0; i--) {
-      months[i] = 0
-    }
+    let currentYear = new Date().getFullYear()
+    let initData = new Array(12)
+      initData.fill(0)
 
     return {
       allDateForFilter: [],
-      currentYear: yearNow,
+      currentYear: currentYear,
       chartsData: {
-        Revenue: Object.assign([], months),
-        Cost: Object.assign([], months),
-        Profit: Object.assign([], months)
+        Revenue: Object.assign([], initData),
+        Cost: Object.assign([], initData),
+        Profit: Object.assign([], initData)
       }
     }
   }

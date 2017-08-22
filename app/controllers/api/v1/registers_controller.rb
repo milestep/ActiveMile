@@ -7,7 +7,14 @@ class Api::V1::RegistersController < Api::V1::BaseController
   }
 
   def index
-    render_api(registers, :ok, each_serializer: RegistersSerializer)
+    year = Integer(request.headers['year'])
+    month = request.headers['month'].split(/,/)
+
+    month.each_with_index{|value, key|
+      month[key] = Integer(month[key]) + 1
+    }
+
+    render_api({ items: registers.by_date(year, month), years: Register.years}, :ok, each_serializer: RegistersSerializer)
   end
 
   def show

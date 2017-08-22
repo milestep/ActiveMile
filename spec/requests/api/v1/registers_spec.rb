@@ -19,15 +19,18 @@ describe 'GET /api/v1/registers' do
   let(:request_params) {{
     access_token: access_token.token
   }}
+
   let(:request_headers) {{
-    'workspace-id': workspace.id
+    'workspace-id': workspace.id,
+    'year': 2.days.ago.year.to_s,
+    'month': 2.days.ago.mon.to_s
   }}
 
   context 'returns all registers' do
     before do
       get '/api/v1/registers',
-          params: request_params,
-          headers: request_headers
+        params: request_params,
+        headers: request_headers
     end
 
     it 'retrives all registers' do

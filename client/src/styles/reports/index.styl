@@ -1,8 +1,10 @@
 .reports-filter
-  display flex
-  align-items center
-  justify-content flex-end
-  margin-bottom 30px
+  display: table
+  margin 0 auto
+
+  &-block
+    display: block;
+    float: left;
 
   &-select
     min-width 102px
@@ -21,6 +23,10 @@
   &-item
     margin-bottom 30px
 
+  &-months
+    font-weight 600
+    margin 0px 10px 0px 10px
+
   &-heading
     display flex
     align-items center
@@ -28,12 +34,12 @@
     &.profit
       margin-bottom 40px
 
+  &-align-right
+    text-align right
+
   &-value
     font-weight 600
-
-  &-separator
-    margin-top 2px
-    margin-bottom 18px
+    margin 0px 10px 0px 10px
 
   .article-panel
     margin-bottom 0

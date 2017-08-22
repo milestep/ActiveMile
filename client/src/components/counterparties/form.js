@@ -63,10 +63,6 @@ export default class Form extends Component {
         }
       }
     }));
-
-    // console.log('field', field)
-    // console.log('values', values)
-    // console.log("this.state", this.state)
   }
 
   toggleButton(status) {

@@ -21,11 +21,10 @@ export default class List extends Component {
 
   renderItems(type, active) {
     const { counterparties, handleDestroy, toggleEdited, editedCounterparty } = this.props;
-    console.log(active)
-    let counterparties_now = counterparties.filter(t => t.type === type && t.active === active)
+    let counterpartiesNow = counterparties.filter(counterparty => counterparty.type === type && counterparty.active === active)
 
-    if (counterparties_now && counterparties_now.length) {
-      return counterparties_now.map((item, i) => {
+    if (counterpartiesNow && counterpartiesNow.length) {
+      return counterpartiesNow.map((item, i) => {
         const isEdited = editedCounterparty === item.id ? true : false;
 
         return (
@@ -138,8 +137,6 @@ export default class List extends Component {
 
   render() {
     const tabs = this.createTabsTemplate();
-    console.log(tabs.content)
-    console.log(tabs.contentNotActive)
 
     return(
       <div class="site-tabs">

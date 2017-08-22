@@ -43,7 +43,7 @@ export default class Charts extends Component {
   componentWillMount() {
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
-        if (this.props.registers.length === 0) {
+        if (!this.props.registers.length) {
           this.toaster.warning('There is no data for reports')
         }
         this.createReportState()
@@ -65,20 +65,19 @@ export default class Charts extends Component {
   }
 
   createInitialState() {
-    let YearNow = new Date().getFullYear()
-    let array = []
-
-    for (var i = 12 - 1; i >= 0; i--) {
-      array[i] = 0
+    let yearNow = new Date().getFullYear()
+    let months = []
+    for (var i = 11; i >= 0; i--) {
+      months[i] = 0
     }
 
     return {
       allDateForFilter: [],
-      currentYear: YearNow,
+      currentYear: yearNow,
       chartsData: {
-        Revenue: Object.assign([], array),
-        Cost: Object.assign([], array),
-        Profit: Object.assign([], array)
+        Revenue: Object.assign([], months),
+        Cost: Object.assign([], months),
+        Profit: Object.assign([], months)
       }
     }
   }
@@ -89,14 +88,14 @@ export default class Charts extends Component {
     this.state = this.createInitialState()
 
     let chartsData = Object.assign([], this.state.chartsData);
-    let allDateForFilter =[]
+    let allDateForFilter = []
 
     registers.forEach(register => {
       let dataNow = new Date(register.date)
       const registerYear = dataNow.getFullYear()
       pushUnique(allDateForFilter, registerYear)
 
-      if (!(registerYear === currentYear /*&& current.month.includes(registerMonth)*/)) return
+      if (!(registerYear === currentYear)) return
         let modelMoun = monthsNames[dataNow.getMonth()]
         let numModelMoun = dataNow.getMonth()
         const article = articles.find(article => article.id === register.article_id)
@@ -138,22 +137,19 @@ export default class Charts extends Component {
             />
           </div>
         </div>
-
-        <br />
-        <br />
-        <br />
-
-        <HighchartsChart>
-          <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
-          <Chart />
-          <Legend />
-          <XAxis id="x" categories={monthsNames} title={{text:'Місяць'}}/>
-          <YAxis id="number" title={{text:'Сума'}}>
-            <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
-            <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
-            <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>
-          </YAxis>
-        </HighchartsChart>
+        <div className="chart_views">
+          <HighchartsChart>
+            <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
+            <Chart />
+            <Legend />
+            <XAxis id="x" categories={monthsNames} title={{text:'Місяць'}}/>
+            <YAxis id="number" title={{text:'Сума'}}>
+              <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
+              <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
+              <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>
+            </YAxis>
+          </HighchartsChart>
+        </div>
       </div>
     );
   };

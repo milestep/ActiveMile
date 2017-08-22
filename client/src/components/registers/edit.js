@@ -5,29 +5,33 @@ import { push }                           from 'react-router-redux';
 import { defaultHeaders }                 from 'redux-rest-resource';
 import { toaster }                        from '../../actions/alerts';
 import * as utils                         from '../../utils';
-import { actions as registerActions }     from '../../resources/registers';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
+import { show as getRegister }            from '../../actions/registers'
+import { update as updateRegister }       from '../../actions/registers'
 import RegisterForm                       from './form';
 
 @connect(
   state => ({
     register: state.registers.item,
-    registers: state.registers.items,
     articles: state.articles.items,
     counterparties: state.counterparties.items,
     isUpdating: state.registers.isUpdating,
     isFetching: {
-      register: state.registers.isFetchingItem,
       articles: state.articles.isFetching,
       counterparties: state.counterparties.isFetching
     }
   }),
   dispatch => ({
     actions: bindActionCreators({
-      ...registerActions,
       ...subscriptionActions,
-      toaster
-    }, dispatch)
+      toaster,
+      getRegister,
+      updateRegister
+    }, dispatch),
+
+    isUpdatingFunk: (bool) => {
+      dispatch({ type: 'REGISTER/IS_UPDATING', payload: bool })
+    }
   })
 )
 export default class RegistersEditor extends Component {
@@ -42,7 +46,7 @@ export default class RegistersEditor extends Component {
       registerFetched: null
     }
 
-    this.subscriptions = ['registers', 'articles', 'counterparties'];
+    this.subscriptions = ['articles', 'counterparties'];
 
     this.toaster = props.actions.toaster();
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -50,18 +54,16 @@ export default class RegistersEditor extends Component {
 
   componentWillMount() {
     const { actions, params } = this.props;
-    const { id } = params;
 
     actions.subscribe(this.subscriptions);
 
-    actions.getRegister(id)
+    actions.getRegister(params.id)
       .then(res => {
         this.setState({ registerFetched: true });
       })
       .catch(err => {
         if (utils.debug) console.error(err);
         this.toaster.error('Could not laod register!');
-        reject(err);
       })
   }
 
@@ -70,6 +72,8 @@ export default class RegistersEditor extends Component {
   }
 
   handleUpdate(inputRegister) {
+    this.props.isUpdatingFunk(true)
+
     return new Promise((resolve, reject) => {
       const { actions, dispatch, params } = this.props;
       const id = +params.id;
@@ -78,11 +82,13 @@ export default class RegistersEditor extends Component {
         .then(res => {
           dispatch(push('/registers'));
           this.toaster.success('Register has been updated');
+          this.props.isUpdatingFunk(false)
           resolve(res);
         })
         .catch(err => {
           if (utils.debug) console.error(err);
           this.toaster.error('Could not update article!');
+          this.props.isUpdatingFunk(false)
           reject(err);
         });
     })

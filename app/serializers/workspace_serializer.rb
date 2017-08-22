@@ -1,4 +1,4 @@
 class WorkspaceSerializer < ActiveModel::Serializer
-  attributes :id, :title, :created_at, :updated_at
+  attributes :id, :title
   has_many   :articles, serializer: ArticleSerializer
 end

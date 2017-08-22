@@ -67,7 +67,7 @@ export default class Charts extends Component {
   createInitialState() {
     let currentYear = new Date().getFullYear()
     let initData = new Array(12)
-      initData.fill(0)
+    initData.fill(0)
 
     return {
       allDateForFilter: [],

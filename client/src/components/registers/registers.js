@@ -300,7 +300,7 @@ export default class Registers extends Component {
                   isFetching={isCreating}
                   handleSubmit={this.handleCreate}
                   articles={articles}
-                  counterparties={counterparties}
+                  counterparties={counterparties.filter(counterparty => counterparty.active)}
                 />
               </div>
             : null }

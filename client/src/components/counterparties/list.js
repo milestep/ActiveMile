@@ -19,13 +19,12 @@ export default class List extends Component {
     };
   };
 
-  renderItems(type) {
+  renderItems(type, active) {
     const { counterparties, handleDestroy, toggleEdited, editedCounterparty } = this.props;
+    let counterpartiesNow = counterparties.filter(counterparty => counterparty.type === type && counterparty.active === active)
 
-    let counterparties_now = counterparties.filter(t => t.type === type)
-
-    if (counterparties_now && counterparties_now.length) {
-      return counterparties_now.map((item, i) => {
+    if (counterpartiesNow && counterpartiesNow.length) {
+      return counterpartiesNow.map((item, i) => {
         const isEdited = editedCounterparty === item.id ? true : false;
 
         return (
@@ -95,7 +94,8 @@ export default class List extends Component {
 
   createTabsTemplate() {
     let list    = [],
-        content = [];
+        content = [],
+        contentNotActive = [];
 
     this.props.types.forEach((type, i) => {
       const isCurrent = type === this.state.currentType ? true : false;
@@ -115,12 +115,24 @@ export default class List extends Component {
             isCurrent && isFirst ? ' first' : ''
           }`}
         >
-          {this.renderItems(type)}
+          {this.renderItems(type, true)}
+        </div>
+      );
+
+      contentNotActive.push(
+        <div key={i+10}
+          className={`tab-pane fade ${
+            isCurrent ? ' active in' : ''
+          }${
+            isCurrent && isFirst ? ' first' : ''
+          }`}
+        >
+          {this.renderItems(type, false)}
         </div>
       );
     });
 
-    return { list, content }
+    return { list, content, contentNotActive }
   }
 
   render() {
@@ -133,6 +145,10 @@ export default class List extends Component {
         </ul>
         <div className="tab-content">
           {tabs.content}
+
+          <br /><p>Not active</p>
+
+          {tabs.contentNotActive}
         </div>
       </div>
     );

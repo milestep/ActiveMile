@@ -90,6 +90,10 @@ export default class Header extends Component {
         to: '/reports',
         title: 'Reports',
         onClick: this.toggleCollapse
+      }, {
+        to: '/charts',
+        title: 'Charts',
+        onClick: this.toggleCollapse
       }]);
 
       Array.prototype.push.apply(navItemsRight, [{

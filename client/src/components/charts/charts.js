@@ -59,7 +59,7 @@ export default class Charts extends Component {
         this.props.actions.fetchRegisters({year: this.state.currentYear, month: arr})
           .then(() => {
             if (!this.props.registers.length) {
-              this.toaster.warning('There is no data for reports')
+              this.toaster.warning('There is no data for charts')
             }
             this.createReportState()
           })
@@ -68,7 +68,14 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.createReportState()
+      let arr = Array(12)
+        for (var i = arr.length - 1; i >= 0; i--) {
+        arr[i] = i
+      }
+      this.props.actions.fetchRegisters({year: this.state.currentYear, month: arr})
+          .then(() => {
+            this.createReportState()
+          })
     }
   }
 

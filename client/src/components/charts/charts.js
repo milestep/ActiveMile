@@ -1,13 +1,13 @@
-import React, {Component}    from 'react';
-import {bindActionCreators}             from 'redux';
-import {connect}                        from 'react-redux';
+import React, {Component}                 from 'react';
+import {bindActionCreators}               from 'redux';
+import {connect}                          from 'react-redux';
 import Select                             from 'react-select'
-import {actions as subscriptionActions} from '../../actions/subscriptions';
-import {actions as workspaceActions}    from '../../actions/workspaces'
+import {actions as subscriptionActions}   from '../../actions/subscriptions';
+import {actions as workspaceActions}      from '../../actions/workspaces'
 import {index as fetchRegisters}          from '../../actions/registers'
-import {toaster}                        from '../../actions/alerts';
+import {toaster}                          from '../../actions/alerts';
 import moment                             from 'moment';
-import {setStatePromise}    from '../../utils'
+import {setStatePromise}                  from '../../utils'
 import {
   HighchartsChart,
   Chart,
@@ -44,9 +44,9 @@ export default class Charts extends Component {
   constructor(props) {
     super(props);
     this.types = ['Revenue', 'Cost'],
-      this.toaster = props.actions.toaster();
+    this.toaster = props.actions.toaster();
     this.subscriptions = ['articles'],
-      this.state = this.createInitialState()
+    this.state = this.createInitialState()
   }
 
   componentWillMount() {

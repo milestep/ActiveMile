@@ -33,7 +33,6 @@ export default class Header extends Component {
 
   handleLogout = e => {
     const { logout, router } = this.props;
-
     e.preventDefault();
     logout(router);
   }

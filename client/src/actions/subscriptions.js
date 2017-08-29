@@ -35,7 +35,7 @@ export const actions = {
       if (force) dispatch(resetSubscriptions())
 
       const store = getStore()
-      const models = ['articles', 'counterparties', 'registers']
+      const models = ['articles', 'counterparties']
 
       return Promise.all(models.map(model => {
         if (needModel(store.subscriptions[model])) {

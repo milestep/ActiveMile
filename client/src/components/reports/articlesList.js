@@ -27,9 +27,9 @@ export default class TestArticlesList extends Component {
         <div className='panel panel-default article-panel' key={articleTitle}>
           <div class='panel-heading'>
             <div className='row'>
-              <div className='col-md-2'>
+              <div className='col-xs-2'>
                 <div className='row'>
-                  <div className='col-md-3 article-expand-wrapper'>
+                  <div className='col-xs-3 article-expand-wrapper'>
                     <button
                       className='btn btn-default article-expand-btn btn-xs'
                       onClick={(e) => this.props.handleArticleChange(articleTitle, type)}
@@ -37,7 +37,7 @@ export default class TestArticlesList extends Component {
                       <i class={`fa fa-angle-${isCollapsed ? 'down' : 'up'}`}></i>
                     </button>
                   </div>
-                  <div className='col-md-9'>
+                  <div className='col-xs-9'>
                     { articleTitle }
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export default class TestArticlesList extends Component {
 
     currentMonths.map((numMonth, index) => {
       res.push(
-        <div key={index} className='col-md-1 counterparty-value'>{ months[monthsNames[numMonth]] }</div>
+        <div key={index} className='col-xs-1 counterparty-value'>{ months[monthsNames[numMonth]] }</div>
       )
     })
 

@@ -1,80 +1,98 @@
-import React, { Component, PropTypes }      from 'react';
-import { bindActionCreators }               from 'redux';
-import { connect }                          from 'react-redux';
-import Select                               from 'react-select';
-import moment                               from 'moment';
-import { toaster }                          from '../../actions/alerts';
-import { actions as registerActions }       from '../../resources/registers';
-import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import React, { Component, PropTypes }      from 'react'
+import { bindActionCreators }               from 'redux'
+import { connect }                          from 'react-redux'
+import Select                               from 'react-select'
+import moment                               from 'moment'
+import { toaster }                          from '../../actions/alerts'
+import { actions as subscriptionActions }   from '../../actions/subscriptions'
 import { actions as workspaceActions }      from '../../actions/workspaces'
-import RegisterForm                         from './form';
-import RegistersList                        from './list';
-import RegistersFilter                      from './filter';
-import * as utils                           from '../../utils';
+import { index as fetchRegisters }          from '../../actions/registers'
+import { destroy as destroyRegister }       from '../../actions/registers'
+import { create as createRegister }         from '../../actions/registers'
+import RegisterForm                         from './form'
+import RegistersList                        from './list'
+import RegistersFilter                      from './filter'
+import * as utils                           from '../../utils'
 
-const monthsNames = moment.monthsShort();
+const monthsNames = moment.monthsShort()
 
 @connect(
   state => ({
     registers: state.registers.items,
+    filter_years: state.registers.years,
     articles: state.articles.items,
     counterparties: state.counterparties.items,
     nextWorkspace: state.workspaces.app.next,
     isCreating: state.registers.isCreating,
     isResolved: {
-      registers: state.subscriptions.registers.resolved,
       articles: state.subscriptions.articles.resolved,
       counterparties: state.subscriptions.counterparties.resolved
     }
   }),
   dispatch => ({
     actions: bindActionCreators({
-      ...registerActions,
       ...subscriptionActions,
       ...workspaceActions,
-      toaster
-    }, dispatch)
+      toaster,
+      fetchRegisters,
+      createRegister,
+      destroyRegister
+    }, dispatch),
+
+    isCreatingFunk: (bool) => {
+      dispatch({ type: 'REGISTER/IS_CREATING', payload: bool })
+    }
   })
 )
 export default class Registers extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     registers: PropTypes.array.isRequired,
+    filter_years: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
     nextWorkspace: PropTypes.object.isRequired,
     isResolved: PropTypes.object.isRequired,
     isCreating: PropTypes.bool
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.state = {
+    this.state = this.createInitialState()
+    this.subscriptions = ['articles', 'counterparties']
+
+    this.toaster = props.actions.toaster()
+    this.handleCreate = this.handleCreate.bind(this)
+    this.handleDestroy = this.handleDestroy.bind(this)
+    this.handleFilterChange = this.handleFilterChange.bind(this)
+  }
+
+  createInitialState() {
+    const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth()
+
+    return {
       registers: [],
       current: {
-        year: null,
-        month: null
+        year: year,
+        month: month
       },
       filter: {
         years: []
       }
-    };
-
-    this.subscriptions = ['registers', 'articles', 'counterparties'];
-
-    this.toaster = props.actions.toaster();
-    this.handleCreate = this.handleCreate.bind(this);
-    this.handleDestroy = this.handleDestroy.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
+    }
   }
 
   componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions);
+    const { current } = this.state
+    this.props.actions.fetchRegisters(current)
+    this.props.actions.subscribe(this.subscriptions)
   }
 
   componentWillUnmount() {
-    this.props.actions.unsubscribe(this.subscriptions);
+    this.props.actions.unsubscribe(this.subscriptions)
   }
 
   componentWillReceiveProps(newProps) {
@@ -86,147 +104,123 @@ export default class Registers extends Component {
   }
 
   isNextWorkspaceChanged() {
+    if (this.props.currentWorkspace.id != this.props.nextWorkspace.id) {
+      let current = Object.assign({}, this.state.current)
+
+      if (typeof current.month != 'number')
+        current.month = monthsNames.indexOf(current.month)
+
+      this.props.actions.fetchRegisters(current)
+    }
+
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 
-  createRegistersState(props = false) {
-    if (!props) props = this.props;
 
-    let filter = { years: [] },
+  createRegistersState(props = false) {
+    if (!props) props = this.props
+
+    let filter = { years: props.filter_years },
         current = Object.assign({}, this.state.current),
-        currentMonth = current.year ? current.month : monthsNames[new Date().getMonth()],
-        registers = [];
+        registers = []
+
+    if (typeof current.month != 'number')
+      current.month = monthsNames.indexOf(current.month)
 
     props.registers.forEach((register, i) => {
-      const date = new Date(register.date);
-      const year = date.getFullYear();
-      const month = date.getMonth();
+      const date = new Date(register.date)
+      const year = date.getFullYear()
+      const month = date.getMonth()
 
-      if (month == monthsNames.indexOf(currentMonth))
-        registers.push(register);
+      if (month == current.month && year == current.year)
+        registers.push(register)
+    })
 
-      if (!filter.years.includes(year))
-        filter.years.push(year);
-    });
-
-    if (!filter.years.length) filter.years = [ new Date().getFullYear() ]
-
-    let bool = false
-    let { years } = filter
-
-    while(!bool) {
-      bool = true
-
-      for (var i = years.length - 1; i >= 0; i--) {
-        if (years[i] <= years[i+1]) {
-          bool = false
-          let less_year = years[i]
-          years[i] = years[i+1]
-          years[i+1] = less_year
-        }
-      }
-    }
-
-    if (!current.year) {
-      Object.assign(current, {
-        year: filter.years[0],
-        month: currentMonth
-      });
-    } else {
-      Object.assign(current, {
-        year: current.year,
-        month: current.month
-      });
-    }
+    Object.assign(current, {
+      year: current.year,
+      month: monthsNames[current.month]
+    })
 
     this.setState((prevState) => ({
       ...prevState,
       registers,
       current,
       filter
-    }));
+    }))
   }
 
   handleCreate(register) {
-    return new Promise((resolve, reject) => {
-      delete register.article;
-      delete register.counterparty;
+    this.props.isCreatingFunk(true)
 
-      this.props.actions.createRegister({ register })
+    return new Promise((resolve, reject) => {
+      this.props.actions.createRegister(register)
         .then(res => {
-          this.toaster.success('Register has been created');
-          resolve(res);
+          this.toaster.success('Register has been created')
+          this.props.isCreatingFunk(false)
+          resolve(res)
         })
         .catch(err => {
-          if (utils.debug) console.error(err);
-          this.toaster.error('Could not create register!');
-          reject(err);
-        });
+          if (utils.debug) console.error(err)
+          this.toaster.error('Could not create register!')
+          this.props.isCreatingFunk(false)
+          reject(err)
+        })
     })
   }
 
   handleDestroy(id) {
     if (confirm("Are you sure?")) {
-      const { actions } = this.props;
-
-      actions.deleteRegister(id)
+      this.props.actions.destroyRegister(id)
         .then(res => {
-          this.toaster.success('Register was successfully deleted!');
+          this.toaster.success('Register was successfully deleted!')
         })
         .catch(err => {
-          if (utils.debug) console.error(err);
-          this.toaster.error('Could not delete register!');
+          if (utils.debug) console.error(err)
+          this.toaster.error('Could not delete register!')
         })
     }
   }
 
   handleFilterChange = field => e => {
-    const { value } = e;
+    const { value } = e
 
-    this.setRegisters({
-      ...this.state.current,
-      [field]: value,
-    });
     this.setState((prevState) => ({
       current: {
         ...prevState.current,
         [field]: value,
       }
-    }));
-  }
+    }))
 
-  setRegisters(current) {
-    const registers = this.props.registers.filter((register, i) => {
-      const date = new Date(register.date);
+    let current = Object.assign({}, {
+      ...this.state.current,
+      [field]: value,
+    })
 
-      return date.getFullYear() == current.year &&
-             monthsNames[date.getMonth()] == current.month;
-    });
-
-    this.setState({ registers });
+    current.month = monthsNames.indexOf(current.month)
+    this.props.actions.fetchRegisters(current)
   }
 
   isModelsFetched(models, inputProps = false) {
-    const props = inputProps || this.props;
-    const { isResolved } = props;
-    let returnedValue = true;
+    const props = inputProps || this.props
+    const { isResolved } = props
+    let returnedValue = true
 
     models.forEach((model, i) => {
       if (!isResolved[model]) {
-        returnedValue = false;
-        return;
+        returnedValue = false
+        return
       }
-    });
+    })
 
-    return returnedValue;
+    return returnedValue
   }
 
   createRegisterList() {
-    const { registers } = this.state;
-    const { articles, counterparties } = this.props;
-    const isListDataReady = this.isModelsFetched(this.subscriptions);
+    const { registers } = this.state
+    const { articles, counterparties } = this.props
+    const isListDataReady = this.isModelsFetched(this.subscriptions)
 
-    let registerList;
+    let registerList
 
     if (isListDataReady) {
       if (registers.length) {
@@ -260,16 +254,16 @@ export default class Registers extends Component {
             </td>
           </tr>
         </tbody>
-      );
+      )
     }
 
-    return registerList;
+    return registerList
   }
 
   render() {
-    const { articles, counterparties, isCreating } = this.props;
-    const isFormDataReady = this.isModelsFetched(['articles', 'counterparties']);
-    const registerList = this.createRegisterList();
+    const { articles, counterparties, isCreating } = this.props
+    const isFormDataReady = this.isModelsFetched(['articles', 'counterparties'])
+    const registerList = this.createRegisterList()
 
     return (
       <div>
@@ -306,7 +300,7 @@ export default class Registers extends Component {
                   isFetching={isCreating}
                   handleSubmit={this.handleCreate}
                   articles={articles}
-                  counterparties={counterparties}
+                  counterparties={counterparties.filter(counterparty => counterparty.active)}
                 />
               </div>
             : null }
@@ -317,6 +311,6 @@ export default class Registers extends Component {
           </div>
         }
       </div>
-    );
+    )
   }
 }

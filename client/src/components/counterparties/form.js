@@ -34,6 +34,7 @@ export default class Form extends Component {
         value: counterparty.type,
         label: counterparty.type
       },
+      active: counterparty.active,
     } : {
       name: '',
       date: moment(),
@@ -112,6 +113,16 @@ export default class Form extends Component {
         onInvalid={this.toggleButton.bind(this, false)}
         className="site-form counterparties-form"
       >
+
+        { editing ?
+          <FormInput
+            name="active"
+            type="checkbox"
+            value={counterparty.active.value}
+            handleChange={this.handleChange}
+          />
+        : '' }
+
         <FormInput
           name="name"
           placeholder="Name *"

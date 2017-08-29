@@ -49,14 +49,18 @@ export default class Charts extends Component {
     this.state = this.createInitialState()
   }
 
-  componentWillMount() {
+  arrNum(){
     let arr = Array(12)
-    for (var i = arr.length - 1; i >= 0; i--) {
-      arr[i] = i
-    }
+      for (var i = arr.length - 1; i >= 0; i--) {
+        arr[i] = i
+      }
+    return arr
+  }
+
+  componentWillMount() {
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
-        this.props.actions.fetchRegisters({year: this.state.currentYear, month: arr})
+        this.props.actions.fetchRegisters({year: this.state.currentYear, month: this.arrNum()})
           .then(() => {
             if (!this.props.registers.length) {
               this.toaster.warning('There is no data for charts')
@@ -68,11 +72,7 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      let arr = Array(12)
-        for (var i = arr.length - 1; i >= 0; i--) {
-        arr[i] = i
-      }
-      this.props.actions.fetchRegisters({year: this.state.currentYear, month: arr})
+      this.props.actions.fetchRegisters({year: this.state.currentYear, month: this.arrNum()})
           .then(() => {
             this.createReportState()
           })
@@ -128,14 +128,10 @@ export default class Charts extends Component {
     setStatePromise(this, (prevState => ({
       currentYear: year
     }))).then(() => {
-      let arr = Array(12)
-      for (var i = arr.length - 1; i >= 0; i--) {
-        arr[i] = i
-      }
-      this.props.actions.fetchRegisters({year: year, month: arr})
+      this.props.actions.fetchRegisters({year: year, month: this.arrNum()})
         .then(() => {
           if (!this.props.registers.length) {
-            this.toaster.warning('There is no data for reports')
+            this.toaster.warning('There is no data for charts')
           }
           this.createReportState()
         })

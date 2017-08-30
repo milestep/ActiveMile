@@ -7,7 +7,7 @@ import {actions as workspaceActions}      from '../../actions/workspaces'
 import {index as fetchRegisters}          from '../../actions/registers'
 import {toaster}                          from '../../actions/alerts';
 import moment                             from 'moment';
-import {setStatePromise, default_months}  from '../../utils'
+import {setStatePromise, defaultMonths}   from '../../utils'
 import {
   HighchartsChart,
   Chart,
@@ -52,7 +52,7 @@ export default class Charts extends Component {
   componentWillMount() {
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
-        this.props.actions.fetchRegisters({year: this.state.currentYear, month: default_months()})
+        this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
           .then(() => {
             if (!this.props.registers.length) {
               this.toaster.warning('There is no data for charts')
@@ -64,10 +64,10 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.props.actions.fetchRegisters({year: this.state.currentYear, month: default_months()})
-          .then(() => {
-            this.createReportState()
-          })
+      this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
+        .then(() => {
+          this.createReportState()
+        })
     }
   }
 
@@ -120,7 +120,7 @@ export default class Charts extends Component {
     setStatePromise(this, (prevState => ({
       currentYear: year
     }))).then(() => {
-      this.props.actions.fetchRegisters({year: year, month: default_months()})
+      this.props.actions.fetchRegisters({year: year, month: defaultMonths()})
         .then(() => {
           if (!this.props.registers.length) {
             this.toaster.warning('There is no data for charts')

@@ -1,22 +1,31 @@
-import React, { Component, PropTypes }    from 'react';
-import { bindActionCreators }             from 'redux';
-import { connect }                        from 'react-redux';
+import React, {Component}                 from 'react';
+import {bindActionCreators}               from 'redux';
+import {connect}                          from 'react-redux';
 import Select                             from 'react-select'
-import ArticlesList                       from '../reports/articlesList'
-import { actions as counterpartyActions } from '../../resources/counterparties';
-import { actions as subscriptionActions } from '../../actions/subscriptions';
-import { actions as workspaceActions }    from '../../actions/workspaces'
-import { toaster }                        from '../../actions/alerts';
+import {actions as subscriptionActions}   from '../../actions/subscriptions';
+import {actions as workspaceActions}      from '../../actions/workspaces'
+import {index as fetchRegisters}          from '../../actions/registers'
+import {toaster}                          from '../../actions/alerts';
 import moment                             from 'moment';
-import { setStatePromise, pushUnique }    from '../../utils'
-import { HighchartsChart, Chart, XAxis, YAxis, Title, Legend, ColumnSeries, SplineSeries, PieSeries, Tooltip} from 'react-jsx-highcharts';
-
+import {setStatePromise, defaultMonths}   from '../../utils'
+import {
+  HighchartsChart,
+  Chart,
+  XAxis,
+  YAxis,
+  Title,
+  Legend,
+  ColumnSeries,
+  SplineSeries,
+  PieSeries,
+  Tooltip
+} from 'react-jsx-highcharts';
 const monthsNames = moment.monthsShort();
-
 @connect(
   state => ({
     articles: state.articles.items,
     registers: state.registers.items,
+    filter_years: state.registers.years,
     nextWorkspace: state.workspaces.app.next,
     isResolved: {
       registers: state.subscriptions.registers.resolved
@@ -26,33 +35,39 @@ const monthsNames = moment.monthsShort();
     actions: bindActionCreators({
       ...subscriptionActions,
       ...workspaceActions,
-      toaster
+      toaster,
+      fetchRegisters
     }, dispatch)
   })
 )
-
 export default class Charts extends Component {
   constructor(props) {
     super(props);
     this.types = ['Revenue', 'Cost'],
     this.toaster = props.actions.toaster();
-    this.subscriptions = ['articles', 'registers'],
+    this.subscriptions = ['articles'],
     this.state = this.createInitialState()
   }
 
   componentWillMount() {
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
-        if (!this.props.registers.length) {
-          this.toaster.warning('There is no data for reports')
-        }
-        this.createReportState()
+        this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
+          .then(() => {
+            if (!this.props.registers.length) {
+              this.toaster.warning('There is no data for charts')
+            }
+            this.createReportState()
+          })
       })
   }
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.createReportState()
+      this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
+        .then(() => {
+          this.createReportState()
+        })
     }
   }
 
@@ -68,9 +83,7 @@ export default class Charts extends Component {
     let currentYear = new Date().getFullYear()
     let initData = new Array(12)
     initData.fill(0)
-
     return {
-      allDateForFilter: [],
       currentYear: currentYear,
       chartsData: {
         Revenue: Object.assign([], initData),
@@ -81,48 +94,45 @@ export default class Charts extends Component {
   }
 
   createReportState() {
-    const { registers, articles } = this.props
-    const { currentYear } = this.state
+    const {registers, articles} = this.props
+    const {currentYear} = this.state
     this.state = this.createInitialState()
-
     let chartsData = Object.assign([], this.state.chartsData);
-    let allDateForFilter = []
-
     registers.forEach(register => {
       let dataNow = new Date(register.date)
-      const registerYear = dataNow.getFullYear()
-      pushUnique(allDateForFilter, registerYear)
-
-      if (!(registerYear === currentYear)) return
-        let modelMoun = monthsNames[dataNow.getMonth()]
-        let numModelMoun = dataNow.getMonth()
-        const article = articles.find(article => article.id === register.article_id)
-        let modelTypeArticle = article.type
-
-        chartsData[modelTypeArticle][numModelMoun] += register.value
-        chartsData['Profit'][numModelMoun] = chartsData['Revenue'][numModelMoun] - chartsData['Cost'][numModelMoun]
+      let modelMoun = monthsNames[dataNow.getMonth()]
+      let numModelMoun = dataNow.getMonth()
+      const article = articles.find(article => article.id === register.article_id)
+      let modelTypeArticle = article.type
+      chartsData[modelTypeArticle][numModelMoun] += register.value
+      chartsData['Profit'][numModelMoun] = chartsData['Revenue'][numModelMoun] - chartsData['Cost'][numModelMoun]
     })
-
     this.setState({
-      allDateForFilter,
+      currentYear,
       chartsData: chartsData
     });
   }
 
- handleYearChange = e => {
+  handleYearChange = e => {
     if (this.state.isError) return
-
     const year = e.value
 
     setStatePromise(this, (prevState => ({
       currentYear: year
-    }))).then(() => this.createReportState())
+    }))).then(() => {
+      this.props.actions.fetchRegisters({year: year, month: defaultMonths()})
+        .then(() => {
+          if (!this.props.registers.length) {
+            this.toaster.warning('There is no data for charts')
+          }
+          this.createReportState()
+        })
+    })
   }
 
   render() {
     let {Revenue, Cost, Profit} = this.state.chartsData
-
-    return(
+    return (
       <div>
         <div className='row'>
           <div className='col-md-2 select_year'>
@@ -130,7 +140,7 @@ export default class Charts extends Component {
               name='years'
               className='reports-filter-select'
               onChange={this.handleYearChange.bind(this)}
-              options={this.state.allDateForFilter.map(year => ({ value: year, label: year.toString() }))}
+              options={this.props.filter_years.map(year => ({value: year, label: year.toString()}))}
               value={this.state.currentYear}
             />
           </div>
@@ -140,8 +150,8 @@ export default class Charts extends Component {
             <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
             <Chart />
             <Legend />
-            <XAxis id="x" categories={monthsNames} title={{text:'Місяць'}}/>
-            <YAxis id="number" title={{text:'Сума'}}>
+            <XAxis id="x" categories={monthsNames} title={{text: 'Місяць'}}/>
+            <YAxis id="number" title={{text: 'Сума'}}>
               <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
               <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
               <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>

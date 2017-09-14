@@ -14,7 +14,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
       month[key] = Integer(month[key]) + 1
     }
 
-    render_api({ items: registers.by_date(year, month), years: Register.years}, :ok, each_serializer: RegistersSerializer)
+    render_api({ items: registers.by_date(year, month), years: current_workspace.registers.years}, :ok, each_serializer: RegistersSerializer)
   end
 
   def show

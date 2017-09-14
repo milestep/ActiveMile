@@ -6,11 +6,12 @@ import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
-import { setStatePromise, pushUnique }    from '../../utils'
+import { setStatePromise, pushUnique}    from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
 import moment                             from 'moment';
-
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import Workbook from 'react-excel-workbook'
 const monthsNames = moment.monthsShort()
 
 @connect(state => ({
@@ -305,8 +306,49 @@ export default class Reports extends Component {
       )
     }
 
-    return(
-      <div>
+    const monthsNames = moment.monthsShort()
+    const months = current.month.map((month, i)=>{
+      return(<th key={i}>{monthsNames[month]}</th>)
+    })
+    const revenue = this.profitValues(profit['Revenue']).map((reven)=>{
+      return(<td key={reven.id}>{reven}</td>)
+    })
+    const cost = this.profitValues(profit['Cost']).map((cost)=>{
+      return(<td key={cost.id}>{cost}</td>)
+    })
+    const common = this.profitValues(profit['common']).map((common)=>{
+      return(<td key={common.id}>{common}</td>)
+    })
+      return(
+        <div>
+          <div>
+            <ReactHTMLTableToExcel
+              id="test-table-xls-button"
+              className="btn btn-xls-button pull-right"
+              table="table-to-xls"
+              filename="tablexls"
+              sheet="tablexls"
+              buttonText="Download as XLS"/>
+              <table id="table-to-xls" className='displayNone'>
+                <tr>
+                  <th>Month Names</th>
+                  <th>{current.year}</th>
+                  {months}
+                </tr>
+                <tr>
+                  <td>Revenue</td>
+                  <td> { revenue }</td>
+                </tr>
+                 <tr>
+                  <td>Cost</td>
+                  <td> { cost }</td>
+                </tr>
+                <tr>
+                  <td>Profit</td>
+                  <td>{ common }</td>
+                </tr>
+              </table>
+          </div>
         <div className='row'>
           <div className='reports-filter'>
             <div className='reports-filter-block'>

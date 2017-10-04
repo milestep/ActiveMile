@@ -6,7 +6,7 @@ import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
-import { setStatePromise, pushUnique}    from '../../utils'
+import { setStatePromise, pushUnique}     from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
 import moment                             from 'moment';

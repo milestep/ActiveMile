@@ -81,9 +81,10 @@ export default class Reports extends Component {
         Cost: []
       },
         display_total: true,
-
+        display_avg: true,
     }
     this.total_print = this.total_print.bind(this);
+    this.avg_print = this.avg_print.bind(this);
   }
 
   componentWillMount() {
@@ -276,11 +277,15 @@ export default class Reports extends Component {
   }
 
   total_print(){
-    console.log('qwe')
     this.setState((prevState) => ({
      display_total: !prevState.display_total
      }));
+  }
 
+  avg_print(){
+    this.setState((prevState) => ({
+     display_avg: !prevState.display_avg
+     }));
   }
 
 
@@ -359,10 +364,14 @@ export default class Reports extends Component {
                   {this.printCurrentMonths()}
                 </div>
               </div>
-             <button className='btn btn-primary total_btn' onClick={this.total_print.bind(this)}> Total</button>
-             <div className={`col-xs-1 reports-list-title pull-right ${this.state.display_total ? 'display_none' : 'display_block'}`}>
+             <button className='' onClick={this.total_print.bind(this)}> Total</button>
+             <div className={`reports-list-title ${this.state.display_total ? 'display_none' : 'display_block'}`}>
                 { printTotal ? '' : null }
               </div>
+              <button className='pull-right' onClick={this.avg_print.bind(this)}> AVG</button>
+              <div className={`reports-list-title ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
+                 { printTotal ? '' : null }
+               </div>
             </div>
           </div>
 
@@ -374,10 +383,14 @@ export default class Reports extends Component {
                   <div className='col-xs-9 reports-list-value reports-list-align-right '>
                     { this.profitValues(profit['Revenue']) }
                   </div>
-                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
+                  <div className={`reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
                     { printTotal ? totalProfit['Revenue'] : null }
                   </div>
+                  <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
+                    { printTotal ? parseFloat(totalProfit['Revenue'] / this.printCurrentMonths().length).toFixed(2) : null }
+                  </div>
                 </div>
+
               </div>
 
               <ArticlesList
@@ -398,8 +411,11 @@ export default class Reports extends Component {
                   <div className='col-xs-9 reports-list-value reports-list-align-right'>
                     { this.profitValues(profit['Cost']) }
                   </div>
-                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
+                  <div className={`reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
                     { printTotal ? totalProfit['Cost'] : null }
+                  </div>
+                  <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
+                    { printTotal ? parseFloat(totalProfit['Cost'] / this.printCurrentMonths().length).toFixed(2) : null }
                   </div>
                 </div>
               </div>
@@ -422,8 +438,11 @@ export default class Reports extends Component {
                   <div className='col-xs-9 reports-list-value reports-list-align-right'>
                     { this.profitValues(profit['common']) }
                   </div>
-                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
+                  <div className={`reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
                     { printTotal ? totalProfit['common'] : null }
+                  </div>
+                  <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
+                    { printTotal ? parseFloat(totalProfit['common'] / this.printCurrentMonths().length).toFixed(2) : null }
                   </div>
                 </div>
               </div>

@@ -83,8 +83,8 @@ export default class Reports extends Component {
         display_total: true,
         display_avg: true,
     }
-    this.total_print = this.total_print.bind(this);
-    this.avg_print = this.avg_print.bind(this);
+    this.totalPrint = this.totalPrint.bind(this);
+    this.avgPrint = this.avgPrint.bind(this);
   }
 
   componentWillMount() {
@@ -276,13 +276,13 @@ export default class Reports extends Component {
     })
   }
 
-  total_print(){
+  totalPrint(){
     this.setState((prevState) => ({
      display_total: !prevState.display_total
      }));
   }
 
-  avg_print(){
+  avgPrint(){
     this.setState((prevState) => ({
      display_avg: !prevState.display_avg
      }));
@@ -364,11 +364,11 @@ export default class Reports extends Component {
                   {this.printCurrentMonths()}
                 </div>
               </div>
-             <button className='' onClick={this.total_print.bind(this)}> Total</button>
+             <button className='' onClick={this.totalPrint.bind(this)}> Total</button>
              <div className={`reports-list-title ${this.state.display_total ? 'display_none' : 'display_block'}`}>
                 { printTotal ? '' : null }
               </div>
-              <button className='pull-right' onClick={this.avg_print.bind(this)}> AVG</button>
+              <button className='pull-right' onClick={this.avgPrint.bind(this)}> AVG</button>
               <div className={`reports-list-title ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
                  { printTotal ? '' : null }
                </div>

@@ -320,10 +320,16 @@ export default class Reports extends Component {
     return res
   }
 
+  print(qwe) {
+    const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
+    let printTotal = current.month.length > 1
+    return  printTotal ? parseFloat(totalProfit[qwe] / this.printCurrentMonths().length).toFixed(2) : null
+  }
+
+
   render() {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
     let printTotal = current.month.length > 1
-
     if (!this.state.isStateReady && !this.state.isError) {
       return(
         <span className='spin-wrap main-loader'>
@@ -364,7 +370,7 @@ export default class Reports extends Component {
                   {this.printCurrentMonths()}
                 </div>
               </div>
-             <button className='' onClick={this.totalPrint.bind(this)}> Total</button>
+             <button onClick={this.totalPrint.bind(this)}> Total</button>
              <div className={`reports-list-title ${this.state.display_total ? 'display_none' : 'display_block'}`}>
                 { printTotal ? '' : null }
               </div>
@@ -387,7 +393,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['Revenue'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    { printTotal ? parseFloat(totalProfit['Revenue'] / this.printCurrentMonths().length).toFixed(2) : null }
+                    {this.print('Revenue')}
                   </div>
                 </div>
 
@@ -415,7 +421,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['Cost'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    { printTotal ? parseFloat(totalProfit['Cost'] / this.printCurrentMonths().length).toFixed(2) : null }
+                      {this.print('Cost')}
                   </div>
                 </div>
               </div>
@@ -442,7 +448,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['common'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    { printTotal ? parseFloat(totalProfit['common'] / this.printCurrentMonths().length).toFixed(2) : null }
+                    {this.print('common')}
                   </div>
                 </div>
               </div>
@@ -453,3 +459,5 @@ export default class Reports extends Component {
     )
   }
 }
+/*                    { printTotal ? parseFloat(totalProfit['Revenue'] / this.printCurrentMonths().length).toFixed(2) : null }
+*/

@@ -278,14 +278,14 @@ export default class Reports extends Component {
 
   totalPrint(){
     this.setState((prevState) => ({
-     display_total: !prevState.display_total
-     }));
+      display_total: !prevState.display_total
+    }));
   }
 
   avgPrint(){
     this.setState((prevState) => ({
-     display_avg: !prevState.display_avg
-     }));
+      display_avg: !prevState.display_avg
+    }));
   }
 
 
@@ -322,14 +322,14 @@ export default class Reports extends Component {
 
   print(qwe) {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
-    let printTotal = current.month.length > 1
+    let printTotal = current.month.length
     return  printTotal ? parseFloat(totalProfit[qwe] / this.printCurrentMonths().length).toFixed(2) : null
   }
 
 
   render() {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
-    let printTotal = current.month.length > 1
+    let printTotal = current.month.length
     if (!this.state.isStateReady && !this.state.isError) {
       return(
         <span className='spin-wrap main-loader'>
@@ -370,14 +370,8 @@ export default class Reports extends Component {
                   {this.printCurrentMonths()}
                 </div>
               </div>
-             <button onClick={this.totalPrint.bind(this)}> Total</button>
-             <div className={`reports-list-title ${this.state.display_total ? 'display_none' : 'display_block'}`}>
-                { printTotal ? '' : null }
-              </div>
-              <button className='pull-right' onClick={this.avgPrint.bind(this)}> AVG</button>
-              <div className={`reports-list-title ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                 { printTotal ? '' : null }
-               </div>
+              <button onClick={this.totalPrint.bind(this)}>Total</button>
+              <button className='pull-right' onClick={this.avgPrint.bind(this)}>AVG</button>
             </div>
           </div>
 
@@ -459,5 +453,3 @@ export default class Reports extends Component {
     )
   }
 }
-/*                    { printTotal ? parseFloat(totalProfit['Revenue'] / this.printCurrentMonths().length).toFixed(2) : null }
-*/

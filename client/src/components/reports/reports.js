@@ -320,7 +320,7 @@ export default class Reports extends Component {
     return res
   }
 
-  print_values(value) {
+  printValues(value) {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
     let printTotal = current.month.length
     return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentMonths().length).toFixed(2) : null
@@ -387,7 +387,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['Revenue'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    {this.print_values('Revenue')}
+                    {this.printValues('Revenue')}
                   </div>
                 </div>
 
@@ -415,7 +415,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['Cost'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                      {this.print_values('Cost')}
+                      {this.printValues('Cost')}
                   </div>
                 </div>
               </div>
@@ -442,7 +442,7 @@ export default class Reports extends Component {
                     { printTotal ? totalProfit['common'] : null }
                   </div>
                   <div className={`reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    {this.print_values('common')}
+                    {this.printValues('common')}
                   </div>
                 </div>
               </div>

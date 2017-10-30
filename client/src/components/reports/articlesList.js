@@ -42,7 +42,7 @@ export default class TestArticlesList extends Component {
                   </div>
                 </div>
               </div>
-              <div className='col-xs-10 reports-list-align-right'>
+              <div className='col-md-9 reports-list-align-right'>
                 { this.createValuesByMonths(articles[articleTitle]['values']) }
               </div>
             </div>
@@ -70,8 +70,8 @@ export default class TestArticlesList extends Component {
       res.push(
         <div className={`counterparty-wrapper type-${type}`} key={name}>
           <div className='row'>
-            <div className='col-xs-2 counterparty-name'>{ name || '-' }</div>
-              <div className='col-xs-10 reports-list-align-right'>
+            <div className='col-md-2 counterparty-name'>{ name || '-' }</div>
+              <div className='col-md-9 reports-list-align-right'>
                 {this.createValuesByMonths(counterparties[name])}
               </div>
           </div>

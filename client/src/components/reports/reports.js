@@ -6,11 +6,12 @@ import { toaster }                        from '../../actions/alerts';
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
-import { setStatePromise, pushUnique }    from '../../utils'
+import { setStatePromise, pushUnique}     from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
 import moment                             from 'moment';
-
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import Workbook from 'react-excel-workbook'
 const monthsNames = moment.monthsShort()
 
 @connect(state => ({
@@ -71,6 +72,11 @@ export default class Reports extends Component {
         Revenue: {},
         Cost: {}
       },
+      totalProfit: {
+        common: 0,
+        Revenue: 0,
+        Cost: 0
+      },
       collapsedArticles: {
         Revenue: [],
         Cost: []
@@ -120,7 +126,8 @@ export default class Reports extends Component {
     const { registers, articles } = this.props
     const { current } = this.state
 
-    let { report, profit } = fakeState
+    let { report, profit, totalProfit } = fakeState
+    let { years, months } = fakeState.available
 
     const currentTitlesMonths = []
     current.month.forEach(numMonth => currentTitlesMonths[monthsNames[numMonth]] = 0)
@@ -141,6 +148,8 @@ export default class Reports extends Component {
 
       profit[article.type][monthsNames[registerMonth]] += register.value
       profit['common'][monthsNames[registerMonth]] += this.getRegisterValue(article.type, register.value)
+      totalProfit[article.type] += register.value
+      totalProfit['common'] += this.getRegisterValue(article.type, register.value)
 
       if (reportType[articleTitle]) {
         if (reportType[articleTitle]['counterparties'][counterpartyName]) {
@@ -173,6 +182,7 @@ export default class Reports extends Component {
       ...prevState,
       report,
       profit,
+      totalProfit,
       isStateReady: true,
       available: {
         years: this.props.filter_years
@@ -295,7 +305,8 @@ export default class Reports extends Component {
   }
 
   render() {
-    const { report, profit, current, available, collapsedArticles } = this.state
+    const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
+    let printTotal = current.month.length > 1
 
     if (!this.state.isStateReady && !this.state.isError) {
       return(
@@ -305,8 +316,49 @@ export default class Reports extends Component {
       )
     }
 
-    return(
-      <div>
+    const monthsNames = moment.monthsShort()
+    const months = current.month.map((month, i)=>{
+      return(<th key={i}>{monthsNames[month]}</th>)
+    })
+    const revenue = this.profitValues(profit['Revenue']).map((reven)=>{
+      return(<td key={reven.id}>{reven}</td>)
+    })
+    const cost = this.profitValues(profit['Cost']).map((cost)=>{
+      return(<td key={cost.id}>{cost}</td>)
+    })
+    const common = this.profitValues(profit['common']).map((common)=>{
+      return(<td key={common.id}>{common}</td>)
+    })
+      return(
+        <div>
+          <div>
+            <ReactHTMLTableToExcel
+              id="test-table-xls-button"
+              className="btn btn-xls-button pull-right"
+              table="table-to-xls"
+              filename="tablexls"
+              sheet="tablexls"
+              buttonText="Download as XLS"/>
+              <table id="table-to-xls" className='displayNone'>
+                <tr>
+                  <th>Month Names</th>
+                  <th>{current.year}</th>
+                  {months}
+                </tr>
+                <tr>
+                  <td>Revenue</td>
+                  <td> { revenue }</td>
+                </tr>
+                 <tr>
+                  <td>Cost</td>
+                  <td> { cost }</td>
+                </tr>
+                <tr>
+                  <td>Profit</td>
+                  <td>{ common }</td>
+                </tr>
+              </table>
+          </div>
         <div className='row'>
           <div className='reports-filter'>
             <div className='reports-filter-block'>
@@ -330,21 +382,30 @@ export default class Reports extends Component {
         <hr />
 
         <div className='reports-list'>
-          <div className='row'>
-            <div className='col-xs-2'></div>
-            <div className='col-xs-10 reports-list-align-right'>
-              <div className='reports-list-months'>
-                {this.printCurrentMonths()}
+          <div className='fake-panel'>
+            <div className='row reports-list-align-right'>
+              <div className='col-md-offset-2 col-xs-9'>
+                <div className='reports-list-months'>
+                  {this.printCurrentMonths()}
+                </div>
+              </div>
+              <div className='col-xs-1 reports-list-title'>
+                { printTotal ? 'Total' : null }
               </div>
             </div>
           </div>
 
           <div className='row'>
             <div className='col-xs-12'>
-              <div className='row reports-list-heading'>
-                <h4 className='col-xs-2 reports-list-title'>Revenue</h4>
-                <div className='col-xs-10 reports-list-value reports-list-align-right'>
-                  { this.profitValues(profit['Revenue']) }
+              <div className='fake-panel'>
+                <div className='row reports-list-heading'>
+                  <h4 className='col-xs-2 reports-list-title'>Revenue</h4>
+                  <div className='col-xs-9 reports-list-value reports-list-align-right'>
+                    { this.profitValues(profit['Revenue']) }
+                  </div>
+                  <div className='col-xs-1 reports-list-value reports-list-align-right'>
+                    { printTotal ? totalProfit['Revenue'] : null }
+                  </div>
                 </div>
               </div>
 
@@ -360,10 +421,15 @@ export default class Reports extends Component {
 
           <div className='row'>
             <div className='col-xs-12'>
-              <div className='row reports-list-heading'>
-                <h4 className='col-xs-2 reports-list-title'>Cost</h4>
-                <div className='col-xs-10 reports-list-value reports-list-align-right'>
-                  { this.profitValues(profit['Cost']) }
+              <div className='fake-panel'>
+                <div className='row reports-list-heading'>
+                  <h4 className='col-xs-2 reports-list-title'>Cost</h4>
+                  <div className='col-xs-9 reports-list-value reports-list-align-right'>
+                    { this.profitValues(profit['Cost']) }
+                  </div>
+                  <div className='col-xs-1 reports-list-value reports-list-align-right'>
+                    { printTotal ? totalProfit['Cost'] : null }
+                  </div>
                 </div>
               </div>
 
@@ -379,10 +445,15 @@ export default class Reports extends Component {
 
           <div className='row'>
             <div className='col-xs-12'>
-              <div className='row reports-list-heading profit'>
-                <h4 className='col-xs-2 reports-list-title'>Profit</h4>
-                <div className='col-xs-10 reports-list-value reports-list-align-right'>
-                  { this.profitValues(profit['common']) }
+              <div className='fake-panel'>
+                <div className='row reports-list-heading profit'>
+                  <h4 className='col-xs-2 reports-list-title'>Profit</h4>
+                  <div className='col-xs-9 reports-list-value reports-list-align-right'>
+                    { this.profitValues(profit['common']) }
+                  </div>
+                  <div className='col-xs-1 reports-list-value reports-list-align-right'>
+                    { printTotal ? totalProfit['common'] : null }
+                  </div>
                 </div>
               </div>
             </div>

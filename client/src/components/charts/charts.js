@@ -148,7 +148,7 @@ export default class Charts extends Component {
 
   render() {
     let {Revenue, Cost, Profit} = this.state.chartsData
-    if (Revenue[0]>=1) {
+    if (Revenue[0]) {
     let Marga = this.Marga(Revenue, Profit)
 
       return (
@@ -185,7 +185,7 @@ export default class Charts extends Component {
             <Legend layout="vertical" align="right" verticalAlign="middle" />
             <XAxis id="x" categories={monthsNames} title={{text: 'Місяць'}}/>
             <YAxis id="number" title={{text: 'Сума'}}>
-              <LineSeries  id="revenue" name="Revenue" data={Marga} color="#32CD32" />
+              <LineSeries  id="Маржа" name="Маржа" data={Marga} color="#32CD32" />
             </YAxis>
           </HighchartsChart>
         </div>

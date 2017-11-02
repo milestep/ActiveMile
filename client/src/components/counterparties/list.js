@@ -61,7 +61,7 @@ export default class List extends Component {
                   </button>
                   { item.registers_count === 0 ? <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
                     <i className="fa fa-times" aria-hidden="true"></i>
-                  </button> : <button className="btn btn-sm btn-secondary" onClick={handleDestroy.bind(this, item.id)} disabled>
+                  </button> : <button className="btn btn-sm btn-secondary" disabled>
                     <i className="fa fa-times" aria-hidden="true"></i>
                   </button>}
                 </div>

@@ -7,7 +7,7 @@ import {actions as workspaceActions}    from '../../actions/workspaces'
 import {index as fetchRegisters}        from '../../actions/registers'
 import {toaster}                        from '../../actions/alerts';
 import moment                           from 'moment';
-import {setStatePromise}                from '../../utils'
+import {setStatePromise, defaultMonths} from '../../utils'
 import {
   HighchartsChart,
   Chart,
@@ -51,13 +51,9 @@ export default class Charts extends Component {
   }
 
   componentWillMount() {
-    let arr = Array(12)
-    for (var i = arr.length - 1; i >= 0; i--) {
-      arr[i] = i
-    }
     this.props.actions.subscribe(this.subscriptions)
       .then(() => {
-        this.props.actions.fetchRegisters({year: this.state.currentYear, month: arr})
+        this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
           .then(() => {
             if (!this.props.registers.length) {
               this.toaster.warning('There is no data for reports')
@@ -122,11 +118,7 @@ export default class Charts extends Component {
     setStatePromise(this, (prevState => ({
       currentYear: year
     }))).then(() => {
-      let arr = Array(12)
-      for (var i = arr.length - 1; i >= 0; i--) {
-        arr[i] = i
-      }
-      this.props.actions.fetchRegisters({year: year, month: arr})
+      this.props.actions.fetchRegisters({year: year, month: defaultMonths()})
         .then(() => {
           if (!this.props.registers.length) {
             this.toaster.warning('There is no data for reports')
@@ -148,7 +140,7 @@ export default class Charts extends Component {
 
   render() {
     let {Revenue, Cost, Profit} = this.state.chartsData
-    if (Revenue[0]) {
+
     let Marga = this.Marga(Revenue, Profit)
 
       return (
@@ -190,8 +182,5 @@ export default class Charts extends Component {
           </HighchartsChart>
         </div>
       );
-    } else {
-      return null;
-    }
-  };
+  }
 }

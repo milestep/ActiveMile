@@ -1,5 +1,6 @@
 class Counterparty < ApplicationRecord
   self.inheritance_column = nil
+  has_many :registers
 
   belongs_to :workspace
 

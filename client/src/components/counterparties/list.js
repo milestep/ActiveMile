@@ -58,9 +58,9 @@ export default class List extends Component {
                   >
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                   </button>
-                  { item.registers_count === 0 ? <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
+                  { item.registers_count ? <button className="btn btn-sm btn-default" disabled>
                     <i className="fa fa-times" aria-hidden="true"></i>
-                  </button> : <button className="btn btn-sm btn-secondary" disabled>
+                  </button> : <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
                     <i className="fa fa-times" aria-hidden="true"></i>
                   </button>}
                 </div>

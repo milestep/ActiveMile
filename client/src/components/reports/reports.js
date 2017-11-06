@@ -324,7 +324,7 @@ export default class Reports extends Component {
   printValues(value) {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
     let printTotal = current.month.length
-    return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentMonths().length).toFixed(2) : null
+    return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentMonths().length).toFixed(0) : null
   }
 
 
@@ -412,8 +412,15 @@ export default class Reports extends Component {
                   {this.printCurrentMonths()}
                 </div>
               </div>
-              <button onClick={this.totalPrint.bind(this)}>Total</button>
-              <button className='pull-right' onClick={this.avgPrint.bind(this)}>AVG</button>
+              <div className='btntotal'>
+                <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
+                <label for="totalbtn">Total</label>
+              </div>
+              <div className='pull-right'>
+                <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
+                <label for="avgbtn">AVG</label>
+              </div>
+
             </div>
           </div>
 
@@ -425,6 +432,7 @@ export default class Reports extends Component {
                   <div className='col-xs-9 reports-list-value reports-list-align-right '>
                     { this.profitValues(profit['Revenue']) }
                   </div>
+
                   <div className={`reports-list-value reports-list-align-right ${this.state.display_total ? 'display_none' : 'display_block'}`} >
                     { printTotal ? totalProfit['Revenue'] : null }
                   </div>

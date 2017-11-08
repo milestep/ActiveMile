@@ -128,20 +128,20 @@ export default class Charts extends Component {
     })
   }
 
-  Marga(Revenue, Profit) {
-    let Marga = new Array(12)
-    Marga.fill(0)
+  marga(revenue, profit) {
+    let marga = new Array(12)
+    marga.fill(0)
 
-    for (var i = 0; i < Marga.length; i++) {
-      Marga[i] = Revenue[i] / Profit[i] * 100
+    for (var i = 0; i < marga.length; i++) {
+      marga[i] = revenue[i] / profit[i] * 100
     }
-    return Marga
+    return marga
   }
 
   render() {
     let {Revenue, Cost, Profit} = this.state.chartsData
 
-    let Marga = this.Marga(Revenue, Profit)
+    let marga = this.marga(Revenue, Profit)
 
       return (
         <div>
@@ -173,11 +173,11 @@ export default class Charts extends Component {
           <HighchartsChart>
             <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
             <Chart />
-            <Title>Маржа</Title>
+            <Title>Marga</Title>
             <Legend layout="vertical" align="right" verticalAlign="middle" />
             <XAxis id="x" categories={monthsNames} title={{text: 'Місяць'}}/>
             <YAxis id="number" title={{text: 'Сума'}}>
-              <LineSeries  id="Маржа" name="Маржа" data={Marga} color="#32CD32" />
+              <LineSeries id="Marga" name="Marga" data={marga} color="#32CD32" />
             </YAxis>
           </HighchartsChart>
         </div>

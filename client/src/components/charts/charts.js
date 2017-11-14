@@ -1,13 +1,13 @@
-import React, {Component}                 from 'react';
-import {bindActionCreators}               from 'redux';
-import {connect}                          from 'react-redux';
-import Select                             from 'react-select'
-import {actions as subscriptionActions}   from '../../actions/subscriptions';
-import {actions as workspaceActions}      from '../../actions/workspaces'
-import {index as fetchRegisters}          from '../../actions/registers'
-import {toaster}                          from '../../actions/alerts';
-import moment                             from 'moment';
-import {setStatePromise, defaultMonths}   from '../../utils'
+import React, {Component}               from 'react';
+import {bindActionCreators}             from 'redux';
+import {connect}                        from 'react-redux';
+import Select                           from 'react-select'
+import {actions as subscriptionActions} from '../../actions/subscriptions';
+import {actions as workspaceActions}    from '../../actions/workspaces'
+import {index as fetchRegisters}        from '../../actions/registers'
+import {toaster}                        from '../../actions/alerts';
+import moment                           from 'moment';
+import {setStatePromise, defaultMonths} from '../../utils'
 import {
   HighchartsChart,
   Chart,
@@ -18,7 +18,8 @@ import {
   ColumnSeries,
   SplineSeries,
   PieSeries,
-  Tooltip
+  Tooltip,
+  LineSeries
 } from 'react-jsx-highcharts';
 const monthsNames = moment.monthsShort();
 @connect(
@@ -64,10 +65,7 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
-        .then(() => {
-          this.createReportState()
-        })
+      this.createReportState()
     }
   }
 
@@ -130,35 +128,59 @@ export default class Charts extends Component {
     })
   }
 
+  marga(revenue, profit) {
+    let marga = new Array(12)
+    marga.fill(0)
+
+    for (var i = 0; i < marga.length; i++) {
+      marga[i] = revenue[i] / profit[i] * 100
+    }
+    return marga
+  }
+
   render() {
     let {Revenue, Cost, Profit} = this.state.chartsData
-    return (
-      <div>
-        <div className='row'>
-          <div className='col-md-2 select_year'>
-            <Select
-              name='years'
-              className='reports-filter-select'
-              onChange={this.handleYearChange.bind(this)}
-              options={this.props.filter_years.map(year => ({value: year, label: year.toString()}))}
-              value={this.state.currentYear}
-            />
+
+    let marga = this.marga(Revenue, Profit)
+
+      return (
+        <div>
+          <div className='row'>
+            <div className='col-md-2 select_year'>
+              <Select
+                name='years'
+                className='reports-filter-select'
+                onChange={this.handleYearChange.bind(this)}
+                options={this.props.filter_years.map(year => ({value: year, label: year.toString()}))}
+                value={this.state.currentYear}
+              />
+            </div>
           </div>
-        </div>
-        <div className="chart_views">
+          <div className="chart_views">
+            <HighchartsChart>
+              <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
+              <Chart />
+              <Legend />
+              <XAxis id="x" categories={monthsNames} title={{text: 'Місяць'}}/>
+              <YAxis id="number" title={{text: 'Сума'}}>
+                <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
+                <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
+                <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>
+              </YAxis>
+            </HighchartsChart>
+          </div>
+
           <HighchartsChart>
             <Tooltip pointFormat={ColumnSeries.data} shared={true} useHTML={true}/>
             <Chart />
-            <Legend />
+            <Title>Marga</Title>
+            <Legend layout="vertical" align="right" verticalAlign="middle" />
             <XAxis id="x" categories={monthsNames} title={{text: 'Місяць'}}/>
             <YAxis id="number" title={{text: 'Сума'}}>
-              <ColumnSeries id="revenue" name="Revenue" data={Revenue} color="#32CD32"/>
-              <ColumnSeries id="cost" name="Cost" data={Cost} color="#F62817"/>
-              <ColumnSeries id="profit" name="Profit" data={Profit} color="#008080"/>
+              <LineSeries id="Marga" name="Marga" data={marga} color="#32CD32" />
             </YAxis>
           </HighchartsChart>
         </div>
-      </div>
-    );
-  };
+      );
+  }
 }

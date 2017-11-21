@@ -133,7 +133,7 @@ export default class Charts extends Component {
     marga.fill(0)
 
     for (var i = 0; i < marga.length; i++) {
-      marga[i] = revenue[i] / profit[i] * 100
+      marga[i] = profit[i] / revenue[i] * 100
     }
     return marga
   }

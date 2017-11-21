@@ -7,7 +7,7 @@ class Counterparty < ApplicationRecord
   validates :name, :date, :type, :workspace_id, presence: true
   validates :type, acceptance: { accept: ['Client', 'Vendor' , 'Other'] }
 
-  before_destroy :associated_with_registers?
+  before_destroy :associate_with_registers?
 
   def associate_with_registers?
     errors.add(:registers, "cannot delete") if registers_count.positive?

@@ -10,6 +10,9 @@ class Counterparty < ApplicationRecord
   before_destroy :associate_with_registers?
 
   def associate_with_registers?
-    throw(:abort) if registers_count.positive?
+    if registers_count.positive?
+      errors.add(:registers, "could not be deleted due to associated registers")
+      throw(:abort)
+    end
   end
 end

@@ -144,7 +144,6 @@ describe 'DELETE associated_with_registers' do
 
   let(:counterparty_params) {{
     workspace: workspace,
-    registers_count: 1
   }}
 
   let(:request_params) {{
@@ -155,13 +154,14 @@ describe 'DELETE associated_with_registers' do
     'workspace-id': workspace.id
   }}
 
-  let!(:counterparty) { create(:counterparty, counterparty_params) }
+  let!(:counterparty_with_regiesters) { create(:counterparty, counterparty_params) }
 
-  it {
+  it 'cannot destroy if has registers' do
+    create(:register, counterparty: counterparty_with_regiesters)
     expect {
-      delete "/api/v1/counterparties/#{counterparty.id}",
+      delete "/api/v1/counterparties/#{counterparty_with_regiesters.id}",
       params: request_params,
       headers: request_headers
     }.to_not change{ workspace.counterparties.count }
-  }
+  end
 end

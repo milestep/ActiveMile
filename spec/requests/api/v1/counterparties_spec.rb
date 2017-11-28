@@ -136,3 +136,32 @@ describe 'DELETE /api/v1/counterparties/:id' do
     }.to change{ workspace.counterparties.count }.from(1).to(0)
   }
 end
+
+describe 'DELETE associated_with_registers' do
+  include_context :doorkeeper_app_with_token
+
+  let(:workspace) { create(:workspace) }
+
+  let(:counterparty_params) {{
+    workspace: workspace,
+  }}
+
+  let(:request_params) {{
+    access_token: access_token.token
+  }}
+
+  let(:request_headers) {{
+    'workspace-id': workspace.id
+  }}
+
+  let!(:counterparty_with_regiesters) { create(:counterparty, counterparty_params) }
+
+  it 'cannot destroy if has registers' do
+    create(:register, counterparty: counterparty_with_regiesters)
+    expect {
+      delete "/api/v1/counterparties/#{counterparty_with_regiesters.id}",
+      params: request_params,
+      headers: request_headers
+    }.to_not change{ workspace.counterparties.count }
+  end
+end

@@ -26,7 +26,6 @@ export default class List extends Component {
     if (counterpartiesNow && counterpartiesNow.length) {
       return counterpartiesNow.map((item, i) => {
         const isEdited = editedCounterparty === item.id ? true : false;
-
         return (
           <li key={i} className="list-group-item">
             { isEdited ?
@@ -49,7 +48,7 @@ export default class List extends Component {
             :
               <div className="tabs-overlap">
                 <div className="col-md-10">
-                  <span className={`col-md-9 ${ active ? '' : 'not-active' }`}>{ item.name }</span>
+                  <span className={`col-md-7 ${ active ? '' : 'not-active' }`}>{ item.name }</span>
                   <span className={`col-md-3 ${ active ? '' : 'not-active' }`}>{ moment(item.date).format("DD-MM-YYYY") }</span>
                 </div>
                 <div className="btn-group">
@@ -59,9 +58,11 @@ export default class List extends Component {
                   >
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                   </button>
-                  <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
+                  { item.registers_count ? <button className="btn btn-sm btn-default" disabled>
                     <i className="fa fa-times" aria-hidden="true"></i>
-                  </button>
+                  </button> : <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
+                    <i className="fa fa-times" aria-hidden="true"></i>
+                  </button>}
                 </div>
               </div>
             }

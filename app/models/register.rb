@@ -1,6 +1,6 @@
 class Register < ApplicationRecord
   belongs_to :workspace
-  belongs_to :article
+  belongs_to :article, counter_cache: true
   belongs_to :counterparty, counter_cache: true
 
   validates :date, :value, :article_id, :workspace_id, presence: true

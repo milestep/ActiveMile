@@ -135,3 +135,32 @@ describe 'DELETE /api/v1/articles/:id' do
     }.to change{ workspace.articles.count }.from(1).to(0)
   }
 end
+
+describe 'DELETE article_associated_with_registers' do
+  include_context :doorkeeper_app_with_token
+
+  let(:workspace) { create(:workspace) }
+
+  let(:article_params) {{
+    workspace: workspace,
+  }}
+
+  let(:request_params) {{
+    access_token: access_token.token
+  }}
+
+  let(:request_headers) {{
+    'workspace-id': workspace.id
+  }}
+
+  let!(:article_with_regiesters) { create(:article, article_params) }
+
+  it 'cannot destroy article if has registers' do
+    create(:register, article: article_with_regiesters)
+    expect {
+      delete "/api/v1/articles/#{article_with_regiesters.id}",
+      params: request_params,
+      headers: request_headers
+    }.to_not change{ workspace.articles.count }
+  end
+end

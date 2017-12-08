@@ -12,7 +12,10 @@ export default class TestArticlesList extends Component {
     currentMonths: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
     articles: PropTypes.object.isRequired,
-    handleArticleChange: PropTypes.func.isRequired
+    handleArticleChange: PropTypes.func.isRequired,
+    displayTotal: PropTypes.bool.isRequired,
+    displayAvg: PropTypes.bool.isRequired,
+    fetchClassName: PropTypes.func.isRequired
   }
 
   createArticlesList() {
@@ -42,7 +45,7 @@ export default class TestArticlesList extends Component {
                   </div>
                 </div>
               </div>
-              <div className='col-md-10 reports-list-align-right'>
+              <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
                 { this.createValuesByMonths(articles[articleTitle]['values']) }
               </div>
             </div>
@@ -71,7 +74,7 @@ export default class TestArticlesList extends Component {
         <div className={`counterparty-wrapper type-${type}`} key={name}>
           <div className='row'>
             <div className='col-md-2 counterparty-name'>{ name || '-' }</div>
-              <div className='col-md-10 reports-list-align-right'>
+              <div className={`${this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)} reports-list-align-right`}>
                 {this.createValuesByMonths(counterparties[name])}
               </div>
           </div>

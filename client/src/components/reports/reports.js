@@ -81,8 +81,8 @@ export default class Reports extends Component {
         Revenue: [],
         Cost: []
       },
-        display_total: true,
-        display_avg: true,
+        display_total: false,
+        display_avg: false,
     }
     this.totalPrint = this.totalPrint.bind(this);
     this.avgPrint = this.avgPrint.bind(this);
@@ -327,6 +327,20 @@ export default class Reports extends Component {
     return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentMonths().length).toFixed(0) : null
   }
 
+  fetchClassName(display_total, display_avg) {
+    let className
+    if (display_total && !display_avg || !display_total && display_avg){
+      className = 'col-xs-9'
+    }
+    else if (display_total && display_avg){
+      className = 'col-xs-8'
+    }
+    else{
+      className = 'col-xs-10'
+    }
+    return className
+  }
+
 
   render() {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
@@ -404,117 +418,112 @@ export default class Reports extends Component {
 
         <hr />
 
+        <div className="pull-right col-xs-2">
+          <div className='btntotal'>
+            <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
+            <label for="totalbtn">Total</label>
+          </div>
+          <div className='btnavg'>
+            <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
+            <label for="avgbtn">AVG</label>
+          </div>
+        </div>
+        <div className="clearfix"></div>
         <div className='reports-list'>
           <div className='fake-panel'>
             <div className='row reports-list-align-right'>
-              <div className='col-md-offset-2 col-xs-9'>
+              <div className={` col-md-offset-2 ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
                 <div className='reports-list-months'>
                   {this.printCurrentMonths()}
                 </div>
               </div>
-              <div className="avg-total-btn col-xs-1  ">
-                <div className='col-xs-6 btntotal'>
-                  <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
-                  <label for="totalbtn">Total</label>
+              <div className={`col-xs-1 ${!this.state.display_total ? 'display_none' : 'display_block'}`}>
+                  <b>Total</b>
                 </div>
-                <div className='col-xs-6 pull-right'>
-                  <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
-                  <label for="avgbtn">AVG</label>
+                <div className={`col-xs-1 ${!this.state.display_avg ? 'display_none' : 'display_block'} `}>
+                  <b>AVG</b>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className='row'>
-            <div className="inner-row">
-              <div className='col-xs-11'>
-                <div className='fake-panel'>
-                  <div className='row reports-list-heading'>
-                    <h4 className='col-xs-2 reports-list-title'>Revenue</h4>
-                    <div className='col-xs-10 reports-list-value reports-list-align-right '>
-                      { this.profitValues(profit['Revenue']) }
-                    </div>
-                  </div>
-                </div>
-
-                <ArticlesList
-                  currentMonths={current.month}
-                  type='Revenue'
-                  articles={report['Revenue']}
-                  collapsedArticles={collapsedArticles['Revenue']}
-                  handleArticleChange={this.handleArticleChange.bind(this)}
-                />
-              </div>
-              <div className="col-xs-1 main-revenue-block main-block">
-                <div data-toggle="tooltip" title={ printTotal ? totalProfit['Revenue'] : null }
-                   className={`col-xs-6 check-value ${this.state.display_total ? 'display_none' : 'display_block'}`} >
-                    {printTotal ? totalProfit['Revenue'] : null }
-                </div>
-                <div data-toggle="tooltip" title={this.printValues('Revenue')}
-                    className={`col-xs-6 check-value pull-right  ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    {this.printValues('Revenue')}
-                </div>
-              </div>
             </div>
           </div>
 
           <div className='row'>
-            <div className="inner-row">
-                <div className='col-xs-11'>
-                <div className='fake-panel'>
-                  <div className='row reports-list-heading'>
-                    <h4 className='col-xs-2 reports-list-title'>Cost</h4>
-                    <div className='col-xs-10 reports-list-value reports-list-align-right'>
-                      { this.profitValues(profit['Cost']) }
-                    </div>
+            <div className='col-xs-12'>
+              <div className='fake-panel'>
+                <div className='row reports-list-heading'>
+                  <h4 className='col-xs-2 reports-list-title'>Revenue</h4>
+                  <div className={` reports-list-value reports-list-align-right ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
+                    { this.profitValues(profit['Revenue']) }
+                  </div>
 
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_block' : 'display_none'}`} >
+                    <b>{printTotal ? totalProfit['Revenue'] : null }</b>
+                  </div>
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_avg ? 'display_block' : 'display_none'}`}>
+                    <b>{this.printValues('Revenue')}</b>
                   </div>
                 </div>
-
-                <ArticlesList
-                  currentMonths={current.month}
-                  type='Cost'
-                  articles={report['Cost']}
-                  collapsedArticles={collapsedArticles['Cost']}
-                  handleArticleChange={this.handleArticleChange.bind(this)}
-                />
               </div>
-              <div className="col-xs-1 main-cost-block main-block">
-                  <div data-toggle="tooltip" title={ printTotal ? totalProfit['Cost'] : null }
-                     className={`col-xs-6 check-value ${this.state.display_total ? 'display_none' : 'display_block'}`} >
-                       { printTotal ? totalProfit['Cost'] : null }
-                  </div>
-                  <div data-toggle="tooltip" title={this.printValues('Cost')}
-                     className={`col-xs-6 check-value pull-right ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                      {this.printValues('Cost')}
-                  </div>
 
-              </div>
+              <ArticlesList
+                currentMonths={current.month}
+                displayTotal={this.state.display_total}
+                displayAvg={this.state.display_avg}
+                type='Revenue'
+                articles={report['Revenue']}
+                collapsedArticles={collapsedArticles['Revenue']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+                fetchClassName = {this.fetchClassName.bind(this)}
+              />
             </div>
           </div>
 
           <div className='row'>
-          <div className="inner-row">
-            <div className='col-xs-11'>
+            <div className='col-xs-12'>
+              <div className='fake-panel'>
+                <div className='row reports-list-heading'>
+                  <h4 className='col-xs-2 reports-list-title'>Cost</h4>
+                  <div className={`reports-list-value reports-list-align-right ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
+                    { this.profitValues(profit['Cost']) }
+                  </div>
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_block' : 'display_none'}`} >
+                    <b>{ printTotal ? totalProfit['Cost'] : null }</b>
+                  </div>
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_avg ? 'display_block' : 'display_none'}`}>
+                    <b>{this.printValues('Cost')}</b>
+                  </div>
+                </div>
+              </div>
+
+              <ArticlesList
+                currentMonths={current.month}
+                displayTotal={this.state.display_total}
+                displayAvg={this.state.display_avg}
+                type='Cost'
+                articles={report['Cost']}
+                collapsedArticles={collapsedArticles['Cost']}
+                handleArticleChange={this.handleArticleChange.bind(this)}
+                fetchClassName = {this.fetchClassName.bind(this)}
+              />
+            </div>
+          </div>
+
+          <div className='row'>
+            <div className='col-xs-12'>
               <div className='fake-panel'>
                 <div className='row reports-list-heading profit'>
                   <h4 className='col-xs-2 reports-list-title'>Profit</h4>
-                  <div className='col-xs-10 reports-list-value reports-list-align-right'>
+                  <div className={` reports-list-value reports-list-align-right ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
                     { this.profitValues(profit['common']) }
+                  </div>
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right ${this.state.display_total ? 'display_block' : 'display_none'}`} >
+                    <b>{ printTotal ? totalProfit['common'] : null }</b>
+                  </div>
+                  <div className={`col-xs-1 reports-list-value reports-list-align-right pull-right ${this.state.display_avg ? 'display_block' : 'display_none'}`}>
+                    <b>{this.printValues('common')}</b>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-xs-1 main-common-block main-block">
-                <div data-toggle="tooltip" title={ printTotal ? totalProfit['common'] : null }
-                  className={`col-xs-6 check-value ${this.state.display_total ? 'display_none' : 'display_block'}`} >
-                    { printTotal ? totalProfit['common'] : null }
-                </div>
-                <div data-toggle="tooltip" title={this.printValues('common')}
-                  className={`col-xs-6 pull-right check-value ${this.state.display_avg ? 'display_none' : 'display_block'}`}>
-                    {this.printValues('common')}
-                </div>
-            </div>
-          </div>
           </div>
         </div>
       </div>

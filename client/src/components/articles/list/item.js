@@ -3,6 +3,7 @@ import { bindActionCreators }          from 'redux';
 import { connect }                     from 'react-redux';
 import { getCurrentUser }              from '../../../helpers/currentUser';
 import ArticleForm                     from '../form';
+import ReactTooltip                    from 'react-tooltip'
 
 @connect(
   state => ({
@@ -58,11 +59,15 @@ export default class ArticlesListItem extends Component {
               >
                 <i class="fa fa-pencil" aria-hidden="true"></i>
               </button>
-              { registers_count ? <button className="btn btn-sm btn-default" disabled>
+              { registers_count ? <button data-tip data-for='warning' className="btn btn-sm btn-default" disabled>
                   <i className="fa fa-times" aria-hidden="true"></i>
                 </button> : <button className="btn btn-sm btn-danger" onClick={props.handleDestroy.bind(this, id)}>
                   <i class="fa fa-times" aria-hidden="true"></i>
                 </button> }
+                <ReactTooltip id='warning' type='error'>
+                  <b><p className="text-center">Could not be deleted</p></b>
+                  <p>Article has registers associated with it</p>
+                </ReactTooltip>
             </div>
           </div>
         }

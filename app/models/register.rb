@@ -10,7 +10,11 @@ class Register < ApplicationRecord
     distinct.pluck('cast(extract(year from date) as integer)').sort { |a,b| b.to_i <=> a.to_i }
   }
 
-  scope :by_date, -> (year, month) {
+  scope :by_month, -> (year, month) {
     where("cast(extract(year from date) as integer) = ? AND cast(extract(month from date) as integer) IN (?)", year, month)
+  }
+
+  scope :by_year, -> (year) {
+    where("cast(extract(year from date) as integer) = ?", year)
   }
 end

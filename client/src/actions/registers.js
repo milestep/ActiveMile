@@ -10,9 +10,12 @@ export function index(current){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
       let headers = Object.assign({}, HEADERS)
+      let { year, month } = current
+      
       headers['workspace-id'] = getState().workspaces.app.current.id
-      headers['year'] = current.year
-      headers['month'] = current.month
+
+      if (year) headers['year'] = year
+      if (month) headers['month'] = month
 
       axios.get(`${API_URL}`, { headers: headers })
         .then(res => {

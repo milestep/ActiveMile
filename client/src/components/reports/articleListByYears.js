@@ -8,8 +8,8 @@ const monthsNames = moment.monthsShort()
 
 export default class TestArticlesList extends Component {
   static propTypes = {
+    years: PropTypes.array.isRequired,
     collapsedArticles: PropTypes.array,
-    currentYears: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
     articles: PropTypes.object.isRequired,
     handleArticleChange: PropTypes.func.isRequired,
@@ -19,7 +19,7 @@ export default class TestArticlesList extends Component {
   }
 
   createArticlesList() {
-    const { articles, collapsedArticles, currentMonths, type } = this.props
+    const { articles, collapsedArticles, type } = this.props
     let res = [];
 
     for(let articleTitle in articles) {
@@ -85,13 +85,13 @@ export default class TestArticlesList extends Component {
     return res
   }
 
-  createValuesByMonths(months) {
-    const { currentMonths } = this.props
+  createValuesByMonths(years) {
+    const { currentYears } = this.props
     let res = [];
 
-    currentMonths.map((numMonth, index) => {
+    currentYears.map((numYear, index) => {
       res.push(
-        <div key={index} className='col-xs-1 counterparty-value'>{ months[monthsNames[numMonth]] }</div>
+        <div key={index} className='col-xs-1 counterparty-value'>{ years[monthsNames[numYear]] }</div>
       )
     })
 
@@ -116,4 +116,3 @@ export default class TestArticlesList extends Component {
     )
   }
 }
-

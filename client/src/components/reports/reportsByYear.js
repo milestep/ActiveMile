@@ -6,8 +6,9 @@ import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
 import { setStatePromise, pushUnique}     from '../../utils'
-import ArticlesList                       from './articlesList'
+import ArticlesListByYears                from './articleListByYears'
 import MonthsTabs                         from './monthsTabs'
+import YearsTabs                         from './yearsTabs'
 import moment                             from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import Workbook from 'react-excel-workbook'
@@ -17,7 +18,7 @@ const monthsNames = moment.monthsShort()
   registers: state.registers.items,
   articles: state.articles.items,
   counterparties: state.counterparties.items,
-  filter_years: state.registers.years,
+  filterYears: state.registers.years,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
     articles: state.subscriptions.articles.resolved,
@@ -31,12 +32,12 @@ const monthsNames = moment.monthsShort()
     fetchRegisters
   }, dispatch)
 }))
-export default class Reports extends Component {
+export default class ReportsByYear extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,
     counterparties: PropTypes.array.isRequired,
-    filter_years: PropTypes.array.isRequired,
+    filterYears: PropTypes.array.isRequired,
     nextWorkspace: PropTypes.object.isRequired,
     isResolved: PropTypes.object.isRequired
   }
@@ -53,18 +54,18 @@ export default class Reports extends Component {
   createInitialState() {
     const date = new Date(),
           year = date.getFullYear(),
-          month = date.getMonth()
+          filterYears = this.props.filterYears
 
     return {
       isError: false,
       isStateReady: false,
-      current: { year, month: [month] },
+      current: { year: [year] },
       report: {
         Revenue: {},
         Cost: {}
       },
       available: {
-        years: [ year ]
+        years: filterYears 
       },
       profit: {
         common: {},
@@ -125,59 +126,61 @@ export default class Reports extends Component {
   }
 
   createReportState() {
-    console.log(this.state.current)
+    console.log(this.state.current, "*******************************")
+    console.log(this.state)
     const fakeState = this.createInitialState()
     console.log(fakeState)
     const { registers, articles } = this.props
     const { current } = this.state
-
     let { report, profit, totalProfit } = fakeState
-    let { years, months } = fakeState.available
-    console.log(monthsNames)
-    const currentTitlesMonths = []
-    current.month.forEach(numMonth => currentTitlesMonths[monthsNames[numMonth]] = 0)
+    let { years } = fakeState.available
+    /*let yearsNames = {}
+    years.forEach(year => { yearsNames[year.toString()] = 0 })*/
+ 
+    const currentTitlesYears = []
+    current.year.forEach(numYear => currentTitlesYears[years[numYear]] = 0)
 
     for(let model in profit) {
-      profit[model] = Object.assign({}, currentTitlesMonths)
+      profit[model] = Object.assign({}, currentTitlesYears)
     }
-    
+
     registers.forEach(register => {
       const registerDate = new Date(register.date),
-            registerMonth = registerDate.getMonth()
+            registerYear = registerDate.getFullYear()
 
       const article = Object.assign({}, articles.find(article => article.id === register.article_id))
       const reportType = report[article.type]
       const articleTitle = article.title
-      let fakeCurrentTitlesMonths = Object.assign({}, currentTitlesMonths)
+      let fakeCurrentTitlesYears = Object.assign({}, currentTitlesYears)
       let counterpartyName = this.findRegisterCounterparty(register)
 
-      profit[article.type][monthsNames[registerMonth]] += register.value
-      profit['common'][monthsNames[registerMonth]] += this.getRegisterValue(article.type, register.value)
+      profit[article.type][years[registerYear]] += register.value
+      profit['common'][years[registerYear]] += this.getRegisterValue(article.type, register.value)
       totalProfit[article.type] += register.value
       totalProfit['common'] += this.getRegisterValue(article.type, register.value)
 
       if (reportType[articleTitle]) {
         if (reportType[articleTitle]['counterparties'][counterpartyName]) {
-          reportType[articleTitle]['counterparties'][counterpartyName][monthsNames[registerMonth]] += register.value
+          reportType[articleTitle]['counterparties'][counterpartyName][years[registerYear]] += register.value
         } else {
-          fakeCurrentTitlesMonths[monthsNames[registerMonth]] = register.value
-          reportType[articleTitle]['counterparties'][counterpartyName] = fakeCurrentTitlesMonths
+          fakeCurrentTitlesYears[years[registerYear]] = register.value
+          reportType[articleTitle]['counterparties'][counterpartyName] = fakeCurrentTitlesYears
         }
       } else {
         reportType[articleTitle] = {}
         reportType[articleTitle]["counterparties"] = {}
-        fakeCurrentTitlesMonths[monthsNames[registerMonth]] = register.value
-        reportType[articleTitle]["counterparties"][counterpartyName] = fakeCurrentTitlesMonths
+        fakeCurrentTitlesYears[years[registerYear]] = register.value
+        reportType[articleTitle]["counterparties"][counterpartyName] = fakeCurrentTitlesYears
       }
     })
 
     for(let model in report) {
       for(let articleTitle in report[model]) {
-        report[model][articleTitle]['values'] = Object.assign({}, currentTitlesMonths)
+        report[model][articleTitle]['values'] = Object.assign({}, currentTitlesYears)
 
         for(let counterpartyName in report[model][articleTitle]['counterparties']) {
-          for(let month in report[model][articleTitle]['counterparties'][counterpartyName]) {
-            report[model][articleTitle]['values'][month] += report[model][articleTitle]['counterparties'][counterpartyName][month]
+          for(let year in report[model][articleTitle]['counterparties'][counterpartyName]) {
+            report[model][articleTitle]['values'][year] += report[model][articleTitle]['counterparties'][counterpartyName][year]
           }
         }
       }
@@ -190,7 +193,7 @@ export default class Reports extends Component {
       totalProfit,
       isStateReady: true,
       available: {
-        years: this.props.filter_years
+        years: this.props.filterYears
       }
     }))
   }
@@ -218,36 +221,19 @@ export default class Reports extends Component {
     }))
   }
 
-  handleYearChange = e => {
+  handleYearChange = year => {
     if (this.state.isError) return
-
-    const year = e.value
-
-    setStatePromise(this, (prevState => ({
-      current: {
-        ...prevState.current, year
-      }
-    }))).then(() => {
-      this.props.actions.fetchRegisters(this.state.current)
-        .then(() => {
-          this.createReportState()
-        })
-    })
-  }
-
-  handleMonthChange = month => {
-    if (this.state.isError) return
-    let currentMonths = Object.assign([], this.state.current.month)
-    let index = currentMonths.indexOf(month)
+    let currentYears = Object.assign([], this.state.current.year)
+    let index = currentYears.indexOf(year)
 
     if (index != -1)
-      currentMonths.splice([index], 1)
+      currentYears.splice(index, 1)
     else
-      currentMonths.push(month)
+      currentYears.push(year)
 
     setStatePromise(this, (prevState => ({
       current: {
-        ...prevState.current, month: currentMonths.sort((a, b) => a - b)
+        ...prevState.current, year: currentYears.sort((a, b) => a - b)
       }
     }))).then(() => {
       this.props.actions.fetchRegisters(this.state.current)
@@ -291,7 +277,7 @@ export default class Reports extends Component {
   }
 
 
-  printCurrentMonths() {
+/*  printCurrentMonths() {
     const { current } = this.state
 
     const monthsNames = moment.monthsShort()
@@ -310,13 +296,33 @@ export default class Reports extends Component {
     });
 
     return printCurrentMonths
+  }*/
+
+  printCurrentYears() {
+    const { current, available } = this.state
+    let printCurrentYears = []
+    
+    available.years.forEach((year, index) => {
+      const isCurrent = current.year.includes(year)
+
+      if (isCurrent) {
+        printCurrentYears.push(
+          <div className='col-xs-1' key={index}>
+            { year }
+          </div>
+        )
+      }
+    });
+
+    return printCurrentYears
+
   }
 
-  profitValues(months) {
+  profitValues(years) {
     let res = [];
 
-    for(let month in months) {
-      res.push( <div key={month} className={'col-xs-1'}>{ months[month] }</div> )
+    for(let year in years) {
+      res.push( <div key={year} className={'col-xs-1'}>{ years[year] }</div> )
     }
 
     return res
@@ -324,8 +330,8 @@ export default class Reports extends Component {
 
   printValues(value) {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
-    let printTotal = current.month.length
-    return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentMonths().length).toFixed(0) : null
+    let printTotal = current.year.length
+    return  printTotal ? parseFloat(totalProfit[value] / this.printCurrentYears().length).toFixed(0) : null
   }
 
   fetchClassName(display_total, display_avg) {
@@ -345,7 +351,8 @@ export default class Reports extends Component {
 
   render() {
     const { report, profit, totalProfit, current, available, collapsedArticles } = this.state
-    let printTotal = current.month.length
+    let printTotal = current.year.length
+
     if (!this.state.isStateReady && !this.state.isError) {
       return(
         <span className='spin-wrap main-loader'>
@@ -354,9 +361,9 @@ export default class Reports extends Component {
       )
     }
 
-    const monthsNames = moment.monthsShort()
-    const months = current.month.map((month, i)=>{
-      return(<th key={i}>{monthsNames[month]}</th>)
+    const yearsNames = this.state.available.years
+    const years = current.year.map((year, i)=>{
+      return(<th key={i}>{yearsNames[year]}</th>)
     })
     const revenue = this.profitValues(profit['Revenue']).map((reven)=>{
       return(<td key={reven.id}>{reven}</td>)
@@ -367,9 +374,12 @@ export default class Reports extends Component {
     const common = this.profitValues(profit['common']).map((common)=>{
       return(<td key={common.id}>{common}</td>)
     })
+
+    console.log(this.state.available.years)
+
       return(
         <div>
-          <div>
+ {/*         <div>
             <ReactHTMLTableToExcel
               id="test-table-xls-button"
               className="btn btn-xls-button pull-right"
@@ -396,13 +406,14 @@ export default class Reports extends Component {
                   <td>{ common }</td>
                 </tr>
               </table>
-          </div>
+          </div>*/}
         <div className='row'>
           <div className='reports-filter'>
             <div className='reports-filter-block'>
-              <MonthsTabs
-                current={current.month}
-                handleMonthChange={this.handleMonthChange.bind(this)}
+              <YearsTabs 
+                current={current.year}
+                years = {this.state.available.years}
+                handleYearChange = {this.handleYearChange.bind(this)}
               />
             </div>
           </div>
@@ -426,7 +437,7 @@ export default class Reports extends Component {
             <div className='row reports-list-align-right'>
               <div className={` col-md-offset-2 ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
                 <div className='reports-list-months'>
-                  {this.printCurrentMonths()}
+                  {this.printCurrentYears()}
                 </div>
               </div>
               <div className={`col-xs-1 ${!this.state.display_total ? 'display_none' : 'display_block'}`}>
@@ -456,8 +467,9 @@ export default class Reports extends Component {
                 </div>
               </div>
 
-              <ArticlesList
-                currentMonths={current.month}
+              <ArticlesListByYears
+                availableYears={available.years}
+                currentYears={current.year}
                 displayTotal={this.state.display_total}
                 displayAvg={this.state.display_avg}
                 type='Revenue'
@@ -486,8 +498,9 @@ export default class Reports extends Component {
                 </div>
               </div>
 
-              <ArticlesList
-                currentMonths={current.month}
+              <ArticlesListByYears
+                availableYears={available.years}
+                currentYears={current.year}
                 displayTotal={this.state.display_total}
                 displayAvg={this.state.display_avg}
                 type='Cost'
@@ -520,5 +533,6 @@ export default class Reports extends Component {
         </div>
       </div>
     )
+    // return null
   }
 }

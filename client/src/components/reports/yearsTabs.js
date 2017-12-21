@@ -4,38 +4,39 @@ import { connect }                        from 'react-redux';
 import moment                             from 'moment';
 import * as utils                         from '../../utils';
 
-const monthsNames = moment.monthsShort()
-
-export default class MonthsTabs extends Component {
-  static propTypes = {
+export default class YearsTabs extends Component {
+   static propTypes = {
     current: PropTypes.array.isRequired,
-    handleMonthChange: PropTypes.func.isRequired
-  };
+    years: PropTypes.array.isRequired,
+    handleYearChange: PropTypes.func.isRequired
+   };
 
   render() {
-    const { current, handleMonthChange } = this.props
+    const { current, years, handleYearChange } = this.props
     let tabs = [];
 
-    monthsNames.forEach((month, index) => {
-      const isCurrent = current.includes(monthsNames.indexOf(month))
+    years.forEach((year, index) => {
       let listClassNames = []
+      const isCurrent = current.includes(year)
 
-      if (isCurrent)
-        listClassNames.push('active');
+      if (isCurrent) listClassNames.push('active');
 
       tabs.push(
-        <li className={listClassNames.join(' ')} key={month}>
+        <li className={listClassNames.join(' ')}key={index}>
           <a
             href='#'
             onClick={(e) => {
               e.preventDefault()
-              handleMonthChange(index)
+              handleYearChange(year)
             }}
-          >{month}</a>
+          >{year}</a>
         </li>
       );
-    });
 
+      }
+    );
+
+     
     return(
       <ul className='nav nav-pills reports-filter-months-tabs'>{tabs}</ul>
     )

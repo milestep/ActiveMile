@@ -6,5 +6,6 @@ export Counterparties  from './counterparties/counterparties';
 export Registers       from './registers/registers';
 export RegistersEditor from './registers/edit';
 export Reports         from './reports/reports';
+export ReportsByYear   from './reports/reportsByYear';
 export Charts         from './charts/charts';
 export NotFound        from './errors/err404';

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Form                            from './form';
 import moment                          from 'moment';
-import ReactTooltip                    from 'react-tooltip'
+import ReactTooltip                    from 'react-tooltip';
 
 export default class List extends Component {
   static propTypes = {
@@ -59,7 +59,7 @@ export default class List extends Component {
                   >
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                   </button>
-                  { item.registers_count ? <button data-tip data-for='warning' className="btn btn-sm btn-default" disabled>
+                  { item.registers_count ? <button data-tip data-for='warning' className="btn btn-sm btn-default">
                     <i className="fa fa-times" aria-hidden="true"></i>
                   </button> : <button className="btn btn-sm btn-danger" onClick={handleDestroy.bind(this, item.id)}>
                     <i className="fa fa-times" aria-hidden="true"></i>

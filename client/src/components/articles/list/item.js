@@ -59,7 +59,7 @@ export default class ArticlesListItem extends Component {
               >
                 <i class="fa fa-pencil" aria-hidden="true"></i>
               </button>
-              { registers_count ? <button data-tip data-for='warning' className="btn btn-sm btn-default" disabled>
+              { registers_count ? <button data-tip data-for='warning' className="btn btn-sm btn-default">
                   <i className="fa fa-times" aria-hidden="true"></i>
                 </button> : <button className="btn btn-sm btn-danger" onClick={props.handleDestroy.bind(this, id)}>
                   <i class="fa fa-times" aria-hidden="true"></i>

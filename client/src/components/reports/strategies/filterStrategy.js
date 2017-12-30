@@ -1,14 +1,15 @@
+import _ from 'lodash'
+
 export default class FilterStrategy {
   constructor() {
     this._initializeFilters()
   }
 
-  getComponentFilters() {
-    return this._filters
-  }
+  getFilters(type = 'component') {
+    var filters = this._filters
 
-  getDefaultFilters() {
-    return this._defaultFilters
+    if (_.isString(type)) return filters[type]
+    return _.assign({}, filters.default, filters.component)
   }
 
   createComponentFilter(value, name = value, applied = false) {
@@ -19,8 +20,15 @@ export default class FilterStrategy {
    * Private methods
    */
   _initializeFilters() {
-    this._defaultFilters = this.defaultFilters()
-    this._filters = this.componentFilters()
+    this._filters = {
+      default: this._handleFilters(this.defaultFilters()),
+      component: this._handleFilters(this.componentFilters())
+    }
+  }
+
+  _handleFilters(filters) {
+    if (filters && filters.constructor == Object) return filters
+    throw new Error('strategy filter must be an object')
   }
 
   /*

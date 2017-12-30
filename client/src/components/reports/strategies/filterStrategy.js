@@ -1,5 +1,5 @@
 export default class FilterStrategy {
-  constructor(props) {
+  constructor() {
     this._initializeFilters()
   }
 

@@ -4,9 +4,14 @@ import moment         from 'moment'
 class Strategy extends FilterStrategy {
   componentFilters() {
     var currentMonth = new Date().getMonth()
+    var monthsNames = moment.monthsShort()
 
-    return moment.monthsShort().map((month, index) =>
-          (this.createComponentFilter(index, month, index == currentMonth)))
+    return {
+      month: monthsNames.map((month, index) => {
+        var applied = index == currentMonth
+        return this.createComponentFilter(index, month, applied)
+      })
+    }
   }
 
   defaultFilters() {
@@ -15,5 +20,5 @@ class Strategy extends FilterStrategy {
 }
 
 export default function MonthsStrategy() {
-  return new Strategy({ filterBy: 'month' })
+  return new Strategy()
 }

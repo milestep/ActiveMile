@@ -1,7 +1,8 @@
-import FilterStrategy from './filterStrategy'
+import FilterStrategy from '../strategy'
 import moment         from 'moment'
+import _              from 'lodash'
 
-class Strategy extends FilterStrategy {
+export default class MonthsStrategy extends FilterStrategy {
   componentFilters() {
     var currentMonth = new Date().getMonth()
     var monthsNames = moment.monthsShort()
@@ -17,8 +18,4 @@ class Strategy extends FilterStrategy {
   defaultFilters() {
     return { year: new Date().getFullYear() }
   }
-}
-
-export default function MonthsStrategy() {
-  return new Strategy()
 }

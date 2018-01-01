@@ -4,7 +4,7 @@ import YearsStrategy  from './filter/strategies/years'
 import _              from 'lodash'
 
 const {
-  SET_REPORTS_FILTERS
+  SET_REPORT_FILTERS
 } = FilterActions
 
 const STRATEGIES = {
@@ -31,7 +31,7 @@ class Filter {
 
   setFilters(filters) {
     this._dispatch({
-      type: SET_REPORTS_FILTERS,
+      type: SET_REPORT_FILTERS,
       payload: this.strategy.handleFilters(filters)
     })
   }

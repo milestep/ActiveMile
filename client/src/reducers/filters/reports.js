@@ -1,7 +1,7 @@
 import FilterActions from '../../constants/filters'
 
 const {
-  SET_REPORTS_FILTERS
+  SET_REPORT_FILTERS
 } = FilterActions
 
 const initialState = {
@@ -11,7 +11,7 @@ const initialState = {
 
 export default function reports(state = initialState, action) {
   switch (action.type) {
-    case SET_REPORTS_FILTERS: {
+    case SET_REPORT_FILTERS: {
       return action.payload
     }
 

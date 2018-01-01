@@ -1,5 +1,5 @@
 import keyMirror from 'key-mirror'
 
 export default keyMirror({
-  SET_REPORTS_FILTERS: null
+  SET_REPORT_FILTERS: null
 })

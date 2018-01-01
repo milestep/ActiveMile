@@ -3,13 +3,13 @@ import alerts            from './alerts'
 import subscriptions     from './subscriptions'
 import registers         from './registers'
 import apiReducers       from './api'
-import filtersReducers   from './filters/index'
+import filterReducers    from './filters/index'
 
 export default {
   auth,
   alerts,
   subscriptions,
   registers,
-  ...filtersReducers,
+  ...filterReducers,
   ...apiReducers
 }

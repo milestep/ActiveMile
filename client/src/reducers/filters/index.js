@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
 import reports             from './reports'
 
-const filtersReducers = {
+const filterReducers = {
   filters: combineReducers({ reports })
 }
 
-export default filtersReducers
+export default filterReducers

@@ -5,24 +5,18 @@ import { toaster }                        from '../../actions/alerts'
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
+import filter                             from '../../actions/filter'
 import { setStatePromise, pushUnique }    from '../../utils'
 import ReactHTMLTableToExcel              from 'react-html-table-to-excel'
 import Workbook                           from 'react-excel-workbook'
-import MonthsStrategy                     from './strategies/months'
-import YearsStrategy                      from './strategies/years'
 import Filters                            from './filters'
 import _                                  from 'lodash'
-
-
-const strategies = {
-  months: MonthsStrategy,
-  years: YearsStrategy
-}
 
 @connect(state => ({
   registers: state.registers.items,
   articles: state.articles.items,
   counterparties: state.counterparties.items,
+  filterYears: state.registers.years,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
     articles: state.subscriptions.articles.resolved,
@@ -32,8 +26,9 @@ const strategies = {
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
+    fetchRegisters,
     toaster,
-    fetchRegisters
+    filter,
   }, dispatch)
 }))
 export default class Reports extends Component {
@@ -43,11 +38,7 @@ export default class Reports extends Component {
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
     this.toaster = props.actions.toaster()
-    this.strategy = strategies[props.strategy]()
-
-    this.state = {
-      filters: this.strategy.getFilters()
-    }
+    this.filter = props.actions.filter(props.strategy)
 
     this.onTabClick = this.onTabClick.bind(this)
   }
@@ -58,60 +49,44 @@ export default class Reports extends Component {
 
   fetchRegisters() {
     var { actions } = this.props
-    var params = this.getAppliedFilters()
+    var params = this.filter.getAppliedFilters()
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
-        .then(() => {
-          // TODO create reports based on registers
-        })
+        .then(() => this.onReceivedRegisters())
         .catch(err => console.error(err))
     })
   }
 
   onTabClick(filterName, id) {
-    var filter = this.state.filters[filterName]
+    var filters = this.filter.getFilters()
+    var filter = filters.component[filterName]
     var newFilter = _.assign([], filter)
 
     newFilter[id].applied = !filter[id].applied
-    this.changeFilter(filterName, newFilter)
+    this.filter.setComponentFilter(filterName, newFilter)
+    this.fetchRegisters()
   }
 
-  changeFilter(filterName, value) {
-    setStatePromise(this, prevState => ({
-      filters: {
-        ...prevState.filters,
-        [filterName]: value
-      }
-    })).then(() => {
-      this.fetchRegisters()
-    })
+  onReceivedRegisters() {
+    this.updateFilterYears()
   }
 
-  getAppliedFilters() {
-    var defaultFilters = this.strategy.getFilters('default')
-    var { filters } = this.state
-    var appliedFilters = {}
-
-    for (let filterName in filters) {
-      filters[filterName].forEach(componentFilter => {
-        if (!componentFilter.applied) return
-        appliedFilters[filterName] = appliedFilters[filterName] || []
-        appliedFilters[filterName].push(componentFilter.value)
-      })
-    }
-
-    return _.assign({}, defaultFilters, appliedFilters)
+  updateFilterYears() {
+    if (this.props.strategy != 'years') return
+    var strategy = this.filter.getStrategy()
+    this.filter.mergeComponentFilter('year',
+        strategy.mergeYears(this.props.filterYears))
   }
 
   render() {
-    const { filters } = this.state
+    const componentFilters = this.filter.getComponentFilters()
 
     return(
       <div className='row'>
         <div className='col-md-12'>
           <Filters
-            filters={this.state.filters}
+            filters={componentFilters}
             onTabClick={this.onTabClick}
           />
         </div>

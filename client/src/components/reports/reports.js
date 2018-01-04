@@ -40,6 +40,10 @@ export default class Reports extends Component {
     this.toaster = props.actions.toaster()
     this.filter = props.actions.filter(props.strategy)
 
+    this.state = {
+      articles: []
+    }
+
     this.onTabClick = this.onTabClick.bind(this)
   }
 
@@ -53,23 +57,92 @@ export default class Reports extends Component {
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
-        .then(() => this.onReceivedRegisters())
+        .then(() => this.onReceivedData())
         .catch(err => console.error(err))
     })
   }
 
+  onReceivedData() {
+    this.updateFilterYears()
+    this.initializeState()
+  }
+
+  initializeState() {
+    var { registers, articles, counterparties } = this.props
+    var newState = {
+      articles: []
+    }
+    var currentRegister = null
+
+    registers.forEach(register => {
+      currentRegister = register
+      var articleId = register.article_id
+      var article = findArticle(articleId)
+      var localArticle = findLocalArticle(articleId)
+
+      if (!localArticle) {
+        addArticle(article)
+      } else {
+        mergeArticles(localArticle, article)
+      }
+    })
+
+    console.log(newState)
+
+
+    function addArticle(article) {
+      newState.articles.push(createArticle(article))
+    }
+
+    function mergeArticles(localArticle, article) {
+      // localArticle.value += currentRegister.value
+    }
+
+    function createArticle(article) {
+      var counterparty = findCounterparty(currentRegister.counterparty_id)
+
+      return {
+        item: article,
+        value: getValue(),
+        counterparties: [ createCounterParty(counterparty) ]
+      }
+    }
+
+    function createCounterParty(counterparty) {
+      return { item: counterparty, value: getValue() }
+    }
+
+    function findArticle(id) {
+      return articles.find(article => (article.id == id))
+    }
+
+    function findLocalArticle(id) {
+      return newState.articles.find(article => (article.item.id == id))
+    }
+
+    function findCounterparty(id) {
+      return counterparties.find(counterparty => (counterparty.id == id))
+    }
+
+    function findLocalCounterparty(articleId, id) {
+      var article = findLocalArticle(id)
+
+      return article.counterparties
+                    .find(counterparty => (counterparty.item.id == id))
+    }
+
+    function getValue() {
+      return currentRegister.value
+    }
+  }
+
   onTabClick(filterName, id) {
-    var filters = this.filter.getFilters()
-    var filter = filters.component[filterName]
+    var filter = this.filter.getComponentFilters()[filterName]
     var newFilter = _.assign([], filter)
 
     newFilter[id].applied = !filter[id].applied
     this.filter.setComponentFilter(filterName, newFilter)
     this.fetchRegisters()
-  }
-
-  onReceivedRegisters() {
-    this.updateFilterYears()
   }
 
   updateFilterYears() {

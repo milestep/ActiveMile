@@ -95,7 +95,25 @@ export default class Reports extends Component {
     }
 
     function mergeArticles(localArticle, article) {
-      // localArticle.value += currentRegister.value
+      var counterpartyId = currentRegister.counterparty_id
+      var counterparty = findCounterparty(counterpartyId)
+      var localCounterparty = findLocalCounterparty(localArticle, counterpartyId)
+
+      localArticle.value += currentRegister.value
+
+      if (!localCounterparty) {
+        addCounterparty(localArticle, counterparty)
+      } else {
+        changeValue(localCounterparty)
+      }
+    }
+
+    function addCounterparty(localArticle, counterparty) {
+      localArticle.counterparties.push(createCounterParty(counterparty))
+    }
+
+    function changeValue(localCounterparty) {
+      localCounterparty.value += currentRegister.value
     }
 
     function createArticle(article) {
@@ -124,11 +142,9 @@ export default class Reports extends Component {
       return counterparties.find(counterparty => (counterparty.id == id))
     }
 
-    function findLocalCounterparty(articleId, id) {
-      var article = findLocalArticle(id)
-
-      return article.counterparties
-                    .find(counterparty => (counterparty.item.id == id))
+    function findLocalCounterparty(localArticle, id) {
+      return localArticle.counterparties
+               .find(counterparty => (counterparty.item.id == id))
     }
 
     function getValue() {

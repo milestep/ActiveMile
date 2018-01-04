@@ -10,7 +10,7 @@ export default class MonthsStrategy extends FilterStrategy {
     return {
       month: monthsNames.map((month, index) => {
         var applied = index == currentMonth
-        return this.createComponentFilter(index, month, applied)
+        return this.createComponentFilter(index + 1, month, applied)
       })
     }
   }

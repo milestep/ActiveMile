@@ -72,6 +72,7 @@ export default class Reports extends Component {
   }
 
   onDataReceived() {
+    // TODO props should not be supplied to this method
     this.filter.emitEvent('onDataReceived', this.props)
     this.initializeState()
   }

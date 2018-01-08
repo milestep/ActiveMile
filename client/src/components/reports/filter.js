@@ -1,16 +1,16 @@
 import React, { Component, PropTypes } from 'react'
 
 export default class Filter extends Component {
-  onTabClick(e, filterName, index) {
+  onTabClick(e, index) {
     e.preventDefault()
-    this.props.onTabClick(filterName, index)
+    this.props.onTabClick(index)
   }
 
   getTabs() {
-    var { filterName } = this.props
+    var { filters } = this.props
     return this.props.filters.map((filter, index) => (
       <li key={index} className={filter.applied ? 'active' : ''}>
-        <a href='#' onClick={(e) => { this.onTabClick(e, filterName, index) }}>
+        <a href='#' onClick={(e) => { this.onTabClick(e, index) }}>
           { filter.name }
         </a>
       </li>

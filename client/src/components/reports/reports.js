@@ -1,16 +1,23 @@
 import React, { Component, PropTypes }    from 'react'
 import { bindActionCreators }             from 'redux'
 import { connect }                        from 'react-redux'
+import _                                  from 'lodash'
+import ReactHTMLTableToExcel              from 'react-html-table-to-excel'
+import Workbook                           from 'react-excel-workbook'
 import { toaster }                        from '../../actions/alerts'
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
-import filter                             from '../../actions/filter'
 import { setStatePromise, pushUnique }    from '../../utils'
-import ReactHTMLTableToExcel              from 'react-html-table-to-excel'
-import Workbook                           from 'react-excel-workbook'
-import Filters                            from './filters'
-import _                                  from 'lodash'
+import filter                             from '../../lib/filter'
+import MonthsStrategy                     from '../../strategies/filter/months'
+import YearsStrategy                      from '../../strategies/filter/years'
+import Filter                             from './filter'
+
+const STRATEGIES = {
+  months: MonthsStrategy,
+  years: YearsStrategy
+}
 
 @connect(state => ({
   registers: state.registers.items,
@@ -35,14 +42,16 @@ export default class Reports extends Component {
   constructor(props) {
     super(props)
 
-    this.types = ['Revenue', 'Cost']
-    this.subscriptions = ['articles', 'counterparties']
-    this.toaster = props.actions.toaster()
-    this.filter = props.actions.filter(props.strategy)
-
     this.state = {
       articles: []
     }
+
+    this.types = ['Revenue', 'Cost']
+    this.subscriptions = ['articles', 'counterparties']
+
+    var strategy = new STRATEGIES[props.strategy]()
+    this.filter = props.actions.filter('report', strategy)
+    this.toaster = props.actions.toaster()
 
     this.onTabClick = this.onTabClick.bind(this)
   }
@@ -57,13 +66,13 @@ export default class Reports extends Component {
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
-        .then(() => this.onReceivedData())
+        .then(() => this.onDataReceived())
         .catch(err => console.error(err))
     })
   }
 
-  onReceivedData() {
-    this.updateFilterYears()
+  onDataReceived() {
+    this.filter.emitEvent('onDataReceived', this.props)
     this.initializeState()
   }
 
@@ -86,9 +95,6 @@ export default class Reports extends Component {
         mergeArticles(localArticle, article)
       }
     })
-
-    console.log(newState)
-
 
     function addArticle(article) {
       newState.articles.push(createArticle(article))
@@ -152,20 +158,13 @@ export default class Reports extends Component {
     }
   }
 
-  onTabClick(filterName, id) {
-    var filter = this.filter.getComponentFilters()[filterName]
-    var newFilter = _.assign([], filter)
+  onTabClick(id) {
+    var filters = this.filter.getComponentFilters()
+    var newFilters = _.assign([], filters)
 
-    newFilter[id].applied = !filter[id].applied
-    this.filter.setComponentFilter(filterName, newFilter)
+    newFilters[id].applied = !filters[id].applied
+    this.filter.setFilters({ component: newFilters })
     this.fetchRegisters()
-  }
-
-  updateFilterYears() {
-    if (this.props.strategy != 'years') return
-    var strategy = this.filter.getStrategy()
-    this.filter.mergeComponentFilter('year',
-        strategy.mergeYears(this.props.filterYears))
   }
 
   render() {
@@ -174,7 +173,7 @@ export default class Reports extends Component {
     return(
       <div className='row'>
         <div className='col-md-12'>
-          <Filters
+          <Filter
             filters={componentFilters}
             onTabClick={this.onTabClick}
           />

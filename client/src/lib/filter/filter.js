@@ -88,7 +88,6 @@ export default class Filter {
   emitEvent(eventName) {
     var strategy = this._strategy
     var handler = strategy[eventName]
-    var newFilters = {}
 
     if (!handler) return false
 

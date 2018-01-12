@@ -40,8 +40,6 @@ class ReportsStateCreator {
         this._mergeWithCurrentArticle(localArticle)
       }
     })
-
-    console.log(this.state)
   }
 
   setCurrent(newCurrent) {

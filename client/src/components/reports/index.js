@@ -13,6 +13,7 @@ import filter                             from '../../lib/filter'
 import MonthsStrategy                     from '../../strategies/filter/months'
 import YearsStrategy                      from '../../strategies/filter/years'
 import Filter                             from './filter'
+import reportsStateCreator                from './stateCreators'
 
 const STRATEGIES = {
   months: MonthsStrategy,
@@ -20,10 +21,6 @@ const STRATEGIES = {
 }
 
 @connect(state => ({
-  registers: state.registers.items,
-  articles: state.articles.items,
-  counterparties: state.counterparties.items,
-  filterYears: state.registers.years,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
     articles: state.subscriptions.articles.resolved,
@@ -33,24 +30,26 @@ const STRATEGIES = {
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
+    reportsStateCreator,
     fetchRegisters,
     toaster,
     filter,
-  }, dispatch)
+  }, dispatch),
+  stateCreator: dispatch(reportsStateCreator),
 }))
 export default class Reports extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      articles: []
+      filters: { cost: [], revenue: [] }
     }
-
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
 
-    var strategy = new STRATEGIES[props.strategy]()
-    this.filter = props.actions.filter('report', strategy)
+    this.strategy = new STRATEGIES[props.strategy]()
+    this.filter = props.actions.filter('report', this.strategy)
+
     this.toaster = props.actions.toaster()
 
     this.onTabClick = this.onTabClick.bind(this)
@@ -72,91 +71,21 @@ export default class Reports extends Component {
   }
 
   onDataReceived() {
-    // TODO props should not be supplied to this method
-    this.filter.emitEvent('onDataReceived', this.props)
+    this.filter.emitEvent('onDataReceived')
     this.initializeState()
   }
 
   initializeState() {
-    var { registers, articles, counterparties } = this.props
-    var newState = {
-      articles: []
-    }
-    var currentRegister = null
-
-    registers.forEach(register => {
-      currentRegister = register
-      var articleId = register.article_id
-      var article = findArticle(articleId)
-      var localArticle = findLocalArticle(articleId)
-
-      if (!localArticle) {
-        addArticle(article)
-      } else {
-        mergeArticles(localArticle, article)
-      }
+    var stateCreator = this.props.stateCreator({
+      filter: this.filter,
+      strategy: this.strategy
     })
 
-    function addArticle(article) {
-      newState.articles.push(createArticle(article))
-    }
+    stateCreator.generate()
 
-    function mergeArticles(localArticle, article) {
-      var counterpartyId = currentRegister.counterparty_id
-      var counterparty = findCounterparty(counterpartyId)
-      var localCounterparty = findLocalCounterparty(localArticle, counterpartyId)
-
-      localArticle.value += currentRegister.value
-
-      if (!localCounterparty) {
-        addCounterparty(localArticle, counterparty)
-      } else {
-        changeValue(localCounterparty)
-      }
-    }
-
-    function addCounterparty(localArticle, counterparty) {
-      localArticle.counterparties.push(createCounterParty(counterparty))
-    }
-
-    function changeValue(localCounterparty) {
-      localCounterparty.value += currentRegister.value
-    }
-
-    function createArticle(article) {
-      var counterparty = findCounterparty(currentRegister.counterparty_id)
-
-      return {
-        item: article,
-        value: getValue(),
-        counterparties: [ createCounterParty(counterparty) ]
-      }
-    }
-
-    function createCounterParty(counterparty) {
-      return { item: counterparty, value: getValue() }
-    }
-
-    function findArticle(id) {
-      return articles.find(article => (article.id == id))
-    }
-
-    function findLocalArticle(id) {
-      return newState.articles.find(article => (article.item.id == id))
-    }
-
-    function findCounterparty(id) {
-      return counterparties.find(counterparty => (counterparty.id == id))
-    }
-
-    function findLocalCounterparty(localArticle, id) {
-      return localArticle.counterparties
-               .find(counterparty => (counterparty.item.id == id))
-    }
-
-    function getValue() {
-      return currentRegister.value
-    }
+    this.setState({
+      filters: stateCreator.getState()
+    })
   }
 
   onTabClick(id) {

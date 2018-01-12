@@ -1,6 +1,15 @@
 export class FilterStrategy {
-  filterBy(name) {
-    this.filterBy = name
+  constructor(props) {
+    this.filterBy = props.filterBy
+    this._filter = null
+  }
+
+  setFilter(filter) {
+    this._filter = filter
+  }
+
+  getFilter() {
+    return this._filter
   }
 
   createComponentFilter(value, name = value, applied = false) {

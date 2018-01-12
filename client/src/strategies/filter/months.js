@@ -3,8 +3,7 @@ import moment             from 'moment'
 
 export default class MonthsStrategy extends FilterStrategy {
   constructor() {
-    super()
-    this.filterBy('month')
+    super({ filterBy: 'month' })
   }
 
   componentFilters() {
@@ -21,5 +20,11 @@ export default class MonthsStrategy extends FilterStrategy {
 
   defaultFilters() {
     return { year: new Date().getFullYear() }
+  }
+
+  getCurrentFilterByDate(date) {
+    var month = date.getMonth() + 1
+    var filters = this._filter.getComponentFilters()
+    return filters.find(filter => (filter.value == month))
   }
 }

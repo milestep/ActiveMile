@@ -7,9 +7,11 @@ const { SET_FILTERS } = constants
 export default class Filter {
   constructor(props) {
     this.name      = props.name
-    this._dispatch = props.dispatch
-    this._getState = props.getState
+    this.dispatch = props.dispatch
+    this.getState = props.getState
     this._strategy = props.strategy
+
+    this._strategy.setFilter(this)
 
     this.createActions()
     this.initializeFilters()
@@ -18,7 +20,7 @@ export default class Filter {
   createActions() {
     var { createAction } = new ActionCreator({
       name: this.name,
-      dispatch: this._dispatch
+      dispatch: this.dispatch
     })
 
     this.actions = {
@@ -36,7 +38,7 @@ export default class Filter {
   }
 
   getFilters() {
-    var store = this._getState()
+    var store = this.getState()
     return store.filters[this.name]
   }
 
@@ -83,14 +85,18 @@ export default class Filter {
     this.actions.setFilters(newFilters)
   }
 
-  emitEvent(eventName, props) {
+  emitEvent(eventName) {
     var strategy = this._strategy
     var handler = strategy[eventName]
     var newFilters = {}
 
     if (!handler) return false
 
-    handler.call(strategy, this, props)
+    handler.call(strategy)
+  }
+
+  getStrategy() {
+    return this._strategy
   }
 
   _checkComponentFilters(filters) {

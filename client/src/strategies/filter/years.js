@@ -3,8 +3,7 @@ import _                  from 'lodash'
 
 export default class YearsStrategy extends FilterStrategy {
   constructor() {
-    super()
-    this.filterBy('year')
+    super({ filterBy: 'year' })
   }
 
   componentFilters() {
@@ -12,17 +11,23 @@ export default class YearsStrategy extends FilterStrategy {
     return [ this.createComponentFilter(currentYear, currentYear, true) ]
   }
 
-  onDataReceived(filter, props) {
-    var { filterYears } = props
-    this._mergeYears(filter, filterYears)
+  getCurrentFilterByDate(date) {
+    var year = date.getFullYear()
+    var filters = this._filter.getComponentFilters()
+    return filters.find(filter => (filter.value == year))
   }
 
-  _mergeYears(filter, filterYears) {
+  onDataReceived() {
+    var store = this._filter.getState()
+    this._mergeYears(store.registers.years)
+  }
+
+  _mergeYears(filterYears) {
     var currentYear = new Date().getFullYear()
     var newYears = _.concat(_.difference(
         [currentYear], filterYears), filterYears).sort()
     var newFilters = newYears.map(year => (this.createComponentFilter(year)))
-    var filters = filter.getComponentFilters()
+    var filters = this._filter.getComponentFilters()
     var mergedFilters = []
 
     newFilters.forEach(newFilter => {
@@ -30,6 +35,6 @@ export default class YearsStrategy extends FilterStrategy {
       mergedFilters.push(filter || newFilter)
     })
 
-    filter.setFilters({ component: mergedFilters })
+    this._filter.setFilters({ component: mergedFilters })
   }
 }

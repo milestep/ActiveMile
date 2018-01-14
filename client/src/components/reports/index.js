@@ -13,7 +13,7 @@ import filter                             from '../../lib/filter'
 import MonthsStrategy                     from '../../strategies/filter/months'
 import YearsStrategy                      from '../../strategies/filter/years'
 import Filter                             from './filter'
-import reportsStateCreator                from './stateCreators'
+import ReportsStateCreator                from './stateCreators'
 
 const STRATEGIES = {
   months: MonthsStrategy,
@@ -21,6 +21,9 @@ const STRATEGIES = {
 }
 
 @connect(state => ({
+  registers: state.registers.items,
+  articles: state.articles.items,
+  counterparties: state.counterparties.items,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
     articles: state.subscriptions.articles.resolved,
@@ -30,12 +33,10 @@ const STRATEGIES = {
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
-    reportsStateCreator,
     fetchRegisters,
     toaster,
     filter,
-  }, dispatch),
-  stateCreator: dispatch(reportsStateCreator),
+  }, dispatch)
 }))
 export default class Reports extends Component {
   constructor(props) {
@@ -44,12 +45,11 @@ export default class Reports extends Component {
     this.state = {
       filters: { cost: [], revenue: [] }
     }
+
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
-
     this.strategy = new STRATEGIES[props.strategy]()
     this.filter = props.actions.filter('report', this.strategy)
-
     this.toaster = props.actions.toaster()
 
     this.onTabClick = this.onTabClick.bind(this)
@@ -57,6 +57,10 @@ export default class Reports extends Component {
 
   componentWillMount() {
     this.fetchRegisters()
+  }
+
+  componentWillUnmount() {
+    this.props.actions.unsubscribe(this.subscriptions)
   }
 
   fetchRegisters() {
@@ -76,12 +80,15 @@ export default class Reports extends Component {
   }
 
   initializeState() {
-    var stateCreator = this.props.stateCreator({
+    var { registers, articles, counterparties } = this.props
+
+    var stateCreator = new ReportsStateCreator({
       filter: this.filter,
-      strategy: this.strategy
+      strategy: this.strategy,
+      models: { registers, articles, counterparties }
     })
 
-    stateCreator.generate()
+    stateCreator.generateState()
 
     this.setState({
       filters: stateCreator.getState()

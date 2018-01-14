@@ -1,25 +1,13 @@
-class ReportsStateCreator {
+export default class ReportsStateCreator {
   constructor(props) {
     this.props = props
 
     this.state = this._createInitialState()
     this.current = { register: null, article: null, counterparty: null }
-
-    this.initializeModels()
   }
 
-  initializeModels() {
-    var store = this.props.getState()
-
-    this.models = {
-      registers: store.registers.items,
-      articles: store.articles.items,
-      counterparties: store.counterparties.items
-    }
-  }
-
-  generate() {
-    var { registers, articles, counterparties } = this.models
+  generateState() {
+    var { registers, articles, counterparties } = this.props.models
 
     registers.forEach(register => {
       this.setCurrent({
@@ -121,8 +109,4 @@ class ReportsStateCreator {
   _getCurrentValue() {
     return this.current.register.value
   }
-}
-
-export default function reportsStateCreator(dispatch, getState) {
-  return props => (new ReportsStateCreator({ ...props, getState }))
 }

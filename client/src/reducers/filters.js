@@ -1,7 +1,7 @@
-import { createFilterReducers } from '../lib/filter'
+import { createFilterReducer } from '../lib/filter'
 
 const filterReducers = {
-  filters: createFilterReducers(['report'])
+  filters: createFilterReducer()
 }
 
 export default filterReducers

@@ -4,23 +4,20 @@ import * as constants    from './constants'
 
 const { SET_FILTERS } = constants
 
-export default class Filter {
+export class Filter {
   constructor(props) {
-    this.name      = props.name
-    this.dispatch = props.dispatch
-    this.getState = props.getState
-    this._strategy = props.strategy
-
-    this._strategy.setFilter(this)
+    this.name    = props.name
+    this.action  = props.action
+    this.actions = {}
 
     this.createActions()
-    this.initializeFilters()
+    this.setFilters(props.filters)
   }
 
   createActions() {
     var { createAction } = new ActionCreator({
       name: this.name,
-      dispatch: this.dispatch
+      dispatch: this.action.dispatch
     })
 
     this.actions = {
@@ -28,81 +25,54 @@ export default class Filter {
     }
   }
 
-  initializeFilters() {
-    const strategy = this._strategy
-
-    this.setFilters({
-      default: strategy.defaultFilters(),
-      component: strategy.componentFilters()
-    })
+  setFilters(filters) {
+    var handledFilters = this.handleFilters(filters)
+    this.actions.setFilters(handledFilters)
   }
 
-  getFilters() {
-    var store = this.getState()
-    return store.filters[this.name]
+  checkFilters(filters) {
+    var res = this.verifyFilters(filters)
+    if (!res.isValid) throw new Error(res.error)
   }
 
-  getDefaultFilters() {
-    return this.getFilters().default
-  }
+  handleFilters(filters) {
+    var handledFilters = {}
 
-  getComponentFilters() {
-    return this.getFilters().component
-  }
-
-  getAppliedFilters() {
-    var filters = this.getFilters()
-    var appliedFilters = []
-
-    filters.component.forEach(filter => {
-      if (filter.applied != true) return
-      appliedFilters.push(filter.value)
-    })
-
-    return _.assign({}, filters.default, {
-      [this._strategy.filterBy]: appliedFilters
-    })
-  }
-
-  setFilters() {
-    var newFilters = {}
-    var arg = arguments[0]
-    var filters = (_.isFunction(arg) ?
-                  arg.call(this, this.getFilters()) :
-                  arg) || null
-
-    if (!filters) return
-
-    if (filters.hasOwnProperty('default')) {
-      newFilters['default'] = filters['default'] || null
+    if (!filters || !filters.constructor == Object) {
+      this._throw('Component filters must be an object')
     }
 
-    if (filters.hasOwnProperty('component')) {
-      this._checkComponentFilters(filters['component'])
-      newFilters['component'] = filters['component']
+    for (var name in filters) {
+      var filter = filters[name]
+      if (!_.isArray(filter)) {
+        this._throw('Filter must be an array')
+      }
+
+      if (!filter.length) {
+        this._throw('Filter must contain at least one filter item')
+      }
+
+      handledFilters[name] = filter.map(item => (this.handleFilterItem(item)))
     }
 
-    this.actions.setFilters(newFilters)
+    return handledFilters
   }
 
-  emitEvent(eventName) {
-    var strategy = this._strategy
-    var handler = strategy[eventName]
-
-    if (!handler) return false
-
-    handler.call(strategy)
-  }
-
-  getStrategy() {
-    return this._strategy
-  }
-
-  _checkComponentFilters(filters) {
-    if (!filters || !filters.length) {
-      throw new Error("'componentFilter' must be present")
-    } else if (!_.isArray(filters)) {
-      throw new Error("'componentFilter' must be an array")
+  handleFilterItem(item) {
+    if (!item || !item['value']) {
+      this._throw("Filter item must contain a 'value' attribute")
     }
+
+    var { value, name, applied } = item
+
+    return {
+      value,
+      name: name || value,
+      applied: applied || false
+    }
+  }
+
+  _throw(message) {
+    throw new Error(message)
   }
 }

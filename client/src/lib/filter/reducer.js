@@ -61,7 +61,7 @@ export function createFilterReducer() {
       }
     },
     [DELETE_FILTERS]: (state, payload) => {
-      var newState = Object.assign({}, state)
+      var newState = _.clone(state)
       delete newState[payload.name]
       return newState
     },

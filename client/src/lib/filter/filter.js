@@ -2,7 +2,10 @@ import _                 from 'lodash'
 import { ActionCreator } from './reducer'
 import * as constants    from './constants'
 
-const { SET_FILTERS } = constants
+const {
+  SET_FILTERS, UPDATE_FILTERS,
+  DELETE_FILTERS, REMOVE_FILTER
+} = constants
 
 export class Filter {
   constructor(props) {
@@ -21,7 +24,10 @@ export class Filter {
     })
 
     this.actions = {
-      setFilters: createAction(SET_FILTERS)
+      setFilters:    createAction(SET_FILTERS),
+      updateFilters: createAction(UPDATE_FILTERS),
+      removeFilter:  createAction(REMOVE_FILTER),
+      deleteFilters: createAction(DELETE_FILTERS)
     }
   }
 
@@ -30,9 +36,35 @@ export class Filter {
     this.actions.setFilters(handledFilters)
   }
 
-  checkFilters(filters) {
-    var res = this.verifyFilters(filters)
-    if (!res.isValid) throw new Error(res.error)
+  updateFilters(filters) {
+    var handleFilters = this.handleFilters(filters)
+    this.actions.updateFilters(handleFilters)
+  }
+
+  removeFilter() {
+    var names = arguments[0]
+    var errmsg = 'Filter names must be a string or an array of strings'
+
+    if (_.isString(names)) {
+      names = [names]
+    } else if (!_.isArray(names)) {
+      this._throw(errmsg)
+    }
+
+    names.forEach(name => {
+      if (!_.isString(name)) this._throw(errmsg)
+    })
+
+    this.actions.removeFilter(names)
+  }
+
+  deleteFilters() {
+    this.actions.deleteFilters()
+  }
+
+  getFilters() {
+    var store = this.action.getState()
+    return store.filters[this.name]
   }
 
   handleFilters(filters) {

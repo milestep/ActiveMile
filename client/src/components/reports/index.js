@@ -9,16 +9,9 @@ import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
 import { setStatePromise, pushUnique }    from '../../utils'
-import filter                             from '../../lib/filter'
-import MonthsStrategy                     from '../../strategies/filter/months'
-import YearsStrategy                      from '../../strategies/filter/years'
+import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
 import Filter                             from './filter'
 import ReportsStateCreator                from './stateCreators'
-
-const STRATEGIES = {
-  months: MonthsStrategy,
-  years: YearsStrategy
-}
 
 @connect(state => ({
   registers: state.registers.items,
@@ -30,12 +23,15 @@ const STRATEGIES = {
     counterparties: state.subscriptions.counterparties.resolved
   }
 }), dispatch => ({
+  strategies: bindActionCreators({
+    months: monthsStrategy,
+    years: yearsStrategy
+  }, dispatch),
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
     fetchRegisters,
     toaster,
-    filter,
   }, dispatch)
 }))
 export default class Reports extends Component {
@@ -48,8 +44,7 @@ export default class Reports extends Component {
 
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
-    this.strategy = new STRATEGIES[props.strategy]()
-    this.filter = props.actions.filter('report', this.strategy)
+    this.strategy = props.strategies[props.strategy]()
     this.toaster = props.actions.toaster()
 
     this.onTabClick = this.onTabClick.bind(this)
@@ -65,7 +60,7 @@ export default class Reports extends Component {
 
   fetchRegisters() {
     var { actions } = this.props
-    var params = this.filter.getAppliedFilters()
+    var params = this.strategy.getAppliedFilters({ pluck: 'value' })
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
@@ -75,7 +70,7 @@ export default class Reports extends Component {
   }
 
   onDataReceived() {
-    this.filter.emitEvent('onDataReceived')
+    this.strategy.onDataReceived()
     this.initializeState()
   }
 
@@ -83,7 +78,6 @@ export default class Reports extends Component {
     var { registers, articles, counterparties } = this.props
 
     var stateCreator = new ReportsStateCreator({
-      filter: this.filter,
       strategy: this.strategy,
       models: { registers, articles, counterparties }
     })
@@ -96,22 +90,26 @@ export default class Reports extends Component {
   }
 
   onTabClick(id) {
-    var filters = this.filter.getComponentFilters()
+    var filters = this.strategy.getPrimaryFilter()
     var newFilters = _.assign([], filters)
 
     newFilters[id].applied = !filters[id].applied
-    this.filter.setFilters({ component: newFilters })
+
+    this.strategy.updateFilters({
+      [this.strategy.primaryFilter]: newFilters
+    })
+
     this.fetchRegisters()
   }
 
   render() {
-    const componentFilters = this.filter.getComponentFilters()
+    const filters = this.strategy.getPrimaryFilter()
 
     return(
       <div className='row'>
         <div className='col-md-12'>
           <Filter
-            filters={componentFilters}
+            filters={filters}
             onTabClick={this.onTabClick}
           />
         </div>

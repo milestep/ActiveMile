@@ -1,5 +1,5 @@
 import _                 from 'lodash'
-import { ActionCreator } from './reducer'
+import { ActionCreator } from './action'
 import * as constants    from './constants'
 
 const {

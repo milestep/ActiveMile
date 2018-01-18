@@ -1,13 +1,8 @@
-import ReportsStrategy from './reports'
-import moment          from 'moment'
+import moment           from 'moment'
+import ReportsStrategy  from './reports'
+import MonthsFilter     from '../../components/reports/filters/months'
 
 class MonthsStrategy extends ReportsStrategy {
-  constructor(props) {
-    super({ ...props,
-      name: 'reportByMonths'
-    })
-  }
-
   componentFilters() {
     var date = new Date()
     var currentMonth = date.getMonth()
@@ -28,6 +23,10 @@ class MonthsStrategy extends ReportsStrategy {
     return 'month'
   }
 
+  renderComponent() {
+    return { component: MonthsFilter }
+  }
+
 
   /*
    * Helper methods
@@ -38,8 +37,9 @@ class MonthsStrategy extends ReportsStrategy {
   }
 }
 
-export function monthsStrategy() {
+export function monthsStrategy(props) {
   return (dispatch, getState) => (new MonthsStrategy({
+    ...props,
     action: { dispatch, getState }
   }))
 }

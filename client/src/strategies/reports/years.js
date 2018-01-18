@@ -1,12 +1,7 @@
-import ReportsStrategy from './reports'
+import ReportsStrategy  from './reports'
+import YearsFilter      from '../../components/reports/filters/years'
 
 export class YearsStrategy extends ReportsStrategy {
-  constructor(props) {
-    super({ ...props,
-      name: 'reportByYears'
-    })
-  }
-
   componentFilters() {
     return { year: [{
       value: new Date().getFullYear(),
@@ -16,6 +11,10 @@ export class YearsStrategy extends ReportsStrategy {
 
   primaryFilterName() {
     return 'year'
+  }
+
+  renderComponent() {
+    return { component: YearsFilter }
   }
 
 
@@ -28,8 +27,9 @@ export class YearsStrategy extends ReportsStrategy {
   }
 }
 
-export function yearsStrategy() {
+export function yearsStrategy(props) {
   return (dispatch, getState) => (new YearsStrategy({
+    ...props,
     action: { dispatch, getState }
   }))
 }

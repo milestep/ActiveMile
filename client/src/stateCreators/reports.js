@@ -1,9 +1,6 @@
 export default class ReportsStateCreator {
   constructor(props) {
     this.props = props
-
-    this.strategy = props.strategy
-
     this.state = this._createInitialState()
     this.current = { register: null, article: null, counterparty: null }
   }
@@ -41,15 +38,14 @@ export default class ReportsStateCreator {
   }
 
   _createInitialState() {
-    var filters = this.strategy.getPrimaryFilter()
-    var stateItems = () => (filters
+    var stateItems = () => (this.props.models.filters
           .map(filter => (this._localFilter(filter))))
     return { cost: stateItems(), revenue: stateItems() }
   }
 
   _getCurrentFilter() {
     var { register, article } = this.current
-    var filter = this.strategy.getCurrentFilterByDate(register.date)
+    var filter = this.props.getCurrentFilterByDate(register.date)
     var currentState = this.state[article.type.toLowerCase()]
     return this._findLocal(currentState, filter, { by: 'value' })
   }

@@ -1,18 +1,32 @@
-import { Filter } from '../../lib/filter'
-import moment     from 'moment'
-import _          from 'lodash'
+import { Filter, InjectProps } from '../../lib/filter'
+import moment                  from 'moment'
+import _                       from 'lodash'
 
 export default class ReportsStrategy {
   constructor(props) {
     this.props  = props
 
     this.filter = new Filter({
-      name: props.name,
+      name: 'reports',
       action: props.action,
       filters: this.componentFilters()
     })
 
-    this.primaryFilter = this.primaryFilterName()
+    this.emit = props.events
+    this.Filter = this.createRenderFilter()
+    this.primaryFilterName = this.primaryFilterName()
+  }
+
+  createRenderFilter() {
+    var { component, props } = this.renderComponent(),
+        defaults = { strategy: this },
+        newProps = _.merge({}, defaults, props)
+
+    return InjectProps(component, newProps)
+  }
+
+  injectStrategy(component) {
+    return InjectProps(component, { strategy: this })
   }
 
   getFilters() {
@@ -23,14 +37,20 @@ export default class ReportsStrategy {
     this.filter.updateFilters(filters)
   }
 
+  updatePrimaryFilter(filter) {
+    this.updateFilters({
+      [this.primaryFilterName]: filter
+    })
+  }
+
   getPrimaryFilter() {
-    return this.getFilters()[this.primaryFilter]
+    return this.getFilters()[this.primaryFilterName]
   }
 
   getAppliedFilters(options = {}) {
-    var defaults = { pluck: null }
-    var filters = this.getFilters()
-    var appliedFilters = {}
+    var defaults = { pluck: null },
+        filters = this.getFilters(),
+        appliedFilters = {}
 
     options = _.assign({}, defaults, options)
 
@@ -69,26 +89,36 @@ export default class ReportsStrategy {
 
 
   /*
-   * Private methods
+   * Events
    */
-  _mergeYears() {
-    var filterYears = this.getStore().registers.years
-    var newItems = this._getNewFilters(filterYears)
-    var filters = this.getFilters().year
-    var mergedFilters = []
+  onTabClick(id) {
+    var filters = this.getPrimaryFilter()
+    var newFilters = _.assign([], filters)
 
-    newItems.forEach(newItem => {
-      var item = filters.find(i => (i.value == newItem.value))
-      mergedFilters.push(item || newItem)
-    })
+    newFilters[id].applied = !filters[id].applied
 
-    this.updateFilters({ year: mergedFilters })
+    this.updatePrimaryFilter(newFilters)
+    this.emit.onFilterChange()
   }
 
-  _getNewFilters(years) {
-    var currentYear = new Date().getFullYear()
-    var newYears = _.concat(_.difference([currentYear], years), years).sort()
-    return newYears.map(newYear => ({ value: newYear }))
+  onSelectChange(e) {
+    var year = e.value
+    var filters = this.getFilters()['year']
+    var newFilters = _.assign([], filters)
+
+    for (var i = 0; i < filters.length; i++) {
+      var item = filters[i]
+      var newItem = newFilters[i]
+
+      if (item.value == year) {
+        newItem.applied = true
+      } else if (item.applied) {
+        newItem.applied = false
+      }
+    }
+
+    this.updateFilters({ year: newFilters })
+    this.emit.onFilterChange()
   }
 
 
@@ -101,5 +131,9 @@ export default class ReportsStrategy {
 
   primaryFilter() {
     throw new Error("Primary filter must be specified")
+  }
+
+  renderComponent() {
+    throw new Error("'renderComponent' method must be implemented in strategy")
   }
 }

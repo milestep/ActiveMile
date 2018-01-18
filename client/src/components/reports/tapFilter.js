@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 
-export default class Filter extends Component {
+export default class TapFilter extends Component {
   onTabClick(e, index) {
     e.preventDefault()
     this.props.onTabClick(index)
@@ -19,7 +19,7 @@ export default class Filter extends Component {
 
   render() {
     return(
-      <div className='reports-filter'>
+      <div className='reports-filter-block'>
         <ul class='nav nav-pills reports-filter-months-tabs'>
           { this.getTabs() }
         </ul>

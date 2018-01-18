@@ -6,18 +6,24 @@ export default class SelectFilter extends Component {
     this.props.onSelectChange(e)
   }
 
-  render() {
-    var { filters } = this.props
-    var options = []
-    var current = new Date().getFullYear()
+  getOptions() {
+    var { filters } = this.props,
+        current = new Date().getFullYear(),
+        selectOptions = []
 
     filters.forEach(item => {
       if (item.applied) current = item.value
-      options.push({
+      selectOptions.push({
         value: item.value,
         label: item.name.toString()
       })
     })
+
+    return { current, selectOptions }
+  }
+
+  render() {
+    var { current, selectOptions } = this.getOptions()
 
     return(
       <div className='reports-filter-block'>
@@ -25,7 +31,7 @@ export default class SelectFilter extends Component {
           name='years'
           className='reports-filter-select'
           onChange={e => this.onSelectChange(e)}
-          options={options}
+          options={selectOptions}
           value={current}
         />
       </div>

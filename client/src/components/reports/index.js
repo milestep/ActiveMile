@@ -14,6 +14,7 @@ import MonthsStrategy                     from '../../strategies/filter/months'
 import YearsStrategy                      from '../../strategies/filter/years'
 import Filter                             from './filter'
 import ReportsStateCreator                from './stateCreators'
+import ArticlesList                       from './articlesList'
 
 const STRATEGIES = {
   months: MonthsStrategy,
@@ -98,21 +99,59 @@ export default class Reports extends Component {
   onTabClick(id) {
     var filters = this.filter.getComponentFilters()
     var newFilters = _.assign([], filters)
-
     newFilters[id].applied = !filters[id].applied
     this.filter.setFilters({ component: newFilters })
     this.fetchRegisters()
+    this.printCurrentFilter()
   }
 
   render() {
     const componentFilters = this.filter.getComponentFilters()
+    const { filters } = this.state
+    const revenue = filters.revenue.map((revenue, index) => (
+      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.value}</p></div> : null
+    ))
 
+    const filterName = filters.revenue.map((revenue, index) => (
+      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.item.name}</p></div> : null
+    ))
+
+    const cost = filters.cost.map((cost, index) => (
+      cost.item.applied ? <div className="col-md-1" key={index}><p>{cost.value}</p></div> : null
+    ))
+
+
+
+    console.log(filters)
     return(
       <div className='row'>
         <div className='col-md-12'>
           <Filter
             filters={componentFilters}
             onTabClick={this.onTabClick}
+          />
+        </div>
+        <div className="reports">
+          <div className="col-md-offeset-2 col-md-10 pull-right">
+            {filterName}
+          </div>
+          <div className="clearfix"></div>
+          <div className="col-md-2 revenue"><p>Revenue:</p></div>
+          <div className="col-md-10">
+            {revenue}
+          </div>
+          <ArticlesList 
+            filters = {filters}
+            type = {filters.revenue}
+          />
+          <div className="clearfix"></div>
+          <div className="col-md-2 cost"><p>Cost:</p></div>
+          <div className="col-md-10">
+            {cost}
+          </div>
+          <ArticlesList 
+            filters = {filters}
+            type = {filters.cost}
           />
         </div>
       </div>

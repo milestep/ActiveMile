@@ -1,21 +1,61 @@
 export class ActionCreator {
   constructor(props) {
-    this.name         = props.name
-    this._dispatch    = props.dispatch
-    this.createAction = this.createAction.bind(this)
+    this.dispatch       = props.dispatch
+    this.defaultPayload = { name: props.name }
+    this.createActions  = this.createActions.bind(this)
   }
 
-  createAction(type) {
-    if (typeof type != 'string') return null
+  createActions(actions, callbacks) {
+    var activeActions = {}
 
-    return filters => {
-      var payload = { name: this.name}
+    this.actions = actions
+    this.callbacks = callbacks
 
-      if (filters) {
-        payload['filters'] = filters
-      }
-
-      this._dispatch({ type, payload })
+    for (var actionName in actions) {
+      activeActions[actionName] = this.createAction(actionName)
     }
+
+    return activeActions
+  }
+
+  createAction(actionName) {
+    return (actionName => {
+      return filters => {
+        this._hook('beforeAction', actionName)
+        this._dispatchAction(actionName, filters)
+        this._hook('afterAction', actionName)
+      }
+    })(actionName)
+  }
+
+  _dispatchAction(actionName, filters) {
+    var payload = _.merge({}, this.defaultPayload, { filters })
+    this.dispatch({ type: this.actions[actionName], payload })
+  }
+
+  _hook(hookName, actionName) {
+    if (!this._isHookPresent(hookName)) return
+
+    var cbOptions = this.callbacks[hookName]
+    var actionNames = cbOptions[1]
+    var callback = cbOptions[0]
+
+    if (actionNames) {
+      var ruleType = Object.keys(actionNames)[0]
+      var includesMethod = actionNames[ruleType]
+                           .includes(actionName)
+
+      if ((ruleType == 'only' && !includesMethod) ||
+          (ruleType == 'except' && includesMethod)) return
+    }
+
+    callback()
+  }
+
+  _isHookPresent(hookName) {
+    var { callbacks } = this
+    return (callbacks &&
+            callbacks.constructor == Object &&
+            callbacks[hookName])
   }
 }

@@ -9,26 +9,27 @@ const {
 
 export class Filter {
   constructor(props) {
-    this.name    = props.name
-    this.action  = props.action
-    this.actions = {}
+    this.props  = props
+    this.action = props.action
 
     this.createActions()
     this.setFilters(props.filters)
   }
 
   createActions() {
-    var { createAction } = new ActionCreator({
-      name: this.name,
+    var { createActions } = new ActionCreator({
+      name: this.props.name,
       dispatch: this.action.dispatch
     })
 
-    this.actions = {
-      setFilters:    createAction(SET_FILTERS),
-      updateFilters: createAction(UPDATE_FILTERS),
-      removeFilter:  createAction(REMOVE_FILTER),
-      deleteFilters: createAction(DELETE_FILTERS)
-    }
+    this.actions = createActions({
+      setFilters: SET_FILTERS,
+      updateFilters: UPDATE_FILTERS,
+      removeFilter: REMOVE_FILTER,
+      deleteFilters: DELETE_FILTERS
+    }, {
+      afterAction: [ this.updateStore.bind(this) ]
+    })
   }
 
   setFilters(filters) {
@@ -63,8 +64,16 @@ export class Filter {
   }
 
   getFilters() {
-    var store = this.action.getState()
-    return store.filters[this.name]
+    var store = this.getStore()
+    return store.filters[this.props.name]
+  }
+
+  getStore() {
+    return this.store
+  }
+
+  updateStore() {
+    this.store = this.action.getState()
   }
 
   handleFilters(filters) {

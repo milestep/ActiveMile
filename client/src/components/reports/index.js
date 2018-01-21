@@ -11,6 +11,7 @@ import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
 import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
 import ReportsStateCreator                from '../../stateCreators/reports'
+import ArticlesList                       from './articlesList'
 
 @connect(state => ({
   registers: state.registers.items,
@@ -120,6 +121,19 @@ export default class Reports extends Component {
 
   render() {
     const { Filter } = this.strategy
+    const { filters } = this.state
+
+    const revenue = filters.revenue.map((revenue, index) => (
+      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.value}</p></div> : null
+    ))
+
+    const filterName = filters.revenue.map((revenue, index) => (
+      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.item.name}</p></div> : null
+    ))
+
+    const cost = filters.cost.map((cost, index) => (
+      cost.item.applied ? <div className="col-md-1" key={index}><p>{cost.value}</p></div> : null
+    ))
 
     return(
       <div className='row'>
@@ -127,6 +141,29 @@ export default class Reports extends Component {
           <div className='reports-filter'>
             <Filter />
           </div>
+        </div>
+        <div className="reports">
+          <div className="col-md-offeset-2 col-md-10 pull-right">
+            {filterName}
+          </div>
+          <div className="clearfix"></div>
+          <div className="col-md-2 revenue"><p>Revenue:</p></div>
+          <div className="col-md-10">
+            {revenue}
+          </div>
+          <ArticlesList
+            filters = {filters}
+            type = {filters.revenue}
+          />
+          <div className="clearfix"></div>
+          <div className="col-md-2 cost"><p>Cost:</p></div>
+          <div className="col-md-10">
+            {cost}
+          </div>
+          <ArticlesList
+            filters = {filters}
+            type = {filters.cost}
+          />
         </div>
       </div>
     )

@@ -87,12 +87,14 @@ export default class Reports extends Component {
   }
 
   initializeState() {
-    var { strategy } = this
-    var filters = strategy.getPrimaryFilter()
-    var { registers, articles, counterparties } = this.props
+    var { strategy } = this,
+        filters = strategy.getPrimaryFilter(),
+        appliedFilters = strategy.getAppliedFilters()[strategy.primaryFilterName],
+        { registers, articles, counterparties } = this.props
+
     var stateCreator = new ReportsStateCreator({
       getCurrentFilterByDate: strategy.getCurrentFilterByDate.bind(strategy),
-      models: { registers, articles, counterparties, filters }
+      models: { registers, articles, counterparties, filters, appliedFilters }
     })
 
     stateCreator.generateState()

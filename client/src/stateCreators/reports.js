@@ -15,11 +15,18 @@ export default class ReportsStateCreator {
         counterparty: this._find(counterparties, register.counterparty_id)
       })
 
-      var current = this.current
-      var currentFilter = this._getCurrentFilter()
-      var localArticle = this._findLocal(currentFilter.articles, current.article)
+      var current = this.current,
+          { value } = register,
+          { article } = current,
+          articleType = article.type.toLowerCase(),
+          absValue = article.type == 'Revenue' ? value : - value,
+          { currentFilter, currentProfit } = this._getCurrentFilter(),
+          localArticle = this._findLocal(currentFilter.articles, article)
 
-      currentFilter.value += register.value
+      currentFilter.value           += value
+      currentProfit.value           += absValue
+      this.state.total.profit       += absValue
+      this.state.total[articleType] += value
 
       if (!localArticle) {
         this._addArticleTo(currentFilter)
@@ -27,6 +34,9 @@ export default class ReportsStateCreator {
         this._mergeWithCurrentArticle(localArticle)
       }
     })
+
+
+    this._setAverageValues()
   }
 
   setCurrent(newCurrent) {
@@ -38,16 +48,46 @@ export default class ReportsStateCreator {
   }
 
   _createInitialState() {
-    var stateItems = () => (this.props.models.filters
-          .map(filter => (this._localFilter(filter))))
-    return { cost: stateItems(), revenue: stateItems() }
+    var { filters } = this.props.models
+    var profitItems = []
+    var stateItems = []
+
+    filters.forEach(item => {
+      stateItems.push(this._localFilter(item))
+      profitItems.push({ value: 0, item })
+    })
+
+    return {
+      total: { cost: 0, revenue: 0, profit: 0 },
+      average: { cost: 0, revenue: 0, profit: 0 },
+      items: { cost: stateItems, revenue: stateItems, profit: profitItems }
+    }
+  }
+
+  _setAverageValues() {
+    var { total, average } = this.state,
+        { appliedFilters } = this.props.models,
+        appliedLength = appliedFilters.length,
+        newAverage = {}
+
+    for (var type in average) {
+      var value = total[type] / appliedLength
+      newAverage[type] = Math.ceil(value)
+    }
+
+    this.state.average = newAverage
   }
 
   _getCurrentFilter() {
+    var { items, total } = this.state
     var { register, article } = this.current
     var filter = this.props.getCurrentFilterByDate(register.date)
-    var currentState = this.state[article.type.toLowerCase()]
-    return this._findLocal(currentState, filter, { by: 'value' })
+    var articleType = article.type.toLowerCase()
+
+    return {
+      currentFilter: this._findLocal(items[articleType], filter, { by: 'value' }),
+      currentProfit: this._findLocal(items.profit, filter, { by: 'value' })
+    }
   }
 
   _addArticleTo(currenFilter) {

@@ -32,6 +32,7 @@ const routes = (
     <Route path="registers" component={RequireWorkspace(Registers)} />
     <Route path="registers/:id/edit" component={RequireWorkspace(RegistersEditor)} />
     <Route path="reports" component={RequireWorkspace(Reports, { strategy: 'months' })} />
+    <Route path="reports_old" component={RequireWorkspace(ReportsOld)} />
     <Route path="charts" component={RequireWorkspace(Charts)} />
     <Route path='*' component={NotFound} />
   </Route>

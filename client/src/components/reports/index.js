@@ -39,10 +39,7 @@ export default class Reports extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      filters: { cost: [], revenue: [] }
-    }
-
+    this.state = {}
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
     this.strategy = this.setStrategy()
@@ -122,18 +119,21 @@ export default class Reports extends Component {
   }
 
   render() {
+    if (!this.state.filters) return null
+
     const { Filter } = this.strategy
     const { filters } = this.state
+    const models = filters.items
 
-    const revenue = filters.revenue.map((revenue, index) => (
-      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.value}</p></div> : null
-    ))
-
-    const filterName = filters.revenue.map((revenue, index) => (
+    const filterName = models.revenue.map((revenue, index) => (
       revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.item.name}</p></div> : null
     ))
 
-    const cost = filters.cost.map((cost, index) => (
+    const revenue = models.revenue.map((revenue, index) => (
+      revenue.item.applied ? <div className="col-md-1" key={index}><p>{revenue.value}</p></div> : null
+    ))
+
+    const cost = models.cost.map((cost, index) => (
       cost.item.applied ? <div className="col-md-1" key={index}><p>{cost.value}</p></div> : null
     ))
 
@@ -154,8 +154,8 @@ export default class Reports extends Component {
             {revenue}
           </div>
           <ArticlesList
-            filters = {filters}
-            type = {filters.revenue}
+            filters = {models}
+            type = {models.revenue}
           />
           <div className="clearfix"></div>
           <div className="col-md-2 cost"><p>Cost:</p></div>
@@ -163,8 +163,8 @@ export default class Reports extends Component {
             {cost}
           </div>
           <ArticlesList
-            filters = {filters}
-            type = {filters.cost}
+            filters = {models}
+            type = {models.cost}
           />
         </div>
       </div>

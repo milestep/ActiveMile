@@ -17,17 +17,21 @@ export default class Schema {
   }
 
   article() {
+    var { initialValues } = this.props
+
     return {
       item: this.props.article,
-      values: [this.value(this.props.value)],
+      values: _.cloneDeep(initialValues),
       counterparties: [this.counterparty()]
     }
   }
 
-  counterparty() {
+  counterparty(values) {
+    var { initialValues } = this.props
+
     return {
       item: this.props.counterparty,
-      values: [this.value(this.props.value)]
+      values: _.cloneDeep(initialValues)
     }
   }
 
@@ -36,7 +40,7 @@ export default class Schema {
     return { item: currentFilter, value }
   }
 
-  filter(item, value) {
+  filter(item, value = 0) {
     return { item, value }
   }
 

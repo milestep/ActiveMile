@@ -8,6 +8,22 @@ export class ReportsStateCreator {
     this.schema   = new Schema(this.strategy)
     this.state    = this.schema.state()
     this.current  = {}
+    this.appliedFilters = this.strategy.getPrimaryAppliedFilters()
+  }
+
+  generateState() {
+    this.eachRegister(current => {
+      const { localStorage, value, valueAbs } = current
+
+      this.incrementTotalValue()
+      this.incrementLocalValue(this.state.profit, valueAbs)
+      this.incrementLocalValue(localStorage, value)
+
+      this.mergeArticles()
+    })
+
+    this.setTotalProfitValue()
+    this.setAverageValues()
   }
 
   eachRegister(callback) {
@@ -25,6 +41,7 @@ export class ReportsStateCreator {
 
       const localStorage = this.state.items[articleType]
       const currentFilter = this.strategy.getCurrentFilterByDate(register.date)
+      const initialValues = this.getInitialValues(currentFilter, value)
 
       const localArticle = this.searchItem(localStorage.articles, articleId)
       const localCounterparty = localArticle ?
@@ -33,30 +50,13 @@ export class ReportsStateCreator {
       this.current = {
         article, counterparty,
         localArticle, localCounterparty,
-        localStorage, currentFilter,
+        localStorage, currentFilter, initialValues,
         value, valueAbs, type: articleType
       }
 
       this.schema.setCurrentValues(this.current)
       callback(this.current)
     })
-  }
-
-  generateState() {
-    this.eachRegister(current => {
-      const { localStorage, value, valueAbs } = current
-
-      this.incrementTotalValue()
-      this.incrementLocalValue(this.state.profit, valueAbs)
-      this.incrementLocalValue(localStorage, value)
-
-      this.mergeArticles()
-    })
-
-    this.setTotalProfitValue()
-    this.setAverageValues()
-
-    console.log(this.state)
   }
 
   mergeArticles() {
@@ -80,9 +80,6 @@ export class ReportsStateCreator {
     }
   }
 
-  /*
-   * Helpers for values
-   */
   setTotalProfitValue() {
     var { total } = this.state
     total.profit = total.revenue - total.cost
@@ -90,8 +87,7 @@ export class ReportsStateCreator {
 
   setAverageValues() {
     var { total, average } = this.state,
-        appliedFilters = this.strategy.getPrimaryAppliedFilters(),
-        appliedLength = appliedFilters.length,
+        appliedLength = this.appliedFilters.length,
         newAverage = {}
 
     for (var type in average) {
@@ -109,24 +105,35 @@ export class ReportsStateCreator {
 
   incrementLocalValue(storage, value) {
     var localValue = this.searchLocalValue(storage)
+    var { initialValues } = this.current
 
     if (!localValue) {
-      storage.values.push(this.schema.value(value))
+      storage.values = _.cloneDeep(initialValues)
     } else {
       localValue.value += value
     }
   }
 
+  getInitialValues(currentFilter, value) {
+    return this.appliedFilters.map(item => {
+      var filterValue = 0
+
+      if (currentFilter.value == item.value) {
+        filterValue = value
+      }
+
+      return this.schema.filter(item, filterValue)
+    })
+  }
+
   searchLocalValue(storage) {
+    if (!storage.values) return
     const { currentFilter } = this.current
     return storage.values.find(filter => (
       filter.item.value == currentFilter.value
     ))
   }
 
-  /*
-   * Class Helpers
-   */
   search(storage, value, item = false) {
     if (!storage.length) return
 

@@ -4,15 +4,28 @@ import { connect }                      from 'react-redux'
 export default class ArticlesList extends Component {
   static propTypes = {
     filters: PropTypes.object.isRequired,
-    type: PropTypes.array.isRequired
+    type: PropTypes.object.isRequired,
+    displayTotal: PropTypes.bool.isRequired,
+    displayAvg: PropTypes.bool.isRequired,
+    fetchClassName: PropTypes.func.isRequired
   }
 
   createCounterpartiesList(counterparties) {
     return counterparties.map((counterparty, index) =>(
       <div key={index}>
-        <div className="col-md-2">{counterparty.item.name}</div>
-        <div className="col-md-1">{counterparty.value}</div>
-        <div className="clearfix"></div>
+        <div className="row">
+            <div className="col-md-2">{counterparty.item.name}</div>
+            <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
+              <div className="col-md-12">
+                {counterparty.values.map((values, index) => (
+                  <div key={index}>
+                    <div className="col-md-1"><p>{values.value}</p></div>
+                  </div>
+                ))}
+                <div className="clearfix"></div>
+              </div>
+            </div>
+        </div>
       </div>
     ))
   }
@@ -20,10 +33,27 @@ export default class ArticlesList extends Component {
   createArticlesList() {
     const { filters, type } = this.props
 
-    const articles = type.map((type) => (
-      type.articles.map((article, index, title) => (
-        <div className="col-md-1" key={index}>{article.item.title}</div>
-      ))
+    const articles = type.articles.map((article, index) => (
+      <div class="panel panel-default">
+        <div class="panel-heading" key={index}>
+        <div className="row">
+          <div className="col-md-2"><p>{article.item.name}</p></div>
+            <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
+              <div className="col-md-12">
+                {article.values.map((values, index) => (
+                  <div key={index}>
+                    <div className="col-md-1"><p>{values.value}</p></div>
+                  </div>
+                ))}
+                <div className="clearfix"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          {this.createCounterpartiesList(article.counterparties)}
+        </div>
+      </div>
     ))
 
     return articles

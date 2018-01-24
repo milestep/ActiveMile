@@ -40,7 +40,8 @@ export default class Reports extends Component {
     super(props)
 
     this.state = {
-    };
+
+    }
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
     this.strategy = this.setStrategy()
@@ -159,11 +160,14 @@ export default class Reports extends Component {
       <div className="col-md-1" key={index}><p>{values.value}</p></div>
     ))
 
+    const cost = filters.items.cost.values.map((values, index) => (
+      <div className="col-md-1" key={index}><p>{values.value}</p></div>
+    ))
+
     const profit = filters.profit.map((profit, index) => (
       <div className="col-md-1" key={index}><p>{profit.item.value}</p></div>
     ))
 
-    console.log(filters.profit)
     return(
       <div className='row'>
           <div className='col-md-12 reports-filter'>
@@ -213,7 +217,7 @@ export default class Reports extends Component {
           <div className="col-md-2"><p>Cost:</p></div>
           <div className={this.fetchClassName(this.state.display_total, this.state.display_avg)}>
             <div className="col-md-12">
-              {revenue}
+              {cost}
             </div>
           </div>
           <div className={this.state.display_avg ? 'col-md-1 pull-right' : 'displayNone'}>

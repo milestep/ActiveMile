@@ -1,19 +1,12 @@
 export default class Schema {
-  constructor(strategy) {
-    this.strategy = strategy
-    this.props    = {}
-  }
-
-  state() {
-    return {
-      items: {
-        revenue: { values: [], articles: [] },
-        cost: { values: [], articles: [] }
-      },
-      average: { cost: 0, revenue: 0, profit: 0 },
-      total: { cost: 0, revenue: 0, profit: 0 },
-      profit: { values: [] }
-    }
+  static state = {
+    items: {
+      revenue: { values: [], articles: [] },
+      cost: { values: [], articles: [] }
+    },
+    average: { cost: 0, revenue: 0, profit: 0 },
+    total: { cost: 0, revenue: 0, profit: 0 },
+    profit: { values: [] }
   }
 
   article() {

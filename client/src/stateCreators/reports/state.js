@@ -2,16 +2,16 @@ import Schema  from './schema'
 import _       from 'lodash'
 
 export class ReportsStateCreator {
-  constructor(props) {
-    this.props    = props.models
-    this.strategy = props.strategy
-    this.schema   = new Schema(this.strategy)
-    this.state    = this.schema.state()
-    this.current  = {}
-    this.appliedFilters = this.strategy.getPrimaryAppliedFilters()
+  constructor(strategy) {
+    this.strategy = strategy
+    this.schema   = new Schema()
   }
 
-  generateState() {
+  generateState(props) {
+    this.props          = props
+    this.state          = this.getInitialState()
+    this.appliedFilters = this.strategy.getPrimaryAppliedFilters()
+
     this.eachRegister(current => {
       const { localStorage, value, valueAbs } = current
 
@@ -26,6 +26,10 @@ export class ReportsStateCreator {
     this.setAverageValues()
 
     return this.state
+  }
+
+  getInitialState() {
+    return _.cloneDeep(Schema.state)
   }
 
   eachRegister(callback) {

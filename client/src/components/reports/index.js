@@ -39,13 +39,15 @@ export default class Reports extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-
-    }
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
     this.strategy = this.setStrategy()
     this.toaster = props.actions.toaster()
+    this.stateCreator = new ReportsStateCreator(this.strategy)
+
+    this.state = {
+      filters: this.stateCreator.getInitialState()
+    }
   }
 
   setStrategy() {
@@ -91,13 +93,10 @@ export default class Reports extends Component {
 
     if (!registers || !registers.length) return
 
-    var stateCreator = new ReportsStateCreator({
-      strategy: this.strategy,
-      models: { registers, articles, counterparties }
-    })
-
     this.setState({
-      filters: stateCreator.generateState()
+      filters: this.stateCreator.generateState({
+        registers, articles, counterparties
+      })
     })
   }
 
@@ -146,8 +145,6 @@ export default class Reports extends Component {
   render() {
     const { Filter } = this.strategy
     const { filters } = this.state
-
-    console.log(filters)
 
     if (!filters) return null
 

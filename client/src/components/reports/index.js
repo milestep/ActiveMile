@@ -72,7 +72,7 @@ export default class Reports extends Component {
 
   onDataReceived() {
     this.updateYears()
-    /*this.initializeState()*/
+    this.initializeState()
   }
 
   fetchRegisters() {
@@ -131,13 +131,13 @@ export default class Reports extends Component {
     return className
   }
 
-  totalPrint(){
+  totalPrint() {
     this.setState((prevState) => ({
       display_total: !prevState.display_total
     }));
   }
 
-  avgPrint(){
+  avgPrint() {
     this.setState((prevState) => ({
       display_avg: !prevState.display_avg
     }));
@@ -145,7 +145,11 @@ export default class Reports extends Component {
 
   render() {
     const { Filter } = this.strategy
-    const filters = this.state
+    const { filters } = this.state
+
+    console.log(filters)
+
+    if (!filters) return null
 
     const filtersNames = filters.items.revenue.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.item.name}</p></div>
@@ -159,8 +163,8 @@ export default class Reports extends Component {
       <div className="col-md-1" key={index}><p>{values.value}</p></div>
     ))
 
-    const profit = filters.profit.map((profit, index) => (
-      <div className="col-md-1" key={index}><p>{profit.item.value}</p></div>
+    const profit = filters.profit.values.map((profit, index) => (
+      <div className="col-md-1" key={index}><p>{profit.value}</p></div>
     ))
 
     return(

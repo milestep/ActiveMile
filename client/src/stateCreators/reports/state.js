@@ -24,6 +24,8 @@ export class ReportsStateCreator {
 
     this.setTotalProfitValue()
     this.setAverageValues()
+
+    return this.state
   }
 
   eachRegister(callback) {

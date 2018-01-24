@@ -70,6 +70,7 @@ export default class Header extends Component {
     } = this.props;
     let navItems = [];
     let navItemsRight = [];
+    let reports = [];
     let workspacesList = [];
 
     if (loggedIn) {
@@ -86,14 +87,20 @@ export default class Header extends Component {
         title: 'Registers',
         onClick: this.toggleCollapse
       }, {
-        to: '/reports',
-        title: 'Reports',
-        onClick: this.toggleCollapse
-      }, {
         to: '/charts',
         title: 'Charts',
         onClick: this.toggleCollapse
       }]);
+
+      Array.prototype.push.apply(reports, [{
+        to: 'reports_by_months',
+        title: 'Monthly',
+        onClick: this.toggleCollapse
+       }, {
+        to: '/reports_by_years',
+        title: 'By year',
+        onClick: this.toggleCollapse
+       }]);
 
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces',
@@ -116,6 +123,7 @@ export default class Header extends Component {
     }
 
     navItems = this.createNavItems(navItems);
+    reports = this.createNavItems(reports);
     navItemsRight = this.createNavItems(navItemsRight);
     workspacesList = workspaces.map((workspace, i) => {
       return(
@@ -146,6 +154,15 @@ export default class Header extends Component {
         { navItems ?
           <ul className="nav navbar-nav">
             { navItems }
+          </ul>
+        : null }
+
+        { reports ?
+          <ul className="nav navbar-nav">
+            <Dropdown
+              title='Reports'
+              list={reports}
+            />
           </ul>
         : null }
 

@@ -74,6 +74,10 @@ export default class ReportsStrategy {
     return appliedFilters
   }
 
+  getPrimaryAppliedFilters() {
+    return this.getAppliedFilters()[this.primaryFilterName]
+  }
+
   onDataReceived() {
     this._mergeYears()
   }

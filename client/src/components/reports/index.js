@@ -10,7 +10,7 @@ import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
 import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
-import ReportsStateCreator                from '../../stateCreators/reports'
+import { ReportsStateCreator }            from '../../stateCreators/reports'
 import ArticlesList                       from './articlesList'
 
 @connect(state => ({
@@ -86,23 +86,20 @@ export default class Reports extends Component {
     })
   }
 
-  /*initializeState() {
-    var { strategy } = this,
-        filters = strategy.getPrimaryFilter(),
-        appliedFilters = strategy.getAppliedFilters()[strategy.primaryFilterName],
-        { registers, articles, counterparties } = this.props
+  initializeState() {
+    var { registers, articles, counterparties } = this.props
+
+    if (!registers || !registers.length) return
 
     var stateCreator = new ReportsStateCreator({
-      getCurrentFilterByDate: strategy.getCurrentFilterByDate.bind(strategy),
-      models: { registers, articles, counterparties, filters, appliedFilters }
+      strategy: this.strategy,
+      models: { registers, articles, counterparties }
     })
-
-    stateCreator.generateState()
 
     this.setState({
-      filters: stateCreator.getState()
+      filters: stateCreator.generateState()
     })
-  }*/
+  }
 
   updateYears() {
     var { filterYears } = this.props,
@@ -147,8 +144,6 @@ export default class Reports extends Component {
   }
 
   render() {
-    /*if (!this.state.filters) return null*/
-
     const { Filter } = this.strategy
     const filters = this.state
 
@@ -205,7 +200,7 @@ export default class Reports extends Component {
           <div className={this.state.display_total ? 'col-md-1 pull-right' : 'displayNone'}>
             <b>{filters.total.revenue}</b>
           </div>
-          <ArticlesList 
+          <ArticlesList
             filters = {filters}
             type = {filters.items.revenue}
             displayTotal={this.state.display_total}
@@ -226,7 +221,7 @@ export default class Reports extends Component {
           <div className={this.state.display_total ? 'col-md-1 pull-right' : 'displayNone'}>
             <b>{filters.total.cost}</b>
           </div>
-          <ArticlesList 
+          <ArticlesList
             filters = {filters}
             type = {filters.items.cost}
             displayTotal={this.state.display_total}

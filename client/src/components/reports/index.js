@@ -46,7 +46,9 @@ export default class Reports extends Component {
     this.stateCreator = new ReportsStateCreator(this.strategy)
 
     this.state = {
-      filters: this.stateCreator.getInitialState()
+      filters: this.stateCreator.getInitialState(),
+      displayAvg: false,
+      displayTotal: false
     }
   }
 
@@ -132,13 +134,13 @@ export default class Reports extends Component {
 
   totalPrint() {
     this.setState((prevState) => ({
-      display_total: !prevState.display_total
+      displayTotal: !prevState.displayTotal
     }));
   }
 
   avgPrint() {
     this.setState((prevState) => ({
-      display_avg: !prevState.display_avg
+      displayAvg: !prevState.displayAvg
     }));
   }
 
@@ -151,98 +153,145 @@ export default class Reports extends Component {
     const filtersNames = filters.items.revenue.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.item.name}</p></div>
     ))
-
     const revenue = filters.items.revenue.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.value}</p></div>
     ))
-
     const cost = filters.items.cost.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.value}</p></div>
     ))
-
     const profit = filters.profit.values.map((profit, index) => (
       <div className="col-md-1" key={index}><p>{profit.value}</p></div>
     ))
 
+    const filtersNamesTable = filters.items.revenue.values.map((values, index)=>{
+      return(<th key={index}>{values.item.name}</th>)
+    })
+    const revenueTable = filters.items.revenue.values.map((values, index) => {
+      return(<td key={index}>{values.value}</td>)
+    })
+    const costTable = filters.items.cost.values.map((values, index) => {
+      return(<td key={index}>{values.value}</td>)
+    })
+    const commonTable = filters.profit.values.map((profit, index) => {
+      return(<td key={index}>{profit.value}</td>)
+    })
+
     return(
       <div className='row'>
-          <div className='col-md-12 reports-filter'>
-            <Filter />
-            <div className="pull-right">
-              <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
-              <label for="totalbtn">Total</label>
-              <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
-              <label for="avgbtn">AVG</label>
+        <div>
+          <ReactHTMLTableToExcel
+            id="test-table-xls-button"
+            className="btn btn-xls-button pull-right"
+            table="table-to-xls"
+            filename="tablexls"
+            sheet="tablexls"
+            buttonText="Download as XLS"/>
+            <table id="table-to-xls" className='display_none'>
+              <tr>
+                <th>Month Names</th>
+                <th></th>
+                {filtersNamesTable}
+              </tr>
+              <tr>
+                <td>Revenue</td>
+                <td> {revenueTable}</td>
+              </tr>
+              <tr>
+                <td>Cost</td>
+                <td> {costTable}</td>
+              </tr>
+              <tr>
+                <td>Profit</td>
+                <td>{commonTable}</td>
+              </tr>
+            </table>
+          </div>
+
+        <div className="reports-filter">
+          <Filter />
+        </div>
+
+        <div className="pull-right col-md-2">
+          <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
+          <label for="totalbtn">Total</label>
+          <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
+          <label for="avgbtn">AVG</label>
+        </div>
+
+        <div className="col-md-12">
+          <div className="fake-panel">
+            <div className="row reports-list-heading">
+              <div className={`col-md-offset-2 ${this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}`}>
+                {filtersNames}
+              </div>
+              <div className={this.state.displayTotal ? 'col-md-1' : 'display_none'}>
+                <b>Total</b>
+              </div>
+              <div className={this.state.displayAvg ? 'col-md-1' : 'display_none'}>
+                <b>AVG</b>
+              </div>
+              <div className="clearfix"></div>
+              <div className="col-md-2 revenue"><p>Revenue:</p></div>
+              <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
+                {revenue}
+              </div>
+              <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.average.revenue}</b>
+              </div>
+              <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.total.revenue}</b>
+              </div>
             </div>
           </div>
 
-          <div className={`col-md-offset-2 ${this.fetchClassName(this.state.display_total, this.state.display_avg)}`}>
-            <div className="col-md-12">
-              {filtersNames}
-            </div>
-          </div>
-          <div className={!this.state.display_total ? 'display_none' : 'col-md-1'}>
-            <b>Total</b>
-          </div>
-          <div className={!this.state.display_avg ? 'display_none' : 'col-md-1'}>
-            <b>AVG</b>
-          </div>
-          <div className="clearfix"></div>
-
-          <div className="col-md-2 revenue"><p>Revenue:</p></div>
-          <div className={this.fetchClassName(this.state.display_total, this.state.display_avg)}>
-            <div className="col-md-12">
-              {revenue}
-            </div>
-          </div>
-          <div className={this.state.display_avg ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.average.revenue}</b>
-          </div>
-          <div className={this.state.display_total ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.total.revenue}</b>
-          </div>
           <ArticlesList
             filters = {filters}
             type = {filters.items.revenue}
-            displayTotal={this.state.display_total}
-            displayAvg={this.state.display_avg}
+            displayTotal={this.state.displayTotal}
+            displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}
           />
           <div className="clearfix"></div>
 
-          <div className="col-md-2"><p>Cost:</p></div>
-          <div className={this.fetchClassName(this.state.display_total, this.state.display_avg)}>
-            <div className="col-md-12">
-              {cost}
+          <div className="fake-panel">
+            <div className="row reports-list-heading">
+              <div className="col-md-2"><p>Cost:</p></div>
+              <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
+                {cost}
+              </div>
+              <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.average.cost}</b>
+              </div>
+              <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.total.cost}</b>
+              </div>
             </div>
           </div>
-          <div className={this.state.display_avg ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.average.cost}</b>
-          </div>
-          <div className={this.state.display_total ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.total.cost}</b>
-          </div>
+
           <ArticlesList
             filters = {filters}
             type = {filters.items.cost}
-            displayTotal={this.state.display_total}
-            displayAvg={this.state.display_avg}
+            displayTotal={this.state.displayTotal}
+            displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}
           />
           <div className="clearfix"></div>
 
-          <div className="col-md-2"><p>Profit:</p></div>
-          <div className={this.fetchClassName(this.state.display_total, this.state.display_avg)}>
-            <div className="col-md-12">
-              {profit}
+          <div className="fake-panel">
+            <div className="row reports-list-heading">
+              <div className="col-md-2"><p>Profit:</p></div>
+              <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
+                {profit}
+              </div>
+              <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.average.profit}</b>
+              </div>
+              <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
+                <b>{filters.total.profit}</b>
+              </div>
             </div>
           </div>
-          <div className={this.state.display_avg ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.average.profit}</b>
-          </div>
-          <div className={this.state.display_total ? 'col-md-1 pull-right' : 'displayNone'}>
-            <b>{filters.total.profit}</b>
-          </div>
+        </div>
       </div>
     )
   }

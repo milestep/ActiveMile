@@ -48,7 +48,8 @@ export default class Reports extends Component {
     this.state = {
       filters: this.stateCreator.getInitialState(),
       displayAvg: false,
-      displayTotal: false
+      displayTotal: false,
+      openedArticles: []
     }
   }
 
@@ -142,6 +143,22 @@ export default class Reports extends Component {
     this.setState((prevState) => ({
       displayAvg: !prevState.displayAvg
     }));
+  }
+
+  toggleArticle(id) {
+    // const { openedArticles } = this.state
+    var newArticles = _.clone(this.state.openedArticles)
+    const index = newArticles.indexOf(id)
+
+    if (index > -1) {
+        newArticles.splice(index, 1)
+      } else {
+        newArticles.push(id)
+      }
+
+    this.setState({
+      openedArticles: newArticles
+    })
   }
 
   render() {
@@ -247,6 +264,8 @@ export default class Reports extends Component {
           <ArticlesList
             filters = {filters}
             type = {filters.items.revenue}
+            toggleArticle = {this.toggleArticle.bind(this)}
+            openedArticles = {this.state.openedArticles}
             displayTotal={this.state.displayTotal}
             displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}
@@ -271,6 +290,8 @@ export default class Reports extends Component {
           <ArticlesList
             filters = {filters}
             type = {filters.items.cost}
+            toggleArticle = {this.toggleArticle.bind(this)}
+            openedArticles = {this.state.openedArticles}
             displayTotal={this.state.displayTotal}
             displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}

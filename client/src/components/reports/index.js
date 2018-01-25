@@ -94,8 +94,6 @@ export default class Reports extends Component {
   initializeState() {
     var { registers, articles, counterparties } = this.props
 
-    if (!registers || !registers.length) return
-
     this.setState({
       filters: this.stateCreator.generateState({
         registers, articles, counterparties
@@ -193,7 +191,6 @@ export default class Reports extends Component {
     const commonTable = filters.profit.values.map((profit, index) => {
       return(<td key={index}>{profit.value}</td>)
     })
-    console.log(appliedFilters)
 
     return(
       <div className='row'>
@@ -241,7 +238,7 @@ export default class Reports extends Component {
           <div className="fake-panel">
             <div className="row reports-list-heading">
               <div className={`col-md-offset-2 ${this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}`}>
-                {filtersNames}
+                {_.isEmpty(appliedFilters) ? null : filtersNames}
               </div>
               <div className={this.state.displayTotal ? 'col-md-1' : 'display_none'}>
                 <b>Total</b>
@@ -252,7 +249,7 @@ export default class Reports extends Component {
               <div className="clearfix"></div>
               <div className="col-md-2 revenue"><p>Revenue:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {_.isEmpty(appliedFilters) ? 0 : revenue}
+                {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : revenue}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.revenue}</b>
@@ -263,22 +260,26 @@ export default class Reports extends Component {
             </div>
           </div>
 
-          <ArticlesList
-            type = {filters.items.revenue}
-            toggleArticle = {this.toggleArticle.bind(this)}
-            openedArticles = {this.state.openedArticles}
-            appliedFilters = {appliedFilters}
-            displayTotal={this.state.displayTotal}
-            displayAvg={this.state.displayAvg}
-            fetchClassName = {this.fetchClassName.bind(this)}
-          />
+          {_.isEmpty(filters.items.revenue.articles) ?
+            <div class="alert alert-info">There are no articles here</div>
+            :
+            <ArticlesList
+              type = {filters.items.revenue}
+              toggleArticle = {this.toggleArticle.bind(this)}
+              openedArticles = {this.state.openedArticles}
+              appliedFilters = {appliedFilters}
+              displayTotal={this.state.displayTotal}
+              displayAvg={this.state.displayAvg}
+              fetchClassName = {this.fetchClassName.bind(this)}
+            />
+          }
           <div className="clearfix"></div>
 
           <div className="fake-panel">
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Cost:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {_.isEmpty(appliedFilters) ? 0 : cost}
+                {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : cost}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.cost}</b>
@@ -289,22 +290,26 @@ export default class Reports extends Component {
             </div>
           </div>
 
-          <ArticlesList
-            type = {filters.items.cost}
-            toggleArticle = {this.toggleArticle.bind(this)}
-            openedArticles = {this.state.openedArticles}
-            appliedFilters = {appliedFilters}
-            displayTotal={this.state.displayTotal}
-            displayAvg={this.state.displayAvg}
-            fetchClassName = {this.fetchClassName.bind(this)}
-          />
+          {_.isEmpty(filters.items.cost.articles) ?
+            <div class="alert alert-info">There are no articles here</div>
+            :
+            <ArticlesList
+              type = {filters.items.cost}
+              toggleArticle = {this.toggleArticle.bind(this)}
+              openedArticles = {this.state.openedArticles}
+              appliedFilters = {appliedFilters}
+              displayTotal={this.state.displayTotal}
+              displayAvg={this.state.displayAvg}
+              fetchClassName = {this.fetchClassName.bind(this)}
+            />
+          }
           <div className="clearfix"></div>
 
           <div className="fake-panel">
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Profit:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {_.isEmpty(appliedFilters) ? 0 : profit}
+                {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : profit}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.profit}</b>

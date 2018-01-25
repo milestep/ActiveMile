@@ -81,7 +81,10 @@ export default class Reports extends Component {
 
   fetchRegisters() {
     var { actions } = this.props
-    var params = this.strategy.getAppliedFilters({ pluck: 'value' })
+    var params = _.assign({},
+      this.strategy.getAppliedFilters({ pluck: 'value' }),
+      { filter_by: this.props.strategy }
+    )
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)

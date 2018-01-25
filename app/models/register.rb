@@ -11,8 +11,8 @@ class Register < ApplicationRecord
             .sort { |a, b| b.to_i <=> a.to_i }
   }
 
-  scope :extract_by_date, -> (year, month = nil) {
-    extract_by(:year, year).extract_by(:month, month)
+  scope :extract_by_date, -> (props) {
+    extract_by(:year, props[:years]).extract_by(:month, props[:months])
   }
 
   scope :extract_by, -> (name, value) {

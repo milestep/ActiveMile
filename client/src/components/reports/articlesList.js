@@ -3,7 +3,6 @@ import { connect }                      from 'react-redux'
 
 export default class ArticlesList extends Component {
   static propTypes = {
-    filters: PropTypes.object.isRequired,
     type: PropTypes.object.isRequired,
     displayTotal: PropTypes.bool.isRequired,
     displayAvg: PropTypes.bool.isRequired,
@@ -32,7 +31,7 @@ export default class ArticlesList extends Component {
   }
 
   createArticlesList() {
-    const { filters, type, toggleArticle, openedArticles } = this.props
+    const { type, toggleArticle, openedArticles } = this.props
 
     const articles = type.articles.map((article, index) => (
       <div class="panel panel-default">

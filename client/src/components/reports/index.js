@@ -264,7 +264,6 @@ export default class Reports extends Component {
           </div>
 
           <ArticlesList
-            filters = {filters}
             type = {filters.items.revenue}
             toggleArticle = {this.toggleArticle.bind(this)}
             openedArticles = {this.state.openedArticles}
@@ -291,7 +290,6 @@ export default class Reports extends Component {
           </div>
 
           <ArticlesList
-            filters = {filters}
             type = {filters.items.cost}
             toggleArticle = {this.toggleArticle.bind(this)}
             openedArticles = {this.state.openedArticles}

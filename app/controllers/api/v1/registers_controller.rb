@@ -41,9 +41,8 @@ class Api::V1::RegistersController < Api::V1::BaseController
 
   def props_valid?(props)
     filter_by = params[:filter_by]
-    if !filter_by || props[filter_by.to_sym].nil?
-      return false
-    end
+    return true unless filter_by
+    return false if props[filter_by.to_sym].nil?
     true
   end
 

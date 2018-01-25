@@ -9,7 +9,8 @@ export default class ArticlesList extends Component {
     displayAvg: PropTypes.bool.isRequired,
     fetchClassName: PropTypes.func.isRequired,
     toggleArticle: PropTypes.func.isRequired,
-    openedArticles: PropTypes.array.isRequired
+    openedArticles: PropTypes.array.isRequired,
+    appliedFilters: PropTypes.array.isRequired
   }
 
   createCounterpartiesList(counterparties) {
@@ -63,9 +64,12 @@ export default class ArticlesList extends Component {
   }
 
   render() {
+    const {appliedFilters} = this.props
+    const noArticles = <div class="alert alert-info">There are no articles here</div>
+
     return (
       <div>
-        {this.createArticlesList()}
+        {_.isEmpty(appliedFilters) ? noArticles : this.createArticlesList()}
       </div>
     )
   }

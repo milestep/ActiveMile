@@ -164,6 +164,7 @@ export default class Reports extends Component {
   render() {
     const { Filter } = this.strategy
     const { filters } = this.state
+    const appliedFilters = this.strategy.getPrimaryAppliedFilters()
 
     if (!filters) return null
 
@@ -192,6 +193,7 @@ export default class Reports extends Component {
     const commonTable = filters.profit.values.map((profit, index) => {
       return(<td key={index}>{profit.value}</td>)
     })
+    console.log(appliedFilters)
 
     return(
       <div className='row'>
@@ -250,7 +252,7 @@ export default class Reports extends Component {
               <div className="clearfix"></div>
               <div className="col-md-2 revenue"><p>Revenue:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {revenue}
+                {_.isEmpty(appliedFilters) ? 0 : revenue}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.revenue}</b>
@@ -266,6 +268,7 @@ export default class Reports extends Component {
             type = {filters.items.revenue}
             toggleArticle = {this.toggleArticle.bind(this)}
             openedArticles = {this.state.openedArticles}
+            appliedFilters = {appliedFilters}
             displayTotal={this.state.displayTotal}
             displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}
@@ -276,7 +279,7 @@ export default class Reports extends Component {
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Cost:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {cost}
+                {_.isEmpty(appliedFilters) ? 0 : cost}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.cost}</b>
@@ -292,6 +295,7 @@ export default class Reports extends Component {
             type = {filters.items.cost}
             toggleArticle = {this.toggleArticle.bind(this)}
             openedArticles = {this.state.openedArticles}
+            appliedFilters = {appliedFilters}
             displayTotal={this.state.displayTotal}
             displayAvg={this.state.displayAvg}
             fetchClassName = {this.fetchClassName.bind(this)}
@@ -302,7 +306,7 @@ export default class Reports extends Component {
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Profit:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                {profit}
+                {_.isEmpty(appliedFilters) ? 0 : profit}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b>{filters.average.profit}</b>

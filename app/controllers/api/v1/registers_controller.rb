@@ -3,7 +3,16 @@ class Api::V1::RegistersController < Api::V1::BaseController
   expose :register,  -> { registers.find(params[:id]) }
 
   def index
-    items = registers.extract_by_date(params[:year], params[:month])
+    props = {
+      years: params[:year],
+      months: params[:month]
+    }
+
+    unless props_valid?(props)
+      return render_api({ years: registers.years}, :ok)
+    end
+
+    items = registers.extract_by_date(props)
     render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end
@@ -30,8 +39,17 @@ class Api::V1::RegistersController < Api::V1::BaseController
 
   private
 
+  def props_valid?(props)
+    filter_by = params[:filter_by]
+    if !filter_by || props[filter_by.to_sym].nil?
+      return false
+    end
+    true
+  end
+
   def register_params
-    params.require(:register).permit(:date, :value, :note, :article_id, :counterparty_id)
+    params.require(:register).permit(:date, :value, :note,
+                                     :article_id, :counterparty_id)
   end
 
 end

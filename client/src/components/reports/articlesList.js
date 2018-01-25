@@ -7,7 +7,9 @@ export default class ArticlesList extends Component {
     type: PropTypes.object.isRequired,
     displayTotal: PropTypes.bool.isRequired,
     displayAvg: PropTypes.bool.isRequired,
-    fetchClassName: PropTypes.func.isRequired
+    fetchClassName: PropTypes.func.isRequired,
+    toggleArticle: PropTypes.func.isRequired,
+    openedArticles: PropTypes.array.isRequired
   }
 
   createCounterpartiesList(counterparties) {
@@ -29,13 +31,18 @@ export default class ArticlesList extends Component {
   }
 
   createArticlesList() {
-    const { filters, type } = this.props
+    const { filters, type, toggleArticle, openedArticles } = this.props
 
     const articles = type.articles.map((article, index) => (
       <div class="panel panel-default">
         <div class="panel-heading" key={index}>
         <div className="row">
-          <div className="col-md-2"><p>{article.item.title}</p></div>
+          <div className="col-md-1"><p>{article.item.title}</p></div>
+          <div className="col-md-1">
+            <button className="btn btn-default btn-xs" onClick={(e) => toggleArticle(article.item.id)}>
+              <i className={`fa fa-angle-${openedArticles.includes(article.item.id) ? "up" : "down"}`}></i>
+            </button>
+          </div>
             <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
               {article.values.map((values, index) => (
                 <div key={index}>
@@ -46,7 +53,7 @@ export default class ArticlesList extends Component {
             </div>
           </div>
         </div>
-        <div class="panel-body">
+        <div class={openedArticles.includes(article.item.id) ? "panel-body" : "display_none"}>
           {this.createCounterpartiesList(article.counterparties)}
         </div>
       </div>

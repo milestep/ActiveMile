@@ -9,7 +9,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
     }
 
     unless props_valid?(props)
-      return render_api({ years: registers.years}, :ok)
+      return render_api({ years: registers.years }, :ok)
     end
 
     items = registers.extract_by_date(props)

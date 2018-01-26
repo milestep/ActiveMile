@@ -205,20 +205,19 @@ export default class Reports extends Component {
             <table id="table-to-xls" className='display_none'>
               <tr>
                 <th>Month Names</th>
-                <th></th>
                 {filtersNamesTable}
               </tr>
               <tr>
                 <td>Revenue</td>
-                <td> {revenueTable}</td>
+                {revenueTable}
               </tr>
               <tr>
                 <td>Cost</td>
-                <td> {costTable}</td>
+                {costTable}
               </tr>
               <tr>
                 <td>Profit</td>
-                <td>{commonTable}</td>
+                {commonTable}
               </tr>
             </table>
           </div>
@@ -252,10 +251,10 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : revenue}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.average.revenue}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.revenue}</b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.total.revenue}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.revenue}</b>
               </div>
             </div>
           </div>
@@ -282,10 +281,10 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : cost}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.average.cost}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.cost}</b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.total.cost}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.cost}</b>
               </div>
             </div>
           </div>
@@ -312,10 +311,10 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : profit}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.average.profit}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.profit}</b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{filters.total.profit}</b>
+                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.profit}</b>
               </div>
             </div>
           </div>

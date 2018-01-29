@@ -1,117 +1,74 @@
-import React, { Component, PropTypes }  from 'react';
-import { bindActionCreators }           from 'redux';
-import { connect }                      from 'react-redux';
-import * as utils                       from '../../utils';
-import moment                             from 'moment';
+import React, { Component, PropTypes }  from 'react'
+import { connect }                      from 'react-redux'
 
-const monthsNames = moment.monthsShort()
-
-export default class TestArticlesList extends Component {
+export default class ArticlesList extends Component {
   static propTypes = {
-    collapsedArticles: PropTypes.array,
-    currentMonths: PropTypes.array.isRequired,
-    type: PropTypes.string.isRequired,
-    articles: PropTypes.object.isRequired,
-    handleArticleChange: PropTypes.func.isRequired,
+    type: PropTypes.object.isRequired,
     displayTotal: PropTypes.bool.isRequired,
     displayAvg: PropTypes.bool.isRequired,
-    fetchClassName: PropTypes.func.isRequired
-  }
-
-  createArticlesList() {
-    const { articles, collapsedArticles, currentMonths, type } = this.props
-    let res = [];
-
-    for(let articleTitle in articles) {
-      const { counterparties } = articles[articleTitle]
-      const isCollapsed = collapsedArticles.indexOf(articleTitle) === -1
-
-      res.push(
-        <div className='panel panel-default article-panel' key={articleTitle}>
-          <div class='panel-heading'>
-            <div className='row'>
-              <div className='col-xs-2'>
-                <div className='row'>
-                  <div className='col-xs-3 article-expand-wrapper'>
-                    <button
-                      className='btn btn-default article-expand-btn btn-xs'
-                      onClick={(e) => this.props.handleArticleChange(articleTitle, type)}
-                    >
-                      <i class={`fa fa-angle-${isCollapsed ? 'down' : 'up'}`}></i>
-                    </button>
-                  </div>
-                  <div className='col-xs-9'>
-                    { articleTitle }
-                  </div>
-                </div>
-              </div>
-              <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
-                { this.createValuesByMonths(articles[articleTitle]['values']) }
-              </div>
-            </div>
-          </div>
-
-          { isCollapsed ?
-            null
-          :
-            <div className='panel-body'>
-              { this.createCounterpartiesList(counterparties) }
-            </div>
-          }
-        </div>
-      )
-    }
-
-    return res
+    fetchClassName: PropTypes.func.isRequired,
+    toggleArticle: PropTypes.func.isRequired,
+    openedArticles: PropTypes.array.isRequired,
+    appliedFilters: PropTypes.array.isRequired
   }
 
   createCounterpartiesList(counterparties) {
-    const { type } = this.props
-    let res = [];
+    return counterparties.map((counterparty, index) =>(
+      <div key={index}>
+        <div className="row">
+            <div className="col-md-2">{counterparty.item.name}</div>
+            <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
+              {counterparty.values.map((values, index) => (
+                <div key={index}>
+                  <div className="col-md-1"><p>{values.value}</p></div>
+                </div>
+              ))}
+              <div className="clearfix"></div>
+            </div>
+        </div>
+      </div>
+    ))
+  }
 
-    for(let name in counterparties) {
-      res.push(
-        <div className={`counterparty-wrapper type-${type}`} key={name}>
-          <div className='row'>
-            <div className='col-md-2 counterparty-name'>{ name || '-' }</div>
-              <div className={`${this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)} reports-list-align-right`}>
-                {this.createValuesByMonths(counterparties[name])}
-              </div>
+  createArticlesList() {
+    const { type, toggleArticle, openedArticles } = this.props
+
+    const articles = type.articles.map((article, index) => (
+      <div class="panel panel-default">
+        <div class="panel-heading" key={index}>
+        <div className="row">
+          <div className="col-md-1"><p>{article.item.title}</p></div>
+          <div className="col-md-1">
+            <button className="btn btn-default btn-xs" onClick={(e) => toggleArticle(article.item.id)}>
+              <i className={`fa fa-angle-${openedArticles.includes(article.item.id) ? "up" : "down"}`}></i>
+            </button>
+          </div>
+            <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
+              {article.values.map((values, index) => (
+                <div key={index}>
+                  <div className="col-md-1"><p>{values.value}</p></div>
+                </div>
+              ))}
+              <div className="clearfix"></div>
+            </div>
           </div>
         </div>
-      )
-    }
-
-    return res
-  }
-
-  createValuesByMonths(months) {
-    const { currentMonths } = this.props
-    let res = [];
-
-    currentMonths.map((numMonth, index) => {
-      res.push(
-        <div key={index} className='col-xs-1 counterparty-value'>{ months[monthsNames[numMonth]] }</div>
-      )
-    })
-
-    return res
-  }
-
-  renderEmptyList() {
-    return (
-      <div className='alert alert-info'>
-        <span>There are no articles here</span>
+        <div class={openedArticles.includes(article.item.id) ? "panel-body" : "display_none"}>
+          {this.createCounterpartiesList(article.counterparties)}
+        </div>
       </div>
-    )
+    ))
+
+    return articles
   }
 
   render() {
-    const { articles } = this.props
+    const {appliedFilters} = this.props
+    const noArticles = <div class="alert alert-info">There are no articles here</div>
 
     return (
-      <div className='reports-list-item'>
-        { Object.keys(articles).length ? this.createArticlesList() : this.renderEmptyList() }
+      <div>
+        {_.isEmpty(appliedFilters) ? noArticles : this.createArticlesList()}
       </div>
     )
   }

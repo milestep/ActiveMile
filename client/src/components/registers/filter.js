@@ -17,8 +17,8 @@ export default class RegistersFilter extends Component {
       years: filter.years.map((year) => {
         return { value: year, label: year };
       }),
-      months: monthsNames.map((monthName) => {
-        return { value: monthName, label: monthName };
+      months: monthsNames.map((monthName, index) => {
+        return { value: index + 1, label: monthName };
       })
     }
 

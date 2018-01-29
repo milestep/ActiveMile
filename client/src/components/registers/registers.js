@@ -71,7 +71,7 @@ export default class Registers extends Component {
   createInitialState() {
     const date = new Date(),
           year = date.getFullYear(),
-          month = date.getMonth()
+          month = date.getMonth() + 1
 
     return {
       registers: [],
@@ -124,27 +124,9 @@ export default class Registers extends Component {
         current = Object.assign({}, this.state.current),
         registers = []
 
-    if (typeof current.month != 'number')
-      current.month = monthsNames.indexOf(current.month)
-
-    props.registers.forEach((register, i) => {
-      const date = new Date(register.date)
-      const year = date.getFullYear()
-      const month = date.getMonth()
-
-      if (month == current.month && year == current.year)
-        registers.push(register)
-    })
-
-    Object.assign(current, {
-      year: current.year,
-      month: monthsNames[current.month]
-    })
-
     this.setState((prevState) => ({
       ...prevState,
-      registers,
-      current,
+      registers: props.registers,
       filter
     }))
   }
@@ -196,7 +178,6 @@ export default class Registers extends Component {
       [field]: value,
     })
 
-    current.month = monthsNames.indexOf(current.month)
     this.props.actions.fetchRegisters(current)
   }
 

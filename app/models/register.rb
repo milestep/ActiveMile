@@ -7,10 +7,17 @@ class Register < ApplicationRecord
   validates :value, numericality: true
 
   scope :years, -> {
-    distinct.pluck('cast(extract(year from date) as integer)').sort { |a,b| b.to_i <=> a.to_i }
+    distinct.pluck('cast(extract(year from date) as integer)')
+            .sort { |a, b| b.to_i <=> a.to_i }
   }
 
-  scope :by_date, -> (year, month) {
-    where("cast(extract(year from date) as integer) = ? AND cast(extract(month from date) as integer) IN (?)", year, month)
+  scope :extract_by_date, -> (props) {
+    extract_by(:year, props[:years]).extract_by(:month, props[:months])
+  }
+
+  scope :extract_by, -> (name, value) {
+    return unless value.present?
+    term = value.kind_of?(Array) ? 'IN (?)' : '= ?'
+    where("cast(extract(#{name.to_s} from date) as integer) #{term}", value)
   }
 end

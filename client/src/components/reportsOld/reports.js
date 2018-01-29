@@ -10,8 +10,9 @@ import { setStatePromise, pushUnique}     from '../../utils'
 import ArticlesList                       from './articlesList'
 import MonthsTabs                         from './monthsTabs'
 import moment                             from 'moment';
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import Workbook from 'react-excel-workbook'
+import ReactHTMLTableToExcel              from 'react-html-table-to-excel';
+import Workbook                           from 'react-excel-workbook'
+
 const monthsNames = moment.monthsShort()
 
 @connect(state => ({
@@ -32,7 +33,7 @@ const monthsNames = moment.monthsShort()
     fetchRegisters
   }, dispatch)
 }))
-export default class Reports extends Component {
+export default class ReportsOld extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
     articles: PropTypes.array.isRequired,

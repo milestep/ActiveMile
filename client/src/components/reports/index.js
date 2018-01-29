@@ -162,6 +162,14 @@ export default class Reports extends Component {
     })
   }
 
+  fetchClassNameForTotalAndAvg(value) {
+    if(value > 0){
+      return "green"
+    } else {
+      return "red"
+    }
+  }
+
   render() {
     const { Filter } = this.strategy
     const { filters } = this.state
@@ -254,10 +262,14 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : revenue}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.revenue}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.average.revenue)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.revenue}
+                </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.revenue}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.total.revenue)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.revenue}
+                </b>
               </div>
             </div>
           </div>
@@ -284,10 +296,14 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : cost}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.cost}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.average.cost)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.cost}
+                </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.cost}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.total.cost)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.cost}
+                </b>
               </div>
             </div>
           </div>
@@ -314,10 +330,14 @@ export default class Reports extends Component {
                 {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : profit}
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.profit}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.average.profit)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.profit}
+                </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
-                <b>{(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.profit}</b>
+                <b className={this.fetchClassNameForTotalAndAvg(filters.total.profit)}>
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.profit}
+                </b>
               </div>
             </div>
           </div>

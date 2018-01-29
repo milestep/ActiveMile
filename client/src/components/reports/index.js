@@ -147,7 +147,6 @@ export default class Reports extends Component {
   }
 
   toggleArticle(id) {
-    // const { openedArticles } = this.state
     var newArticles = _.clone(this.state.openedArticles)
     const index = newArticles.indexOf(id)
 

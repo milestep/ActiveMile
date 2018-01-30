@@ -6,15 +6,13 @@ const TOKEN = cookie.load('token')
 let HEADERS = new Headers({ 'Content-Type': 'application/json'})
 HEADERS['Authorization'] = `Bearer ${TOKEN}`
 
-export function index(current){
+export function index(params) {
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
       let headers = Object.assign({}, HEADERS)
       headers['workspace-id'] = getState().workspaces.app.current.id
-      headers['year'] = current.year
-      headers['month'] = current.month
 
-      axios.get(`${API_URL}`, { headers: headers })
+      axios.get(API_URL, { params, headers })
         .then(res => {
           dispatch({ type: 'REGISTER/FETCH', payload: res.data });
           resolve(res)

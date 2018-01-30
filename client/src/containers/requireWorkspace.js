@@ -3,7 +3,7 @@ import { connect }                     from 'react-redux';
 import { browserHistory }              from 'react-router';
 import requireAuth                     from './requireAuth';
 
-export default function (WrappedComponent) {
+export default function(WrappedComponent, options) {
   @connect(state => ({
     authenticated: state.auth.token,
     currentWorkspace: state.workspaces.app.current,
@@ -16,7 +16,8 @@ export default function (WrappedComponent) {
       const { authenticated, currentWorkspace, isResolved, isFetching } = this.props;
 
       if (currentWorkspace && isResolved) {
-        return <WrappedComponent {...this.props} />
+        let params = Object.assign({}, this.props, options)
+        return <WrappedComponent { ...params } />
       }
 
       if (!currentWorkspace && isResolved) {

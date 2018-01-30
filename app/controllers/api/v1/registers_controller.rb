@@ -1,20 +1,20 @@
 class Api::V1::RegistersController < Api::V1::BaseController
-  expose :register, -> {
-    current_workspace.registers.find(params[:id])
-  }
-  expose :registers, -> {
-    current_workspace.registers.order(id: :asc)
-  }
+  expose :registers, -> { current_workspace.registers }
+  expose :register,  -> { registers.find(params[:id]) }
 
   def index
-    year = Integer(request.headers['year'])
-    month = request.headers['month'].split(/,/)
-
-    month.each_with_index{|value, key|
-      month[key] = Integer(month[key]) + 1
+    props = {
+      years: params[:year],
+      months: params[:month]
     }
 
-    render_api({ items: registers.by_date(year, month), years: current_workspace.registers.years}, :ok, each_serializer: RegistersSerializer)
+    unless props_valid?(props)
+      return render_api({ years: registers.years }, :ok)
+    end
+
+    items = registers.extract_by_date(props)
+    render_api({ items: items, years: registers.years },
+                 :ok, each_serializer: RegistersSerializer)
   end
 
   def show
@@ -39,7 +39,16 @@ class Api::V1::RegistersController < Api::V1::BaseController
 
   private
 
-  def register_params
-    params.require(:register).permit(:date, :value, :note, :article_id, :counterparty_id)
+  def props_valid?(props)
+    filter_by = params[:filter_by]
+    return true unless filter_by
+    return false if props[filter_by.to_sym].nil?
+    true
   end
+
+  def register_params
+    params.require(:register).permit(:date, :value, :note,
+                                     :article_id, :counterparty_id)
+  end
+
 end

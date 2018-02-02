@@ -65,7 +65,8 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.createReportState()
+      this.props.actions.fetchRegisters({ year: this.state.currentYear, month: defaultMonths() })
+        .then(() => this.createReportState())
     }
   }
 

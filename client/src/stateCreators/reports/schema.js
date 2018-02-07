@@ -23,7 +23,7 @@ export default class Schema {
     var { initialValues } = this.props
 
     return {
-      item: this.props.counterparty || {name: ' - '},
+      item: this.props.counterparty,
       values: _.cloneDeep(initialValues)
     }
   }

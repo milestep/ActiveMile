@@ -65,7 +65,8 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.createReportState()
+      this.props.actions.fetchRegisters({ year: this.state.currentYear, month: defaultMonths() })
+        .then(() => this.createReportState())
     }
   }
 
@@ -131,9 +132,10 @@ export default class Charts extends Component {
   marga(revenue, profit) {
     let marga = new Array(12)
     marga.fill(0)
-
     for (var i = 0; i < marga.length; i++) {
-      marga[i] = profit[i] / revenue[i] * 100
+      if (revenue[i]) {
+        marga[i] = profit[i] / revenue[i] * 100
+      }
     }
     return marga
   }
@@ -142,7 +144,7 @@ export default class Charts extends Component {
     let {Revenue, Cost, Profit} = this.state.chartsData
 
     let marga = this.marga(Revenue, Profit)
-
+    
       return (
         <div>
           <div className='row'>

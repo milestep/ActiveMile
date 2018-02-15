@@ -103,8 +103,8 @@ export default class Charts extends Component {
       let numModelMoun = dataNow.getMonth()
       const article = articles.find(article => article.id === register.article_id)
       let modelTypeArticle = article.type
-      chartsData[modelTypeArticle][numModelMoun] += register.value
-      chartsData['Profit'][numModelMoun] = chartsData['Revenue'][numModelMoun] - chartsData['Cost'][numModelMoun]
+      chartsData[modelTypeArticle][numModelMoun] += Math.round(register.value)
+      chartsData['Profit'][numModelMoun] = Math.round(chartsData['Revenue'][numModelMoun] - chartsData['Cost'][numModelMoun])
     })
     this.setState({
       currentYear,

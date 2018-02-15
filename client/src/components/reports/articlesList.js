@@ -20,7 +20,7 @@ export default class ArticlesList extends Component {
             <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
               {counterparty.values.map((values, index) => (
                 <div key={index}>
-                  <div className="col-md-1"><p>{values.value}</p></div>
+                  <div className="col-md-1"><p>{Math.round(values.value)}</p></div>
                 </div>
               ))}
               <div className="clearfix"></div>
@@ -46,7 +46,7 @@ export default class ArticlesList extends Component {
             <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
               {article.values.map((values, index) => (
                 <div key={index}>
-                  <div className="col-md-1"><p>{values.value}</p></div>
+                  <div className="col-md-1"><p>{Math.round(values.value)}</p></div>
                 </div>
               ))}
               <div className="clearfix"></div>

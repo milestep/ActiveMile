@@ -172,26 +172,26 @@ export default class Reports extends Component {
       <div className="col-md-1" key={index}><p>{values.item.name}</p></div>
     ))
     const revenue = filters.items.revenue.values.map((values, index) => (
-      <div className="col-md-1" key={index}><p>{values.value}</p></div>
+      <div className="col-md-1" key={index}><p>{Math.round(values.value)}</p></div>
     ))
     const cost = filters.items.cost.values.map((values, index) => (
-      <div className="col-md-1" key={index}><p>{values.value}</p></div>
+      <div className="col-md-1" key={index}><p>{Math.round(values.value)}</p></div>
     ))
     const profit = filters.profit.values.map((profit, index) => (
-      <div className="col-md-1" key={index}><p>{profit.value}</p></div>
+      <div className="col-md-1" key={index}><p>{Math.round(profit.value)}</p></div>
     ))
 
     const filtersNamesTable = filters.items.revenue.values.map((values, index)=>{
       return(<th key={index}>{values.item.name}</th>)
     })
     const revenueTable = filters.items.revenue.values.map((values, index) => {
-      return(<td key={index}>{values.value}</td>)
+      return(<td key={index}>{Math.round(values.value)}</td>)
     })
     const costTable = filters.items.cost.values.map((values, index) => {
-      return(<td key={index}>{values.value}</td>)
+      return(<td key={index}>{Math.round(values.value)}</td>)
     })
     const commonTable = filters.profit.values.map((profit, index) => {
-      return(<td key={index}>{profit.value}</td>)
+      return(<td key={index}>{Math.round(profit.value)}</td>)
     })
 
     return(
@@ -256,12 +256,12 @@ export default class Reports extends Component {
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="blue">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.revenue}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.revenue)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="blue">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.revenue}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.revenue)}
                 </b>
               </div>
             </div>
@@ -292,12 +292,12 @@ export default class Reports extends Component {
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="red">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.cost}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.cost)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="red">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.cost}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.cost)}
                 </b>
               </div>
             </div>
@@ -328,12 +328,12 @@ export default class Reports extends Component {
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="green">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.average.profit}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.profit)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="green">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : filters.total.profit}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.profit)}
                 </b>
               </div>
             </div>

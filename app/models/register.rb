@@ -12,10 +12,10 @@ class Register < ApplicationRecord
   }
 
   scope :extract_by_date, -> (props) {
-    if props[:months].nil?
-      extract_by(:year, props[:years])
-    else
+    if props[:months].present?
       extract_by(:year, props[:years]).extract_by(:month, props[:months])
+    else
+      extract_by(:year, props[:years])
     end
   }
 

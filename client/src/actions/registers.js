@@ -2,14 +2,12 @@ import axios from 'axios';
 import cookie from 'react-cookie';
 
 const API_URL = `${window.location.origin}/api/v1/registers`;
-const TOKEN = cookie.load('token')
-let HEADERS = new Headers({ 'Content-Type': 'application/json'})
-HEADERS['Authorization'] = `Bearer ${TOKEN}`
 
 export function index(params) {
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
-      let headers = Object.assign({}, HEADERS)
+      let headers = {}
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = getState().workspaces.app.current.id
 
       axios.get(API_URL, { params, headers })
@@ -28,7 +26,8 @@ export function index(params) {
 export function show(id){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
-      let headers = Object.assign({}, HEADERS)
+      let headers = {}
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = getState().workspaces.app.current.id
 
       axios.get(`${API_URL}/${id}`, { headers: headers })
@@ -47,7 +46,8 @@ export function show(id){
 export function create(register){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
-      let headers = Object.assign({}, HEADERS)
+      let headers = {}
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = getState().workspaces.app.current.id
       let body = {register: register}
 
@@ -67,7 +67,8 @@ export function create(register){
 export function update(register){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
-      let headers = Object.assign({}, HEADERS)
+      let headers = {}
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = getState().workspaces.app.current.id
       let body = {register: register.register}
 
@@ -86,7 +87,8 @@ export function update(register){
 export function destroy(id){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
-      let headers = Object.assign({}, HEADERS)
+      let headers = {}
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = getState().workspaces.app.current.id
 
       axios.delete(`${API_URL}/${id}`, { headers: headers })

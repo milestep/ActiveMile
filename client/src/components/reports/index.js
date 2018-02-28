@@ -97,8 +97,6 @@ export default class Reports extends Component {
       { filter_by: this.props.strategy }
     )
 
-    console.log(params)
-
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
         .then(() => this.onDataReceived())
@@ -179,8 +177,6 @@ export default class Reports extends Component {
     const appliedFilters = this.strategy.getPrimaryAppliedFilters()
 
     if (!filters) return null
-
-    console.log(this.state)
 
     const filtersNames = filters.items.revenue.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.item.name}</p></div>

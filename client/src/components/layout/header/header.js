@@ -157,7 +157,7 @@ export default class Header extends Component {
           </ul>
         : null }
 
-        { reports ?
+        { (loggedIn && reports) ?
           <ul className="nav navbar-nav">
             <Dropdown
               title='Reports'

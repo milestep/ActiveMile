@@ -71,6 +71,16 @@ export default class Reports extends Component {
     this.props.actions.unsubscribe(this.subscriptions)
   }
 
+  componentWillReceiveProps() {
+    if (this.isNextWorkspaceChanged()) {
+        this.fetchRegisters()
+      }
+    }
+
+  isNextWorkspaceChanged() {
+    return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
+  }
+
   onFilterChange() {
     this.fetchRegisters()
   }
@@ -86,6 +96,8 @@ export default class Reports extends Component {
       this.strategy.getAppliedFilters({ pluck: 'value' }),
       { filter_by: this.props.strategy }
     )
+
+    console.log(params)
 
     actions.fetchRegisters(params).then(() => {
       actions.subscribe(this.subscriptions)
@@ -167,6 +179,8 @@ export default class Reports extends Component {
     const appliedFilters = this.strategy.getPrimaryAppliedFilters()
 
     if (!filters) return null
+
+    console.log(this.state)
 
     const filtersNames = filters.items.revenue.values.map((values, index) => (
       <div className="col-md-1" key={index}><p>{values.item.name}</p></div>

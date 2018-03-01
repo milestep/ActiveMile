@@ -72,12 +72,12 @@ export default class Reports extends Component {
   }
 
   componentWillReceiveProps() {
-    if (this.isNextWorkspaceChanged()) {
+    if (this.workspaceChanged()) {
         this.fetchRegisters()
       }
     }
 
-  isNextWorkspaceChanged() {
+  workspaceChanged() {
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 

@@ -71,6 +71,16 @@ export default class Reports extends Component {
     this.props.actions.unsubscribe(this.subscriptions)
   }
 
+  componentWillReceiveProps() {
+    if (this.workspaceChanged()) {
+        this.fetchRegisters()
+      }
+    }
+
+  workspaceChanged() {
+    return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
+  }
+
   onFilterChange() {
     this.fetchRegisters()
   }

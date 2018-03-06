@@ -65,6 +65,7 @@ export default class App extends Component {
   }
 
   render() {
+    console.log(this.props.children)
     const { actions, logout } = this.props;
     const { store, router } = this.context;
     const { dispatch } = store;

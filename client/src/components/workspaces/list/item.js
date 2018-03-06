@@ -1,4 +1,5 @@
 import React, { Component, PropTypes }    from 'react';
+import { Link }                           from 'react-router';
 import { bindActionCreators }             from 'redux';
 import { connect }                        from 'react-redux';
 import { getCurrentUser }                 from '../../../helpers/currentUser';
@@ -54,6 +55,7 @@ export default class WorkspacesListItem extends Component {
               workspace={workspace}
               handleSubmit={methods.handleUpdate}
             />
+
             <div className="form-btn-wrap">
               <button
                 className="btn btn-sm btn-primary"
@@ -69,34 +71,48 @@ export default class WorkspacesListItem extends Component {
               <span className="workspace-title">
                 {title}&nbsp;
               </span>
+
               { isCurrent ? <span class="label label-primary">Current</span> : null }
             </div>
+            <div className="workspace-actions">
+              <div className='pull-right btn-toolbar'>
+                { !isCurrent ?
+                  <button
+                    className="btn btn-group btn-sm btn-default"
+                    onClick={actions.setupCurrentWorkspace.bind(this, workspace)}
+                  >
+                    Select
+                  </button>
+                : null }
 
-            <div className="workspace-actions btn-group">
-              { !isCurrent ?
-                <button
-                  className="btn btn-sm btn-success"
-                  onClick={actions.setupCurrentWorkspace.bind(this, workspace)}
-                >
-                  Select
-                </button>
-              : null }
-              { currentUser ?
-                <button
-                  className="btn btn-sm btn-primary"
-                  onClick={methods.toggleEdited.bind(this, id, true)}
-                >
-                  <i class="fa fa-pencil" aria-hidden="true"></i>
-                </button>
-              : null }
-              { currentUser ?
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={methods.deleteWorkspace.bind(this, id)}
-                >
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-              : null }
+                <div className='btn-group'>
+                  { currentUser ?
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={methods.toggleEdited.bind(this, id, true)}
+                    >
+                      <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </button>
+                  : null }
+
+                  { currentUser ?
+                    <button className="btn btn-sm btn-default">
+                      <Link to={`workspaces/${workspace.id}/settings`} >
+                        <i class="glyphicon glyphicon-cog" aria-hidden="true"></i>
+                      </Link>
+                    </button>
+                  : null }
+
+                  { currentUser ?
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={methods.deleteWorkspace.bind(this, id)}
+                    >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
+                  : null }
+                </div>
+              </div>
             </div>
           </div>
         }

@@ -1,15 +1,16 @@
 import React, {
   Component,
-  PropTypes }            from 'react';
-import { Provider }      from 'react-redux';
+  PropTypes }                from 'react';
+import { Provider }          from 'react-redux';
 import {
   Router,
   Route,
-  IndexRedirect }        from 'react-router';
+  IndexRedirect }            from 'react-router';
 import {
   App,
   Login,
   Workspaces,
+  WorkspaceSettings,
   Articles,
   Counterparties,
   Registers,
@@ -17,9 +18,9 @@ import {
   Reports,
   ReportsOld,
   Charts,
-  NotFound }             from '../components';
-import requireAuth       from '../containers/requireAuth';
-import RequireWorkspace  from '../containers/requireWorkspace';
+  NotFound }                 from '../components';
+import requireAuth           from '../containers/requireAuth';
+import RequireWorkspace      from '../containers/requireWorkspace';
 
 const routes = (
   <Route path="/" component={App}>
@@ -27,6 +28,7 @@ const routes = (
 
     <Route path="login" component={requireAuth(Login, false)} />
     <Route path="workspaces" component={requireAuth(Workspaces)} />
+    <Route path="/workspaces/:id/settings" component={RequireWorkspace(WorkspaceSettings)} />
     <Route path="articles" component={RequireWorkspace(Articles)} />
     <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
     <Route path="registers" component={RequireWorkspace(Registers)} />

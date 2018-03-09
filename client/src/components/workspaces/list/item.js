@@ -85,6 +85,14 @@ export default class WorkspacesListItem extends Component {
                   </button>
                 : null }
 
+                { isCurrent ?
+                  <button className="btn btn-sm btn-default">
+                    <Link to={`workspaces/${workspace.id}/settings`} >
+                      <i class="glyphicon glyphicon-cog" aria-hidden="true"></i>
+                    </Link>
+                  </button>
+                : null }
+
                 <div className='btn-group'>
                   { currentUser ?
                     <button
@@ -92,14 +100,6 @@ export default class WorkspacesListItem extends Component {
                       onClick={methods.toggleEdited.bind(this, id, true)}
                     >
                       <i class="fa fa-pencil" aria-hidden="true"></i>
-                    </button>
-                  : null }
-
-                  { currentUser ?
-                    <button className="btn btn-sm btn-default">
-                      <Link to={`workspaces/${workspace.id}/settings`} >
-                        <i class="glyphicon glyphicon-cog" aria-hidden="true"></i>
-                      </Link>
                     </button>
                   : null }
 

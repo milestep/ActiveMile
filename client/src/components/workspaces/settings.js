@@ -1,23 +1,99 @@
-import React, { Component } from 'react';
+import React, { Component }                   from 'react';
+import { connect }                            from 'react-redux';
+import { bindActionCreators }                 from 'redux';
+import { actions as workspaceActions }        from '../../resources/workspaces';
+import { actions as workspaceAppActions }     from '../../actions/workspaces';
+import { toaster }                            from '../../actions/alerts';
+import * as utils                             from '../../utils';
 
+@connect(
+  state => ({}),
+  dispatch => ({
+    actions: bindActionCreators({
+      ...workspaceActions,
+      ...workspaceAppActions,
+      toaster
+    }, dispatch)
+  })
+)
 export default class WorkspaceSettings extends Component {
-  componentDidMount () {
-    let id = this.props.params.id;
-  };
+  constructor(props) {
+    super(props);
+    this.toaster = props.actions.toaster();
+    this.state = {
+      title: null,
+      sales: false
+    };
+  }
+
+  handleChange() {
+    let newState = this.state.sales;
+    newState = !newState;
+    this.setState({ sales: newState });
+  }
+
+  handleUpdate(element) {
+    const { id } = this.props.routeParams;
+    const { sales } = this.state;
+    const { actions, dispatch } = this.props;
+
+    element.preventDefault();
+
+    return new Promise((resolve, reject) => {
+      actions.updateWorkspace({ id, sales })
+        .then(res => {
+          dispatch({ type: 'UPDATE_WORKSPACE_SETTINGS', payload: sales });
+
+          this.toaster.success('Workspace settings has been updated');
+          resolve(res);
+        })
+        .catch(err => {
+          if (utils.debug) console.error(err);
+
+          this.toaster.error('Could not update workspace settings!');
+          reject(err);
+        })
+    })
+  }
+
+  componentDidMount() {
+    const { title, sales } = this.props.currentWorkspace;
+
+    this.setState({ title: title });
+    if (sales) this.setState({ sales: true });
+  }
 
   render() {
-    return (
-      <div className="container">
-        <h3>Workspace settings</h3>
+    if (this.props.routeParams.id == this.props.currentWorkspace.id) {
+      return (
+        <div className="container">
+          <h3>{ this.state.title } workspace settings</h3>
 
-        <div className='col-xs-4'>
-          <p>Enable sales</p>
-        </div>
+          <form className='form-group' onSubmit={ this.handleUpdate.bind(this) }>
+            <div className='col-xs-3'>
+              <p>Enable sales</p>
+            </div>
 
-        <div className='col-xs-1'>
-          <input type="checkbox" />
+            <div className='col-xs-9'>
+              <input
+                type="checkbox"
+                onChange={ this.handleChange.bind(this) }
+                checked={ this.state.sales }
+              />
+            </div>
+
+            <div className='col-xs-12'>
+              <button className="btn btn-primary pull-left" type="submit">Update</button>
+            </div>
+          </form>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <p>Only the current workspace can be configured</p>
+        </div>
+      );
+    }
   }
 }

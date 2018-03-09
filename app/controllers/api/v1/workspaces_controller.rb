@@ -14,6 +14,7 @@ class Api::V1::WorkspacesController < Api::V1::BaseController
 
   def update
     workspace.update(workspace_params)
+    workspace.update_column(:sales, params[:sales])
     render_api(workspace, :accepted)
   end
 

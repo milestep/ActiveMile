@@ -33,6 +33,10 @@ export const actions = {
           const currentWorkspace = dispatch(actions.getCurrentWorkspace(res.body));
           const firstWorkspace = res.body[0];
 
+          res.body.map((workspace) => {
+            if (workspace.id == currentWorkspace.id) currentWorkspace.sales = workspace.sales;
+          });
+
           if (!firstWorkspace) {
             dispatch(actions.resolve());
             return;
@@ -70,8 +74,7 @@ export const actions = {
   specifyCurrentWorkspace: function(workspace) {
     if (workspace) {
       Object.assign(defaultHeaders, {
-        'workspace-id': workspace.id,
-        'workspace-sales': workspace.sales
+        'workspace-id': workspace.id
       });
     }
 

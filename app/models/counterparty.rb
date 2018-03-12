@@ -5,7 +5,7 @@ class Counterparty < ApplicationRecord
   belongs_to :workspace
 
   validates :name, :date, :type, :workspace_id, presence: true
-  validates :type, acceptance: { accept: ['Client', 'Vendor' , 'Other'] }
+  validates :type, acceptance: { accept: ['Client', 'Vendor' , 'Other', 'Sales'] }
 
   before_destroy :associate_with_registers?
 

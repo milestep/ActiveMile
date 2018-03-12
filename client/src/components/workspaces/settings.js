@@ -5,6 +5,7 @@ import { actions as workspaceActions }        from '../../resources/workspaces';
 import { actions as workspaceAppActions }     from '../../actions/workspaces';
 import { toaster }                            from '../../actions/alerts';
 import * as utils                             from '../../utils';
+import                                             './settings.css';
 
 @connect(
   state => ({}),
@@ -56,7 +57,7 @@ export default class WorkspaceSettings extends Component {
     })
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const { title, sales } = this.props.currentWorkspace;
 
     this.setState({ title: title });
@@ -74,12 +75,14 @@ export default class WorkspaceSettings extends Component {
               <p>Enable sales</p>
             </div>
 
-            <div className='col-xs-9'>
+            <div className='col-xs-9 settings-switch pull-right'>
               <input
                 type="checkbox"
+                id="sales-switch"
                 onChange={ this.handleChange.bind(this) }
                 checked={ this.state.sales }
               />
+              <label for="sales-switch" class="label-primary"></label>
             </div>
 
             <div className='col-xs-12'>

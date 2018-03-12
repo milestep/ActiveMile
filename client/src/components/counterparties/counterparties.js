@@ -30,6 +30,7 @@ export default class Counterparties extends Component {
     super(props);
 
     this.types = ['Client', 'Vendor', 'Other'];
+    if (this.props.currentWorkspace.sales) this.types.push('Sales');
     this.subscriptions = ['counterparties'];
 
     this.state = {

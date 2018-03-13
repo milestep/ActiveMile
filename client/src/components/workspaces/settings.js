@@ -1,8 +1,9 @@
 import React, { Component }                   from 'react';
 import { connect }                            from 'react-redux';
 import { bindActionCreators }                 from 'redux';
-import { actions as workspaceActions }        from '../../resources/workspaces';
+import { actions as workspaceActions }        from '../../resources/features';
 import { actions as workspaceAppActions }     from '../../actions/workspaces';
+// import { update as updateFeatures }           from '../../actions/features';
 import { toaster }                            from '../../actions/alerts';
 import * as utils                             from '../../utils';
 import                                             './settings.css';
@@ -13,11 +14,12 @@ import                                             './settings.css';
     actions: bindActionCreators({
       ...workspaceActions,
       ...workspaceAppActions,
+      // updateFeatures,
       toaster
     }, dispatch)
   })
 )
-export default class WorkspaceSettings extends Component {
+export default class Features extends Component {
   constructor(props) {
     super(props);
     this.toaster = props.actions.toaster();
@@ -41,9 +43,9 @@ export default class WorkspaceSettings extends Component {
     element.preventDefault();
 
     return new Promise((resolve, reject) => {
-      actions.updateWorkspace({ id, sales })
+      actions.updateFeatures({ id, sales })
         .then(res => {
-          dispatch({ type: 'UPDATE_WORKSPACE_SETTINGS', payload: sales });
+          // dispatch({ type: 'UPDATE_WORKSPACE_SETTINGS', payload: sales });
 
           this.toaster.success('Workspace settings has been updated');
           resolve(res);

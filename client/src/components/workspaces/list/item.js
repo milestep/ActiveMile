@@ -87,7 +87,7 @@ export default class WorkspacesListItem extends Component {
 
                 { isCurrent ?
                   <button className="btn btn-sm btn-default">
-                    <Link to={`workspaces/${workspace.id}/settings`} >
+                    <Link to={`features/${workspace.id}/`} >
                       <i class="glyphicon glyphicon-cog" aria-hidden="true"></i>
                     </Link>
                   </button>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180306114536) do
+ActiveRecord::Schema.define(version: 20180313081701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,11 @@ ActiveRecord::Schema.define(version: 20180306114536) do
     t.boolean  "active",          default: true
     t.integer  "registers_count", default: 0
     t.index ["workspace_id"], name: "index_counterparties_on_workspace_id", using: :btree
+  end
+
+  create_table "features", force: :cascade do |t|
+    t.boolean "sales",        default: false
+    t.integer "workspace_id",                 null: false
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -99,9 +104,8 @@ ActiveRecord::Schema.define(version: 20180306114536) do
 
   create_table "workspaces", force: :cascade do |t|
     t.string   "title"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.boolean  "sales",      default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "articles", "workspaces"

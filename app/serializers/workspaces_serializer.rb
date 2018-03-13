@@ -1,3 +1,3 @@
 class WorkspacesSerializer < ActiveModel::Serializer
-  attributes :id, :title, :sales
+  attributes :id, :title
 end

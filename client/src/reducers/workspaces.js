@@ -54,15 +54,15 @@ export default (state = initialState, action) => {
       }
     }
 
-    case 'UPDATE_WORKSPACE_SETTINGS': {
-      return {
-        ...state,
-        current: {
-          ...state.current,
-          sales: action.payload
-        }
-      }
-    }
+    // case 'UPDATE_WORKSPACE_SETTINGS': {
+    //   return {
+    //     ...state,
+    //     current: {
+    //       ...state.current,
+    //       sales: action.payload
+    //     }
+    //   }
+    // }
 
     default: {
       return state;

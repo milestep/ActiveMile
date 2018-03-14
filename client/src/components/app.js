@@ -61,7 +61,7 @@ export default class App extends Component {
   }
 
   fetchCurrentFeatures() {
-    const { actions, fetchCurrentFeatures } = this.props;
+    const { actions } = this.props;
     let currentWorkspace = cookie.load('current_workspace');
 
     actions.fetchCurrentFeatures(currentWorkspace.id);

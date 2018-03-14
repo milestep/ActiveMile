@@ -3,18 +3,18 @@ import { connect }                            from 'react-redux';
 import { bindActionCreators }                 from 'redux';
 import { actions as workspaceActions }        from '../../resources/features';
 import { actions as workspaceAppActions }     from '../../actions/workspaces';
-// import { update as updateFeatures }           from '../../actions/features';
 import { toaster }                            from '../../actions/alerts';
 import * as utils                             from '../../utils';
 import                                             './settings.css';
 
 @connect(
-  state => ({}),
+  state => ({
+    currentFeatures: state.features
+  }),
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
       ...workspaceAppActions,
-      // updateFeatures,
       toaster
     }, dispatch)
   })
@@ -60,10 +60,17 @@ export default class Features extends Component {
   }
 
   componentWillMount() {
-    const { title, sales } = this.props.currentWorkspace;
+    const { title } = this.props.currentWorkspace;
+    const { currentFeatures } = this.props
 
     this.setState({ title: title });
-    if (sales) this.setState({ sales: true });
+
+    if (currentFeatures) this.setState({ sales: currentFeatures.sales });
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { currentFeatures } = newProps
+    this.setState({ sales: currentFeatures.sales });
   }
 
   render() {

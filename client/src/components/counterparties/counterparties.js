@@ -9,6 +9,7 @@ import Form                               from './form';
 
 @connect(
   state => ({
+    currentFeatures: state.features,
     counterparties: state.counterparties.items,
     isFetching: state.counterparties.isFetching
   }),

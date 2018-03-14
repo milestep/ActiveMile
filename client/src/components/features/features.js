@@ -5,7 +5,7 @@ import { actions as workspaceActions }        from '../../resources/features';
 import { actions as workspaceAppActions }     from '../../actions/workspaces';
 import { toaster }                            from '../../actions/alerts';
 import * as utils                             from '../../utils';
-import                                             './settings.css';
+import                                             '../../styles/features/features.css';
 
 @connect(
   state => ({

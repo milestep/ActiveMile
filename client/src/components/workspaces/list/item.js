@@ -6,6 +6,7 @@ import { getCurrentUser }                 from '../../../helpers/currentUser';
 import { setupCurrentWorkspace }          from '../../../actions/workspaces';
 import { actions as workspaceAppActions } from '../../../actions/workspaces';
 import { actions as workspaceActions }    from '../../../resources/workspaces';
+import { show as fetchCurrentFeatures }   from '../../../actions/features';
 import WorkspaceForm                      from '../form';
 
 @connect(
@@ -16,7 +17,8 @@ import WorkspaceForm                      from '../form';
   dispatch => ({
     actions: bindActionCreators({
       ...workspaceActions,
-      ...workspaceAppActions
+      ...workspaceAppActions,
+      fetchCurrentFeatures,
     }, dispatch)
   })
 )
@@ -28,6 +30,13 @@ export default class WorkspacesListItem extends Component {
     isEdited: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired
   };
+
+  handleSelect(workspace) {
+    let { actions } = this.props;
+
+    actions.setupCurrentWorkspace(workspace);
+    actions.fetchCurrentFeatures(workspace.id);
+  }
 
   render() {
     const currentUser = getCurrentUser();
@@ -79,7 +88,7 @@ export default class WorkspacesListItem extends Component {
                 { !isCurrent ?
                   <button
                     className="btn btn-group btn-sm btn-default"
-                    onClick={actions.setupCurrentWorkspace.bind(this, workspace)}
+                    onClick={this.handleSelect.bind(this, workspace)}
                   >
                     Select
                   </button>

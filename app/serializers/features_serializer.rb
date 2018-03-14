@@ -1,3 +1,3 @@
-class FeatureSerializer < ActiveModel::Serializer
+class FeaturesSerializer < ActiveModel::Serializer
   attributes :sales
 end

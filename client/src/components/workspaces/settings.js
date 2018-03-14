@@ -45,7 +45,7 @@ export default class Features extends Component {
     return new Promise((resolve, reject) => {
       actions.updateFeatures({ id, sales })
         .then(res => {
-          // dispatch({ type: 'UPDATE_WORKSPACE_SETTINGS', payload: sales });
+          dispatch({ type: 'UPDATE_WORKSPACE_SETTINGS', payload: sales });
 
           this.toaster.success('Workspace settings has been updated');
           resolve(res);

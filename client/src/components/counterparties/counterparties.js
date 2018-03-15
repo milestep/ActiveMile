@@ -9,6 +9,7 @@ import Form                               from './form';
 
 @connect(
   state => ({
+    currentFeatures: state.features,
     counterparties: state.counterparties.items,
     isFetching: state.counterparties.isFetching
   }),
@@ -30,6 +31,7 @@ export default class Counterparties extends Component {
     super(props);
 
     this.types = ['Client', 'Vendor', 'Other'];
+    if (this.props.currentFeatures.sales) this.types.push('Sales');
     this.subscriptions = ['counterparties'];
 
     this.state = {

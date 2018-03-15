@@ -18,6 +18,7 @@ const monthsNames = moment.monthsShort()
 
 @connect(
   state => ({
+    currentFeatures: state.features,
     registers: state.registers.items,
     filter_years: state.registers.years,
     articles: state.articles.items,

@@ -35,12 +35,6 @@ RSpec.describe Counterparty, type: :model do
         expect(counterparty).not_to be_valid
         expect(counterparty).to have(1).error_on(:type)
       end
-
-      it 'expect require workspace_id' do
-        counterparty.workspace_id = nil
-        expect(counterparty).not_to be_valid
-        expect(counterparty).to have(1).error_on(:workspace_id)
-      end
     end
   end
 end

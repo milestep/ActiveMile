@@ -33,10 +33,6 @@ export const actions = {
           const currentWorkspace = dispatch(actions.getCurrentWorkspace(res.body));
           const firstWorkspace = res.body[0];
 
-          // res.body.map((workspace) => {
-          //   if (workspace.id == currentWorkspace.id) currentWorkspace.sales = workspace.sales;
-          // });
-
           if (!firstWorkspace) {
             dispatch(actions.resolve());
             return;

@@ -17,11 +17,10 @@ import {
   Reports,
   ReportsOld,
   Charts,
-  // Features,
+  Features,
   NotFound }                 from '../components';
 import requireAuth           from '../containers/requireAuth';
 import RequireWorkspace      from '../containers/requireWorkspace';
-import Features              from '../components/workspaces/settings'
 
 const routes = (
   <Route path="/" component={App}>

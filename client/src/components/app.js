@@ -56,7 +56,7 @@ export default class App extends Component {
       if (actions.getCurrentWorkspace()) {
         actions.unsetCurrentWorkspace();
       }
-      this.fetchWorkspaces();
+      // this.fetchWorkspaces();
     }
   }
 
@@ -64,7 +64,7 @@ export default class App extends Component {
     const { actions } = this.props;
     let currentWorkspace = cookie.load('current_workspace');
 
-    actions.fetchCurrentFeatures(currentWorkspace.id);
+    if (currentWorkspace) actions.fetchCurrentFeatures(currentWorkspace.id);
   }
 
   fetchWorkspaces() {

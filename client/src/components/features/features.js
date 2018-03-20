@@ -5,7 +5,7 @@ import { actions as workspaceActions }        from '../../resources/features';
 import { actions as workspaceAppActions }     from '../../actions/workspaces';
 import { toaster }                            from '../../actions/alerts';
 import * as utils                             from '../../utils';
-import                                             './settings.css';
+import                                             '../../styles/features/features.css';
 
 @connect(
   state => ({
@@ -65,12 +65,12 @@ export default class Features extends Component {
 
     this.setState({ title: title });
 
-    if (currentFeatures) this.setState({ sales: currentFeatures.sales });
+    if (currentFeatures && currentFeatures.sales) this.setState({ sales: currentFeatures.sales });
   }
 
   componentWillReceiveProps(newProps) {
     const { currentFeatures } = newProps
-    this.setState({ sales: currentFeatures.sales });
+    if (currentFeatures && currentFeatures.sales) this.setState({ sales: currentFeatures.sales });
   }
 
   render() {

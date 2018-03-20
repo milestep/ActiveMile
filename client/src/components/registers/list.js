@@ -20,7 +20,7 @@ export default class RegistersList extends Component {
       const typeName = article.type == "Cost" ? 'cost' : 'revenue';
 
       return(
-        <tr key={i}>
+        <tr className="register-table" key={i}>
           <td>{ moment(register.date).format("DD-MM-YYYY") }</td>
           <td>
             {article.title}
@@ -32,7 +32,7 @@ export default class RegistersList extends Component {
           <td>{register.value}</td>
           <td>{register.note}</td>
           <td>
-            <div className="btn-group">
+            <div className="btn-group btns-hidden" >
                <Link
                   to={`/registers/${register.id}/edit`}
                   className="btn btn-primary btn-sm"

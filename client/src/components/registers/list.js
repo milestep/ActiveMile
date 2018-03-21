@@ -30,7 +30,7 @@ export default class RegistersList extends Component {
           </td>
           <td>{counterparty ? counterparty.name : '-'}</td>
           <td>{register.value}</td>
-          <td>{register.note}</td>
+          <td><div className="register-note">{register.note}</div></td>
           <td>
             <div className="btn-group btns-hidden" >
                <Link

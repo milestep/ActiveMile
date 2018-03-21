@@ -10,7 +10,6 @@ import {
   App,
   Login,
   Workspaces,
-  WorkspaceSettings,
   Articles,
   Counterparties,
   Registers,
@@ -18,6 +17,7 @@ import {
   Reports,
   ReportsOld,
   Charts,
+  Features,
   NotFound }                 from '../components';
 import requireAuth           from '../containers/requireAuth';
 import RequireWorkspace      from '../containers/requireWorkspace';
@@ -28,7 +28,7 @@ const routes = (
 
     <Route path="login" component={requireAuth(Login, false)} />
     <Route path="workspaces" component={requireAuth(Workspaces)} />
-    <Route path="/workspaces/:id/settings" component={RequireWorkspace(WorkspaceSettings)} />
+    <Route path="/features/:id/" component={RequireWorkspace(Features)} />
     <Route path="articles" component={RequireWorkspace(Articles)} />
     <Route path="counterparties" component={RequireWorkspace(Counterparties)} />
     <Route path="registers" component={RequireWorkspace(Registers)} />

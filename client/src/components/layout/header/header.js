@@ -1,8 +1,9 @@
-import React, { Component, PropTypes } from 'react';
-import { connect }                     from 'react-redux';
-import { bindActionCreators }          from 'redux';
-import NavItem                         from './navItem';
-import Dropdown                        from '../elements/dropdown';
+import React, { Component, PropTypes }    from 'react';
+import { connect }                        from 'react-redux';
+import { bindActionCreators }             from 'redux';
+import NavItem                            from './navItem';
+import Dropdown                           from '../elements/dropdown';
+import { show as fetchCurrentFeatures }   from '../../../actions/features';
 
 @connect(
   state => ({
@@ -10,6 +11,11 @@ import Dropdown                        from '../elements/dropdown';
     alertsAsync: state.alerts.alertsAsync,
     workspaces: state.workspaces.rest.items,
     currentWorkspace: state.workspaces.app.current
+  }),
+  dispatch => ({
+    actions: bindActionCreators({
+      fetchCurrentFeatures,
+    }, dispatch)
   })
 )
 export default class Header extends Component {
@@ -131,7 +137,9 @@ export default class Header extends Component {
           <a href="#"
             onClick={e => {
               e.preventDefault();
+
               setupCurrentWorkspace(workspace);
+              this.fetchCurrentFeatures(workspace.id);
             }}
           >
             { workspace.title }
@@ -173,6 +181,11 @@ export default class Header extends Component {
          : null}
       </nav>
     );
+  }
+
+  fetchCurrentFeatures(id) {
+    const { actions, fetchCurrentFeatures } = this.props;
+    actions.fetchCurrentFeatures(id);
   }
 
   render() {

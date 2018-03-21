@@ -1,12 +1,12 @@
 class Api::V1::FeaturesController < Api::V1::BaseController
-  expose :features, -> { current_workspace.feature }
+  expose :feature, -> { current_workspace.feature }
 
   def show
-    render_api(features, :ok, each_serializer: FeaturesSerializer)
+    render_api(feature, :ok, each_serializer: FeaturesSerializer)
   end
 
   def update
-    features.update(features_params)
+    feature.update(features_params)
     render_api(:accepted)
   end
 

@@ -56,7 +56,7 @@ export default class App extends Component {
       if (actions.getCurrentWorkspace()) {
         actions.unsetCurrentWorkspace();
       }
-      // this.fetchWorkspaces();
+      this.fetchWorkspaces();
     }
   }
 

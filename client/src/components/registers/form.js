@@ -187,8 +187,10 @@ export default class RegisterForm extends Component {
     const { date, value, note, article, counterparty, client, sales } = this.state.register;
     const { currentFeatures, isFetching, editing, articles, counterparties } = this.props;
     const buttonCaption = editing ? 'Update' : 'Create Register';
+
     let clientOptions = [];
     let salesOptions = [];
+    let filteredCounterpartyOptions = [];
 
     const articleOptions = articles.map((article, i) => {
       return {
@@ -211,7 +213,9 @@ export default class RegisterForm extends Component {
           counterparty.type == 'sales' ?
             salesOptions.push(counterparty)
           :
-            clientOptions.push(counterparty)
+            clientOptions.push(counterparty);
+        } else {
+          filteredCounterpartyOptions.push(counterparty);
         }
       });
     }
@@ -274,7 +278,7 @@ export default class RegisterForm extends Component {
           name="counterparty"
           value={counterparty.value}
           isBlured={counterparty.blured}
-          options={counterpartyOptions}
+          options={filteredCounterpartyOptions}
           handleChange={this.handleChange}
         />
 

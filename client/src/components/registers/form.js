@@ -5,7 +5,13 @@ import FormTextarea                    from '../layout/form/textarea';
 import FormSelect                      from '../layout/form/select';
 import FormDatePicker                  from '../layout/form/datePicker';
 import * as utils                      from '../../utils';
+import { connect }                          from 'react-redux'
 
+@connect(
+  state => ({
+    currentFeatures: state.features,
+  })
+)
 export default class RegisterForm extends Component {
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
@@ -135,8 +141,10 @@ export default class RegisterForm extends Component {
 
   render() {
     const { date, value, note, article, counterparty } = this.state.register;
-    const { isFetching, editing, articles, counterparties } = this.props;
+    const { currentFeatures, isFetching, editing, articles, counterparties } = this.props;
     const buttonCaption = editing ? 'Update' : 'Create Register';
+    let clientOptions = [];
+    let salesOptions = [];
 
     const articleOptions = articles.map((article, i) => {
       return {
@@ -148,9 +156,23 @@ export default class RegisterForm extends Component {
     const counterpartyOptions = counterparties.map((counterparty, i) => {
       return {
         value: counterparty.id,
-        label: counterparty.name
+        label: counterparty.name,
+        type: counterparty.type.toLowerCase()
       }
     });
+
+    const optionsFilter = (...type) => {
+      counterpartyOptions.filter((counterparty) => {
+        if (counterparty.type == type[0] || counterparty.type == type[1]) {
+          counterparty.type == 'sales' ?
+            salesOptions.push(counterparty)
+          :
+            clientOptions.push(counterparty)
+        }
+      });
+    }
+
+    optionsFilter('sales', 'client');
 
     return(
       <Formsy.Form
@@ -180,6 +202,26 @@ export default class RegisterForm extends Component {
           }}
           required
         />
+
+        { (currentFeatures && currentFeatures.sales) ?
+          <div>
+            <FormSelect
+              title="Client"
+              name="client"
+              isBlured={counterparty.blured}
+              options={clientOptions}
+              handleChange={this.handleChange}
+            />
+
+            <FormSelect
+              title="Sales manager"
+              name="salesManager"
+              isBlured={counterparty.blured}
+              options={salesOptions}
+              handleChange={this.handleChange}
+            />
+          </div>
+        : null }
 
         <FormSelect
           title="Counterparty"

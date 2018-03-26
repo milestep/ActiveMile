@@ -157,14 +157,16 @@ export default class RegisterForm extends Component {
 
   handleSubmit = inputModel => {
     const { register } = this.props;
-    const { article, counterparty, date, note, value } = inputModel;
+    const { article, counterparty, date, note, value, client, sales } = inputModel;
 
     let model = {
       date: inputModel.date.format("YYYY-MM-DD"),
       note: inputModel.note,
       value: inputModel.value,
       article_id: article.value,
-      counterparty_id: counterparty ? counterparty.value : null
+      counterparty_id: counterparty ? counterparty.value : null,
+      client_id: client ? client.value : null,
+      sales_manager_id: sales ? sales.value : null
     }
 
     this.props.handleSubmit(model)

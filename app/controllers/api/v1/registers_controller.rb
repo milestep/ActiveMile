@@ -48,7 +48,8 @@ class Api::V1::RegistersController < Api::V1::BaseController
 
   def register_params
     params.require(:register).permit(:date, :value, :note,
-                                     :article_id, :counterparty_id)
+                                     :article_id, :counterparty_id,
+                                     :client_id, :sales_manager_id)
   end
 
 end

@@ -14,6 +14,8 @@ RSpec.describe Counterparty, type: :model do
     context 'associations should' do
       it { should belong_to(:workspace) }
       it { should have_many(:registers) }
+      it { should have_many(:client_registers) }
+      it { should have_many(:manager_registers) }
     end
 
     context 'validations exepect' do

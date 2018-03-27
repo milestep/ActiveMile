@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180313081701) do
+ActiveRecord::Schema.define(version: 20180326074823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 20180313081701) do
   end
 
   create_table "features", force: :cascade do |t|
-    t.boolean "sales",        default: false
+    t.boolean "sales",        default: false, null: false
     t.integer "workspace_id",                 null: false
   end
 
@@ -87,8 +87,10 @@ ActiveRecord::Schema.define(version: 20180313081701) do
     t.integer  "workspace_id"
     t.integer  "article_id"
     t.integer  "counterparty_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.integer  "client_id"
+    t.integer  "sales_manager_id"
     t.index ["article_id"], name: "index_registers_on_article_id", using: :btree
     t.index ["counterparty_id"], name: "index_registers_on_counterparty_id", using: :btree
     t.index ["workspace_id"], name: "index_registers_on_workspace_id", using: :btree

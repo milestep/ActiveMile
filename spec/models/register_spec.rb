@@ -8,6 +8,8 @@ RSpec.describe Register, type: :model do
       it { should belong_to(:workspace) }
       it { should belong_to(:article) }
       it { should belong_to(:counterparty) }
+      it { should belong_to(:client) }
+      it { should belong_to(:sales_manager) }
     end
 
     context 'validations should' do

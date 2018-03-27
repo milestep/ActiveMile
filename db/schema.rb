@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 20180326074823) do
   end
 
   create_table "features", force: :cascade do |t|
-    t.boolean "sales",        default: false
+    t.boolean "sales",        default: false, null: false
     t.integer "workspace_id",                 null: false
   end
 

@@ -5,7 +5,7 @@ import FormTextarea                    from '../layout/form/textarea';
 import FormSelect                      from '../layout/form/select';
 import FormDatePicker                  from '../layout/form/datePicker';
 import * as utils                      from '../../utils';
-import { connect }                          from 'react-redux'
+import { connect }                     from 'react-redux'
 
 @connect(
   state => ({
@@ -34,8 +34,8 @@ export default class RegisterForm extends Component {
   createRegisterState(props) {
     if (!props) props = this.props;
 
-    const { register, articles, counterparties, client, sales } = props;
-    let counterpartyId, counterpartyName;
+    const { register, articles, counterparties } = props;
+    let counterpartyId, clientId, salesId, counterpartyName, clientName, salesName;
 
     if (register && register.counterparty) {
       counterpartyId = register.counterparty.id;
@@ -47,9 +47,9 @@ export default class RegisterForm extends Component {
       clientName = register.client.name;
     }
 
-    if (register && register.sales) {
-      salesId = register.sales.id;
-      salesName = register.sales.name;
+    if (register && register.sales_manager) {
+      salesId = register.sales_manager.id;
+      salesName = register.sales_manager.name;
     }
 
     let forDate, forCounterparty, forArticle, forClient, forSales;

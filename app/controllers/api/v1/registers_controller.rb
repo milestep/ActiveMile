@@ -51,5 +51,4 @@ class Api::V1::RegistersController < Api::V1::BaseController
                                      :article_id, :counterparty_id,
                                      :client_id, :sales_manager_id)
   end
-
 end

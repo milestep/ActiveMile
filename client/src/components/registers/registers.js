@@ -243,7 +243,7 @@ export default class Registers extends Component {
   }
 
   render() {
-    const { articles, counterparties, isCreating } = this.props
+    const { articles, counterparties, isCreating, currentFeatures } = this.props
     const isFormDataReady = this.isModelsFetched(['articles', 'counterparties'])
     const registerList = this.createRegisterList()
 
@@ -266,6 +266,15 @@ export default class Registers extends Component {
                   <tr>
                     <th>Date</th>
                     <th>Article</th>
+
+                    { (currentFeatures && currentFeatures.sales) ?
+                      <th>Client</th>
+                    : null }
+
+                    { (currentFeatures && currentFeatures.sales) ?
+                      <th>Manager</th>
+                    : null }
+
                     <th>Counterparty</th>
                     <th>Value</th>
                     <th>Notes</th>

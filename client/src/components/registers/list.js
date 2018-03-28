@@ -1,8 +1,15 @@
 import React, { Component, PropTypes } from 'react';
+import { connect }                     from 'react-redux'
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
 import moment                          from 'moment';
 
+@connect(
+  state => ({
+    currentFeatures: state.features,
+    registers: state.registers.items
+  })
+)
 export default class RegistersList extends Component {
   static propTypes = {
     registers: PropTypes.array.isRequired,
@@ -12,12 +19,14 @@ export default class RegistersList extends Component {
   };
 
   render() {
-    const { registers, articles, counterparties, handleDestroy } = this.props;
+    const { registers, articles, counterparties, handleDestroy, currentFeatures } = this.props;
 
     const registersList = registers.map((register, i) => {
       const article = articles.find(a => a.id === register.article_id) || {}
-      const counterparty = counterparties.find(c => c.id === register.counterparty_id) || {}
       const typeName = article.type == "Cost" ? 'cost' : 'revenue';
+      const counterparty = counterparties.find(c => c.id === register.counterparty_id) || {}
+      const client = counterparties.find(c => c.id === register.client_id) || {}
+      const manager = counterparties.find(c => c.id === register.sales_manager_id) || {}
 
       return(
         <tr className="register-table" key={i}>
@@ -28,6 +37,15 @@ export default class RegistersList extends Component {
               &nbsp;({typeName})
             </span>
           </td>
+
+          { (currentFeatures && currentFeatures.sales) ?
+            <td>{ client.name }</td>
+          : null }
+
+          { (currentFeatures && currentFeatures.sales) ?
+            <td>{ manager.name }</td>
+          : null }
+
           <td>{counterparty ? counterparty.name : '-'}</td>
           <td>{register.value}</td>
           <td><div className="register-note">{register.note}</div></td>

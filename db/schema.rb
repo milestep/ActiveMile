@@ -42,9 +42,10 @@ ActiveRecord::Schema.define(version: 20180328122957) do
     t.integer "workspace_id",                 null: false
   end
 
-  create_table "inventories", force: :cascade do |t|
+  create_table "inventory_items", force: :cascade do |t|
     t.string   "name"
     t.date     "date"
+    t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

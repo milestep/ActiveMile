@@ -12,6 +12,7 @@ import { index as fetchRegisters }        from '../../actions/registers'
 import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
 import { ReportsStateCreator }            from '../../stateCreators/reports'
 import ArticlesList                       from './articlesList'
+import                                         '../../styles/reports/checkbox.css'
 
 @connect(state => ({
   registers: state.registers.items,
@@ -238,11 +239,16 @@ export default class Reports extends Component {
           <Filter />
         </div>
 
-        <div className="pull-right col-md-2">
-          <input type="checkbox" id="totalbtn" onClick={this.totalPrint.bind(this)}/>
-          <label for="totalbtn">Total</label>
-          <input type="checkbox" id="avgbtn" className='avg' onClick={this.avgPrint.bind(this)} />
-          <label for="avgbtn">AVG</label>
+        <div className="pull-right col-md-2 funkyradio">
+          <div className="funkyradio-primary">
+            <input type="checkbox" id="totalbtn" name="radio" onClick={this.totalPrint.bind(this)}/>
+            <label for="totalbtn">Total</label>
+          </div>
+
+          <div className="funkyradio-primary">
+            <input type="checkbox" id="avgbtn" name="radio" className='avg' onClick={this.avgPrint.bind(this)} />
+            <label for="avgbtn">AVG</label>
+          </div>
         </div>
 
         <div className="col-md-12">

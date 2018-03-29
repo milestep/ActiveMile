@@ -96,6 +96,10 @@ export default class Header extends Component {
         to: '/charts',
         title: 'Charts',
         onClick: this.toggleCollapse
+      }, {
+        to: '/inventory',
+        title: 'Inventory',
+        onClick: this.toggleCollapse
       }]);
 
       Array.prototype.push.apply(reports, [{
@@ -150,15 +154,6 @@ export default class Header extends Component {
 
     return (
       <nav className="site-nav">
-        { (loggedIn && currentWorkspace) ?
-          <ul className="nav navbar-nav navbar-main">
-            <Dropdown
-              title={currentWorkspace.title}
-              list={workspacesList}
-            />
-          </ul>
-        : null }
-
         { navItems ?
           <ul className="nav navbar-nav">
             { navItems }
@@ -179,6 +174,15 @@ export default class Header extends Component {
             { navItemsRight }
           </ul>
          : null}
+
+        { (loggedIn && currentWorkspace) ?
+          <ul className="nav navbar-nav navbar-right">
+            <Dropdown
+              title={currentWorkspace.title}
+              list={workspacesList}
+            />
+          </ul>
+        : null }
       </nav>
     );
   }

@@ -5,6 +5,7 @@ import registers      from './registers'
 import apiReducers    from './api'
 import filterReducers from './filters'
 import features       from './features'
+import inventory      from './inventory'
 
 export default {
   auth,
@@ -12,6 +13,7 @@ export default {
   subscriptions,
   registers,
   features,
+  inventory,
   ...filterReducers,
   ...apiReducers
 }

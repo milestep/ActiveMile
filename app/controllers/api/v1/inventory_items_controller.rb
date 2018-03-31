@@ -1,28 +1,28 @@
-class InventoryItemsController < ApplicationController
-  # expose :inventory, -> { current_user }
-
+class Api::V1::InventoryItemsController < Api::V1::BaseController
   def index
-    # render_api(articles, :ok, each_serializer: ArticlesSerializer)
+    items = current_user.inventory_items
+    render_api(items, :ok, each_serializer: InventoryItemsSerializer)
   end
 
   def create
-    # article = current_workspace.articles.create(article_params)
-    # render_api(article, :created)
+    current_user.inventory_items.create(inventory_items_params)
   end
 
   def update
-    # article.update(article_params)
-    # render_api(article, :accepted)
+    p '*****************'
+    p 'update'
+    p '*****************'
   end
 
   def destroy
-    # article.destroy
-    # render json: { message: I18n.t('articles.destroy.success') }, status: :ok
+    p '*****************'
+    p 'destroy'
+    p '*****************'
   end
 
   private
 
-  def inventory_params
-    # params.require(:article).permit(:title, :type)
+  def inventory_items_params
+    params.require(:inventory_item).permit(:name, :date)
   end
 end

@@ -1,35 +1,60 @@
-import React, { Component } from 'react';
-import moment               from 'moment';
-import FormDatePicker       from '../layout/form/datePicker';
+import React, { Component }                 from 'react';
+import moment                               from 'moment';
+import FormDatePicker                       from '../layout/form/datePicker';
+import { bindActionCreators }               from 'redux';
+import { connect }                          from 'react-redux';
+import { create  as createInventoryItem }   from '../../actions/inventory';
 
+@connect(
+  state => ({}),
+  dispatch => ({
+    actions: bindActionCreators({
+      createInventoryItem
+    }, dispatch)
+  })
+)
 export default class InventoryForm extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      name: null,
-      date: moment()
+      item: {
+        name: null,
+        date: moment()
+      }
     };
   }
 
   handleSubmit(element) {
-    // element.preventDefault();
-    console.log('name', this.state.name);
-    console.log('date', this.state.date);
+    const { item } = this.state;
+    const { actions } = this.props;
+
+    actions.createInventoryItem(item);
   }
 
   handleChange(field, element) {
     if (field == 'date') {
-      if (element.value) this.state[field] = element.value;
+      if (element.value) {
+        this.setState((prevState) => ({
+          item: {
+            ...prevState.item,
+            date: element.value
+          }
+        }));
+      }
     } else {
-      this.state[field] = element.target.value;
+      let input = element.target.value;
+
+      this.setState((prevState) => ({
+        item: {
+          ...prevState.item,
+          [field]: input
+        }
+      }));
     }
-    console.log('change', this.state.date)
   }
 
   render() {
-    console.log('now', this.state.date)
-      return (
+    return (
       <div className='col-sm-3'>
         <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
           <div className="form-group">
@@ -46,7 +71,7 @@ export default class InventoryForm extends Component {
             <label for="date">Date:</label>
             <FormDatePicker
               handleChange={ this.handleChange.bind(this) }
-              selected={ this.state.date }
+              selected={ this.state.item.date }
               name="date"
               required
             />

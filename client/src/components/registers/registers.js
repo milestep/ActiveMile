@@ -19,6 +19,7 @@ const monthsNames = moment.monthsShort()
 
 @connect(
   state => ({
+    currentFeatures: state.features,
     registers: state.registers.items,
     filter_years: state.registers.years,
     articles: state.articles.items,
@@ -255,7 +256,7 @@ export default class Registers extends Component {
   }
 
   render() {
-    const { articles, counterparties, isCreating } = this.props
+    const { articles, counterparties, isCreating, currentFeatures } = this.props
     const isFormDataReady = this.isModelsFetched(['articles', 'counterparties'])
     const registerList = this.createRegisterList()
 
@@ -273,26 +274,29 @@ export default class Registers extends Component {
                 current={this.state.current}
                 handleFilterChange={this.handleFilterChange}
               />
-                <InfiniteScroll
-                  dataLength={this.state.registers.length}
-                  next={this.loadMore.bind(this)}
-                  hasMore={true}
-                >
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Article</th>
-                        <th>Counterparty</th>
-                        <th>Value</th>
-                        <th>Notes</th>
-                        <th>&nbsp;</th>
-                      </tr>
-                    </thead>
-                      { registerList }
-                  </table>
-                </InfiniteScroll>
-              </div>
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Article</th>
+
+                    { (currentFeatures && currentFeatures.sales) ?
+                      <th>Client</th>
+                    : null }
+
+                    { (currentFeatures && currentFeatures.sales) ?
+                      <th>Manager</th>
+                    : null }
+
+                    <th>Counterparty</th>
+                    <th>Value</th>
+                    <th>Notes</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                { registerList }
+              </table>
+            </div>
 
             { isFormDataReady ?
               <div className="col-md-3">

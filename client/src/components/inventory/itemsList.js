@@ -2,11 +2,12 @@ import React, { Component }                 from 'react';
 import { connect }                          from 'react-redux';
 import { bindActionCreators }               from 'redux';
 import { index as fetchInventory }          from '../../actions/inventory';
-import { actions as subscriptionActions }   from '../../actions/subscriptions'
+import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import InventoryItem                        from './item';
 
 @connect(
   state => ({
-    inventory: state.items
+    inventory: state.inventory.items
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -21,14 +22,7 @@ export default class InventoryItemsList extends Component {
   }
 
   componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions)
-      .then(() => {
-        this.fetchInventory()
-      })
-  }
-
-  componentWillUnmount() {
-    this.props.actions.unsubscribe(this.subscriptions)
+    this.fetchInventory()
   }
 
   fetchInventory() {
@@ -37,10 +31,19 @@ export default class InventoryItemsList extends Component {
   }
 
   render() {
-    console.log(this.props.inventory)
     return (
       <div className='col-sm-9'>
-        <p>items</p>
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+
+          <InventoryItem />
+        </table>
       </div>
     );
   }

@@ -1,19 +1,24 @@
 import React, { Component }                 from 'react';
 import moment                               from 'moment';
-import FormDatePicker                       from '../layout/form/datePicker';
 import { bindActionCreators }               from 'redux';
 import { connect }                          from 'react-redux';
-import { create  as createInventoryItem }   from '../../actions/inventory';
+import FormDatePicker                       from '../layout/form/datePicker';
+import { update as updateInventoryItem }    from '../../actions/inventory';
+import { show as fetchInventoryItem }       from '../../actions/inventory';
 
 @connect(
-  state => ({}),
+  state => ({
+    inventory: state.inventory.items,
+    inventoryItem: state.inventory.item
+  }),
   dispatch => ({
     actions: bindActionCreators({
-      createInventoryItem
+      updateInventoryItem,
+      fetchInventoryItem
     }, dispatch)
   })
 )
-export default class InventoryForm extends Component {
+export default class InventoryEditorsForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,7 +33,7 @@ export default class InventoryForm extends Component {
     const { item } = this.state;
     const { actions } = this.props;
 
-    actions.createInventoryItem(item);
+    actions.updateInventoryItem(item);
   }
 
   handleChange(field, element) {
@@ -53,7 +58,34 @@ export default class InventoryForm extends Component {
     }
   }
 
+  componentDidMount() {
+    this.fetchInventoryItem();
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { inventoryItem } = newProps;
+    const { name, date } = inventoryItem;
+
+    this.setState({
+      item: {
+        name: name,
+        date: date
+      }
+    });
+  }
+
+  fetchInventoryItem() {
+    const { actions, params } = this.props;
+    const { id } = params;
+
+    actions.fetchInventoryItem(id);
+  }
+
   render() {
+    const { name, date } = this.state.item;
+
+    console.log('name:', name, 'date', date)
+
     return (
       <div className='col-sm-4'>
         <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
@@ -62,6 +94,7 @@ export default class InventoryForm extends Component {
             <input
               onChange={ this.handleChange.bind(this, 'name') }
               className="form-control"
+              defaultValue={ name }
               id="name"
               required
             />
@@ -71,7 +104,7 @@ export default class InventoryForm extends Component {
             <label for="date">Date:</label>
             <FormDatePicker
               handleChange={ this.handleChange.bind(this) }
-              selected={ this.state.item.date }
+              selected={ moment() }
               name="date"
               required
             />
@@ -80,7 +113,7 @@ export default class InventoryForm extends Component {
           <button
             type="submit"
             className="btn btn-primary"
-          >Submit</button>
+          >Update</button>
         </Formsy.Form>
       </div>
     );

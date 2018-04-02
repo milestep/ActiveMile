@@ -1,6 +1,8 @@
 class Api::V1::InventoryItemsController < Api::V1::BaseController
+  expose :item, -> { InventoryItem.find(params[:id]) }
+  expose :items, -> { current_user.inventory_items }
+
   def index
-    items = current_user.inventory_items
     render_api(items, :ok, each_serializer: InventoryItemsSerializer)
   end
 
@@ -15,9 +17,12 @@ class Api::V1::InventoryItemsController < Api::V1::BaseController
   end
 
   def destroy
-    p '*****************'
-    p 'destroy'
-    p '*****************'
+    item.destroy
+    render json: {}, status: :ok
+  end
+
+  def show
+    render_api(item, :ok, each_serializer: InventoryItemSerializer)
   end
 
   private

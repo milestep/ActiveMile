@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       resources :counterparties, except: [:show, :new]
       resources :registers, except: [:new]
       resources :features, only: [:show, :update]
-      resources :inventory_items, only: [:index, :update, :create, :destroy]
+      resources :inventory_items
     end
   end
 

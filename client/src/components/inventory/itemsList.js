@@ -32,10 +32,11 @@ export default class InventoryItemsList extends Component {
 
   render() {
     return (
-      <div className='col-sm-9'>
+      <div className='col-sm-8'>
         <table className="table table-hover">
           <thead>
             <tr>
+              <th className='col-xs-1'>№</th>
               <th>Name</th>
               <th>Date</th>
               <th>&nbsp;</th>

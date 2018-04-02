@@ -13,6 +13,7 @@ import RegisterForm                         from './form'
 import RegistersList                        from './list'
 import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const monthsNames = moment.monthsShort()
 
@@ -126,9 +127,21 @@ export default class Registers extends Component {
 
     this.setState((prevState) => ({
       ...prevState,
-      registers: props.registers,
+      registers: props.registers.reverse().splice(0, 20).reverse(),
       filter
     }))
+  }
+
+  loadMore(props = false) {
+    props = this.props
+
+    const register = props.registers.splice(0, 20)
+
+    const registers = this.state.registers.reverse().concat(register)
+
+    setTimeout(() => {
+      this.setState({registers: registers.reverse()});
+    }, 800);
   }
 
   handleCreate(register) {
@@ -164,21 +177,21 @@ export default class Registers extends Component {
   }
 
   handleFilterChange = field => e => {
-    const { value } = e
+      const { value } = e ? e : " "
 
-    this.setState((prevState) => ({
-      current: {
-        ...prevState.current,
+      this.setState((prevState) => ({
+        current: {
+          ...prevState.current,
+          [field]: value,
+        }
+      }))
+
+      let current = Object.assign({}, {
+        ...this.state.current,
         [field]: value,
-      }
-    }))
+      })
 
-    let current = Object.assign({}, {
-      ...this.state.current,
-      [field]: value,
-    })
-
-    this.props.actions.fetchRegisters(current)
+      this.props.actions.fetchRegisters(current)
   }
 
   isModelsFetched(models, inputProps = false) {
@@ -260,20 +273,26 @@ export default class Registers extends Component {
                 current={this.state.current}
                 handleFilterChange={this.handleFilterChange}
               />
-              <table className="table table-hover">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Article</th>
-                    <th>Counterparty</th>
-                    <th>Value</th>
-                    <th>Notes</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                { registerList }
-              </table>
-            </div>
+                <InfiniteScroll
+                  dataLength={this.state.registers.length}
+                  next={this.loadMore.bind(this)}
+                  hasMore={true}
+                >
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Article</th>
+                        <th>Counterparty</th>
+                        <th>Value</th>
+                        <th>Notes</th>
+                        <th>&nbsp;</th>
+                      </tr>
+                    </thead>
+                      { registerList }
+                  </table>
+                </InfiniteScroll>
+              </div>
 
             { isFormDataReady ?
               <div className="col-md-3">

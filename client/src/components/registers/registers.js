@@ -274,6 +274,11 @@ export default class Registers extends Component {
                 current={this.state.current}
                 handleFilterChange={this.handleFilterChange}
               />
+              <InfiniteScroll
+                dataLength={this.state.registers.length}
+                next={this.loadMore.bind(this)}
+                hasMore={true}
+              >
               <table className="table table-hover">
                 <thead>
                   <tr>
@@ -296,6 +301,7 @@ export default class Registers extends Component {
                 </thead>
                 { registerList }
               </table>
+              </InfiniteScroll>
             </div>
 
             { isFormDataReady ?

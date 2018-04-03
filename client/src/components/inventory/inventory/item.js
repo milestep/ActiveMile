@@ -32,18 +32,20 @@ export default class InventoryItem extends Component {
   handleDestroy(id) {
     const { actions } = this.props;
 
-    return new Promise((resolve, reject) => {
-      actions.destroyInventoryItem(id)
-        .then(res => {
-          this.toaster.success('Item has been successfully deleted')
-          resolve(res)
-        })
-        .catch(err => {
-          if (utils.debug) console.error(err)
-          this.toaster.error('Could not delete an item!')
-          reject(err)
-        })
-    })
+    if (confirm("Are you sure?")) {
+      return new Promise((resolve, reject) => {
+        actions.destroyInventoryItem(id)
+          .then(res => {
+            this.toaster.success('Item has been successfully deleted')
+            resolve(res)
+          })
+          .catch(err => {
+            if (utils.debug) console.error(err)
+            this.toaster.error('Could not delete an item!')
+            reject(err)
+          })
+      })
+    }
   }
 
   render() {

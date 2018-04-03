@@ -5,10 +5,10 @@ import { connect }                          from 'react-redux';
 import { Link }                             from 'react-router';
 import { push }                             from 'react-router-redux';
 import FormDatePicker                       from '../../layout/form/datePicker';
-import { update as updateInventoryItem }    from '../../../actions/inventory';
-import { show as fetchInventoryItem }       from '../../../actions/inventory';
 import { toaster }                          from '../../../actions/alerts';
 import * as utils                           from '../../../utils';
+import { update as updateInventoryItem,
+         show   as fetchInventoryItem }     from '../../../actions/inventory';
 import                                           '../../../styles/inventory/buttons.css'
 
 @connect(
@@ -39,9 +39,11 @@ export default class InventoryEditorsForm extends Component {
   }
 
   handleSubmit() {
-    const { item } = this.state;
     const { actions, params, dispatch } = this.props;
     const { id } = params;
+    let { item } = this.state;
+
+    item.date.add(1, 'days')
 
     return new Promise((resolve, reject) => {
       actions.updateInventoryItem(item, id)
@@ -84,8 +86,6 @@ export default class InventoryEditorsForm extends Component {
   }
 
   handleChange(field, element) {
-    console.log('el', element.value);
-
     if (field == 'date') {
       if (element.value) {
         this.setState((prevState) => ({
@@ -120,6 +120,7 @@ export default class InventoryEditorsForm extends Component {
               className="form-control"
               name="name"
               id="name"
+              required
             />
           </div>
 
@@ -130,6 +131,7 @@ export default class InventoryEditorsForm extends Component {
               selected={ this.state.item.date }
               name="date"
               id="date"
+              required
             />
           </div>
 

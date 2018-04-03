@@ -74,7 +74,9 @@ export default class Header extends Component {
       currentWorkspace,
       setupCurrentWorkspace
     } = this.props;
+
     let navItems = [];
+    let navAfterReports = [];
     let navItemsRight = [];
     let reports = [];
     let workspacesList = [];
@@ -96,10 +98,6 @@ export default class Header extends Component {
         to: '/charts',
         title: 'Charts',
         onClick: this.toggleCollapse
-      }, {
-        to: '/inventory',
-        title: 'Inventory',
-        onClick: this.toggleCollapse
       }]);
 
       Array.prototype.push.apply(reports, [{
@@ -111,6 +109,14 @@ export default class Header extends Component {
         title: 'By year',
         onClick: this.toggleCollapse
        }]);
+
+      Array.prototype.push.apply(navAfterReports, [
+        {
+          to: '/inventory',
+          title: 'Inventory',
+          onClick: this.toggleCollapse
+        }
+      ]);
 
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces',
@@ -124,6 +130,7 @@ export default class Header extends Component {
           this.toggleCollapse.call(this);
         }
       }]);
+
     } else {
       Array.prototype.push.apply(navItemsRight, [{
         to: '/login',
@@ -134,6 +141,7 @@ export default class Header extends Component {
 
     navItems = this.createNavItems(navItems);
     reports = this.createNavItems(reports);
+    navAfterReports = this.createNavItems(navAfterReports);
     navItemsRight = this.createNavItems(navItemsRight);
     workspacesList = workspaces.map((workspace, i) => {
       return(
@@ -169,6 +177,12 @@ export default class Header extends Component {
           </ul>
         : null }
 
+        { navAfterReports ?
+          <ul className="nav navbar-nav">
+            { navAfterReports }
+          </ul>
+        : null }
+
         { navItemsRight ?
           <ul className="nav navbar-nav navbar-right">
             { navItemsRight }
@@ -176,7 +190,7 @@ export default class Header extends Component {
          : null}
 
         { (loggedIn && currentWorkspace) ?
-          <ul className="nav navbar-nav navbar-right">
+          <ul className="nav navbar-nav navbar-main">
             <Dropdown
               title={currentWorkspace.title}
               list={workspacesList}

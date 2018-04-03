@@ -2,38 +2,50 @@ import React, { Component }                 from 'react';
 import moment                               from 'moment';
 import { bindActionCreators }               from 'redux';
 import { connect }                          from 'react-redux';
-import FormDatePicker                       from '../layout/form/datePicker';
-import { update as updateInventoryItem }    from '../../actions/inventory';
-import { show as fetchInventoryItem }       from '../../actions/inventory';
+import FormDatePicker                       from '../../layout/form/datePicker';
+import { create  as createInventoryItem }   from '../../../actions/inventory';
+import { toaster }                          from '../../../actions/alerts';
+import * as utils                           from '../../../utils';
 
 @connect(
-  state => ({
-    inventory: state.inventory.items,
-    inventoryItem: state.inventory.item
-  }),
+  state => ({}),
   dispatch => ({
     actions: bindActionCreators({
-      updateInventoryItem,
-      fetchInventoryItem
+      createInventoryItem,
+      toaster
     }, dispatch)
   })
 )
-export default class InventoryEditorsForm extends Component {
+export default class InventoryForm extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       item: {
         name: null,
         date: moment()
       }
     };
+
+    this.toaster = props.actions.toaster();
   }
 
   handleSubmit() {
     const { item } = this.state;
     const { actions } = this.props;
 
-    actions.updateInventoryItem(item);
+    return new Promise((resolve, reject) => {
+      actions.createInventoryItem(item)
+        .then(res => {
+          this.toaster.success('Item has been successfully created');
+          resolve(res);
+        })
+        .catch(err => {
+          if (utils.debug) console.error(err);
+          this.toaster.error('Could not create an item!');
+          reject(err)
+        })
+    })
   }
 
   handleChange(field, element) {
@@ -58,34 +70,7 @@ export default class InventoryEditorsForm extends Component {
     }
   }
 
-  componentDidMount() {
-    this.fetchInventoryItem();
-  }
-
-  componentWillReceiveProps(newProps) {
-    const { inventoryItem } = newProps;
-    const { name, date } = inventoryItem;
-
-    this.setState({
-      item: {
-        name: name,
-        date: date
-      }
-    });
-  }
-
-  fetchInventoryItem() {
-    const { actions, params } = this.props;
-    const { id } = params;
-
-    actions.fetchInventoryItem(id);
-  }
-
   render() {
-    const { name, date } = this.state.item;
-
-    console.log('name:', name, 'date', date)
-
     return (
       <div className='col-sm-4'>
         <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
@@ -94,7 +79,6 @@ export default class InventoryEditorsForm extends Component {
             <input
               onChange={ this.handleChange.bind(this, 'name') }
               className="form-control"
-              defaultValue={ name }
               id="name"
               required
             />
@@ -104,7 +88,7 @@ export default class InventoryEditorsForm extends Component {
             <label for="date">Date:</label>
             <FormDatePicker
               handleChange={ this.handleChange.bind(this) }
-              selected={ moment() }
+              selected={ this.state.item.date }
               name="date"
               required
             />
@@ -113,7 +97,7 @@ export default class InventoryEditorsForm extends Component {
           <button
             type="submit"
             className="btn btn-primary"
-          >Update</button>
+          >Submit</button>
         </Formsy.Form>
       </div>
     );

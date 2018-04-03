@@ -7,13 +7,13 @@ class Api::V1::InventoryItemsController < Api::V1::BaseController
   end
 
   def create
-    current_user.inventory_items.create(inventory_items_params)
+    created_item = items.create(inventory_items_params)
+    render_api(created_item.id, :created)
   end
 
   def update
-    p '*****************'
-    p 'update'
-    p '*****************'
+    item.update(inventory_items_params)
+    render_api(:accepted)
   end
 
   def destroy

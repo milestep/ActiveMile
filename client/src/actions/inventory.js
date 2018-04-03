@@ -27,6 +27,7 @@ export function create(item) {
     return new Promise((resolve, reject) => {
       axios.post(API_URL, item, { headers })
         .then(res => {
+          item.id = res.data
           dispatch({ type: 'CREATE_INVENTORY_ITEM', payload: item });
           resolve(res);
         })
@@ -38,19 +39,18 @@ export function create(item) {
   }
 }
 
-export function update(id) {
+export function update(item, id) {
   return function(dispatch, getState) {
-    console.log('update', id)
-    // return new Promise((resolve, reject) => {
-      // axios.patch(`${API_URL}/${register.id}`, body, { headers: headers })
-    //     .then(res => {
-    //       resolve(res);
-    //     })
-    //     .catch(e => {
-    //       console.error("error: ", e);
-    //       reject(e);
-    //     })
-    // })
+    return new Promise((resolve, reject) => {
+      axios.patch(`${API_URL}/${id}`, item, { headers: headers })
+        .then(res => {
+          resolve(res);
+        })
+        .catch(e => {
+          console.error("error: ", e);
+          reject(e);
+        })
+    })
   }
 }
 

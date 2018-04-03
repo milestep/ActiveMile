@@ -1,8 +1,8 @@
 import React, { Component }                 from 'react';
 import { connect }                          from 'react-redux';
 import { bindActionCreators }               from 'redux';
-import { index as fetchInventory }          from '../../actions/inventory';
-import { actions as subscriptionActions }   from '../../actions/subscriptions';
+import { index as fetchInventory }          from '../../../actions/inventory';
+import { actions as subscriptionActions }   from '../../../actions/subscriptions';
 import InventoryItem                        from './item';
 
 @connect(

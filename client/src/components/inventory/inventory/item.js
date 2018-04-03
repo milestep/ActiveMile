@@ -3,7 +3,9 @@ import moment                               from 'moment';
 import { connect }                          from 'react-redux';
 import { Link }                             from 'react-router';
 import { bindActionCreators }               from 'redux';
-import { destroy as destroyInventoryItem }  from '../../actions/inventory';
+import { destroy as destroyInventoryItem }  from '../../../actions/inventory';
+import { toaster }                          from '../../../actions/alerts';
+import * as utils                           from '../../../utils';
 
 @connect(
   state => ({
@@ -11,7 +13,8 @@ import { destroy as destroyInventoryItem }  from '../../actions/inventory';
   }),
   dispatch => ({
     actions: bindActionCreators({
-      destroyInventoryItem
+      destroyInventoryItem,
+      toaster
     }, dispatch)
   })
 )
@@ -22,14 +25,25 @@ export default class InventoryItem extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      edit: null
-    }
+    this.state = { edit: null }
+    this.toaster = props.actions.toaster();
   }
 
   handleDestroy(id) {
-    const {actions} = this.props;
-    actions.destroyInventoryItem(id);
+    const { actions } = this.props;
+
+    return new Promise((resolve, reject) => {
+      actions.destroyInventoryItem(id)
+        .then(res => {
+          this.toaster.success('Item has been successfully deleted')
+          resolve(res)
+        })
+        .catch(err => {
+          if (utils.debug) console.error(err)
+          this.toaster.error('Could not delete an item!')
+          reject(err)
+        })
+    })
   }
 
   render() {

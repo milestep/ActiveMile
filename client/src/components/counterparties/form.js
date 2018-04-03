@@ -63,7 +63,6 @@ export default class Form extends Component {
         }
       }
     }));
-    console.log(this.state.counterparty.date.value)
   }
 
   toggleButton(status) {

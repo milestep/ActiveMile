@@ -1,6 +1,6 @@
 class Api::V1::InventoryItemsController < Api::V1::BaseController
   expose :item, -> { InventoryItem.find(params[:id]) }
-  expose :items, -> { current_user.inventory_items }
+  expose :items, -> { InventoryItem.all }
 
   def index
     render_api(items, :ok, each_serializer: InventoryItemsSerializer)

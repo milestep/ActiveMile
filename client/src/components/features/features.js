@@ -61,7 +61,7 @@ export default class Features extends Component {
 
   componentWillMount() {
     const { title } = this.props.currentWorkspace;
-    const { currentFeatures } = this.props
+    const { currentFeatures } = this.props;
 
     this.setState({ title: title });
 
@@ -69,7 +69,7 @@ export default class Features extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const { currentFeatures } = newProps
+    const { currentFeatures } = newProps;
     if (currentFeatures && currentFeatures.sales) this.setState({ sales: currentFeatures.sales });
   }
 

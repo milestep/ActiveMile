@@ -255,7 +255,7 @@ export default class Registers extends Component {
 
         { articles.length ?
           <div className="row">
-            <div className="col-md-9">
+            <div className="col-md-10">
               <RegistersFilter
                 filter={this.state.filter}
                 current={this.state.current}
@@ -286,7 +286,7 @@ export default class Registers extends Component {
             </div>
 
             { isFormDataReady ?
-              <div className="col-md-3">
+              <div className="col-md-2">
                 <RegisterForm
                   isFetching={isCreating}
                   handleSubmit={this.handleCreate}

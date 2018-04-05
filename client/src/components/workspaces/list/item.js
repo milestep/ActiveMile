@@ -95,11 +95,11 @@ export default class WorkspacesListItem extends Component {
                 : null }
 
                 { isCurrent ?
-                  <button className="btn btn-sm btn-default">
+                  <div className="btn btn-sm btn-default">
                     <Link to={`features/${workspace.id}/`} >
                       <i class="glyphicon glyphicon-cog" aria-hidden="true"></i>
                     </Link>
-                  </button>
+                  </div>
                 : null }
 
                 <div className='btn-group'>

@@ -239,14 +239,14 @@ export default class Reports extends Component {
           <Filter />
         </div>
 
-        <div className="pull-right col-md-2 funkyradio">
-          <div className="funkyradio-primary">
-            <input type="checkbox" id="totalbtn" name="radio" onClick={this.totalPrint.bind(this)}/>
+        <div className="pull-right col-sm-3 funkyradio">
+          <div className="funkyradio-primary pull-right">
+            <input type="checkbox" id="totalbtn" name="radio" onClick={ this.totalPrint.bind(this) }/>
             <label for="totalbtn">Total</label>
           </div>
 
-          <div className="funkyradio-primary">
-            <input type="checkbox" id="avgbtn" name="radio" className='avg' onClick={this.avgPrint.bind(this)} />
+          <div className="funkyradio-primary pull-right">
+            <input type="checkbox" id="avgbtn" name="radio" onClick={ this.avgPrint.bind(this) } />
             <label for="avgbtn">AVG</label>
           </div>
         </div>

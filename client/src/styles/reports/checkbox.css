@@ -1,13 +1,13 @@
 .funkyradio div {
-  clear: both;
   overflow: hidden;
 }
 
 .funkyradio label {
-  width: 100%;
+  width: 95px;
   border-radius: 3px;
   border: 1px solid #D1D3D4;
   font-weight: normal;
+  margin-left: 12px;
 }
 
 .funkyradio input[type="radio"]:empty,
@@ -71,16 +71,16 @@
   box-shadow: 0 0 0 3px #999;
 }
 
-.funkyradio-default input[type="radio"]:checked ~ label:before,
-.funkyradio-default input[type="checkbox"]:checked ~ label:before {
-  color: #333;
-  background-color: #ccc;
-}
-
 .funkyradio-primary input[type="radio"]:checked ~ label:before,
 .funkyradio-primary input[type="checkbox"]:checked ~ label:before {
   color: #fff;
   background-color: #337ab7;
+}
+
+.funkyradio-default input[type="radio"]:checked ~ label:before,
+.funkyradio-default input[type="checkbox"]:checked ~ label:before {
+  color: #333;
+  background-color: #ccc;
 }
 
 .funkyradio-success input[type="radio"]:checked ~ label:before,

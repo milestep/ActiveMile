@@ -74,7 +74,9 @@ export default class Header extends Component {
       currentWorkspace,
       setupCurrentWorkspace
     } = this.props;
+
     let navItems = [];
+    let navAfterReports = [];
     let navItemsRight = [];
     let reports = [];
     let workspacesList = [];
@@ -108,6 +110,14 @@ export default class Header extends Component {
         onClick: this.toggleCollapse
        }]);
 
+      Array.prototype.push.apply(navAfterReports, [
+        {
+          to: '/inventory',
+          title: 'Inventory',
+          onClick: this.toggleCollapse
+        }
+      ]);
+
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces',
         title: 'Workspaces',
@@ -120,6 +130,7 @@ export default class Header extends Component {
           this.toggleCollapse.call(this);
         }
       }]);
+
     } else {
       Array.prototype.push.apply(navItemsRight, [{
         to: '/login',
@@ -130,6 +141,7 @@ export default class Header extends Component {
 
     navItems = this.createNavItems(navItems);
     reports = this.createNavItems(reports);
+    navAfterReports = this.createNavItems(navAfterReports);
     navItemsRight = this.createNavItems(navItemsRight);
     workspacesList = workspaces.map((workspace, i) => {
       return(
@@ -150,15 +162,6 @@ export default class Header extends Component {
 
     return (
       <nav className="site-nav">
-        { (loggedIn && currentWorkspace) ?
-          <ul className="nav navbar-nav navbar-main">
-            <Dropdown
-              title={currentWorkspace.title}
-              list={workspacesList}
-            />
-          </ul>
-        : null }
-
         { navItems ?
           <ul className="nav navbar-nav">
             { navItems }
@@ -174,11 +177,26 @@ export default class Header extends Component {
           </ul>
         : null }
 
+        { navAfterReports ?
+          <ul className="nav navbar-nav">
+            { navAfterReports }
+          </ul>
+        : null }
+
         { navItemsRight ?
           <ul className="nav navbar-nav navbar-right">
             { navItemsRight }
           </ul>
          : null}
+
+        { (loggedIn && currentWorkspace) ?
+          <ul className="nav navbar-nav navbar-main">
+            <Dropdown
+              title={currentWorkspace.title}
+              list={workspacesList}
+            />
+          </ul>
+        : null }
       </nav>
     );
   }

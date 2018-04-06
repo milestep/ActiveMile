@@ -5,6 +5,7 @@ const API_URL = `${window.location.origin}/api/v1/inventory_items`;
 
 const headers = {};
 headers['Authorization'] = `Bearer ${cookie.load('token')}`;
+headers['workspace-id'] = cookie.load('current_workspace').id;
 
 export function index() {
   return function(dispatch, getState) {

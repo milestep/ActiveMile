@@ -9,8 +9,4 @@ RSpec.describe User, type: :model do
       it { should validate_uniqueness_of(:email) }
     end
   end
-
-  describe 'associations' do
-    it { should have_many(:inventory_items) }
-  end
 end

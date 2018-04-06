@@ -28,6 +28,11 @@ end
 describe 'POST /api/v1/inventory_items' do
   include_context :doorkeeper_app_with_token
 
+  let(:workspace)       { create(:workspace) }
+  let(:item_params)     {{ workspace: workspace }}
+  let(:inventory_item)  { create(:inventory_item, item_params) }
+  let(:request_headers) {{ 'workspace-id': workspace.id }}
+
   let(:valid_request_params) {{
     access_token: access_token.token,
     inventory_item: {
@@ -46,7 +51,8 @@ describe 'POST /api/v1/inventory_items' do
   context 'create inventory item' do
     before do
       post '/api/v1/inventory_items',
-        params: valid_request_params
+        params: valid_request_params,
+        headers: request_headers
     end
     it 'returns a successful response' do
       expect(response).to be_success
@@ -56,7 +62,8 @@ describe 'POST /api/v1/inventory_items' do
   context 'authentication failed' do
     before do
       post '/api/v1/inventory_items',
-        params: invalid_request_params
+        params: invalid_request_params,
+        headers: request_headers
     end
     it 'returns a bad response' do
       expect(response.body).to eq '{"error":"Not authorized"}'
@@ -67,9 +74,10 @@ end
 describe 'PATCH /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
-  let(:user)            { create(:user) }
-  let(:item_params)     {{ user: user }}
-  let!(:inventory_item) { create(:inventory_item, item_params) }
+  let(:workspace)       { create(:workspace) }
+  let(:item_params)     {{ workspace: workspace }}
+  let(:inventory_item)  { create(:inventory_item, item_params) }
+  let(:request_headers) {{ 'workspace-id': workspace.id }}
 
   let(:valid_request_params) {{
     access_token: access_token.token,
@@ -89,7 +97,8 @@ describe 'PATCH /api/v1/inventory_items/:id' do
   context 'update inventory item' do
     before do
       patch "/api/v1/inventory_items/#{inventory_item.id}",
-        params: valid_request_params
+        params: valid_request_params,
+        headers: request_headers
     end
     it 'returns a successful response' do
       expect(response.status).to eq 200
@@ -98,7 +107,8 @@ describe 'PATCH /api/v1/inventory_items/:id' do
 
   context 'authentication failed' do
     before do
-      patch "/api/v1/inventory_items/#{inventory_item.id}"
+      patch "/api/v1/inventory_items/#{inventory_item.id}",
+        headers: request_headers
     end
     it 'returns a bad response' do
       expect(response.body).to eq '{"error":"Not authorized"}'
@@ -108,7 +118,8 @@ describe 'PATCH /api/v1/inventory_items/:id' do
   context 'authentication failed' do
     before do
       patch "/api/v1/inventory_items/#{inventory_item.id}",
-        params: invalid_request_params
+        params: invalid_request_params,
+        headers: request_headers
     end
     it 'returns a bad response' do
       expect(response.body).to eq '{"error":"Not authorized"}'
@@ -119,15 +130,17 @@ end
 describe 'DELETE /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
-  let(:user)                 { create(:user) }
-  let(:item_params)          {{ user: user }}
-  let!(:inventory_item)      { create(:inventory_item, item_params) }
+  let(:workspace)            { create(:workspace) }
+  let(:item_params)          {{ workspace: workspace }}
+  let(:inventory_item)       { create(:inventory_item, item_params) }
+  let(:request_headers)      {{ 'workspace-id': workspace.id }}
   let(:valid_request_params) {{ access_token: access_token.token }}
 
   context 'delete inventory item' do
     before do
       delete "/api/v1/inventory_items/#{inventory_item.id}",
-        params: valid_request_params
+        params: valid_request_params,
+        headers: request_headers
     end
     it 'returns a successful response' do
       expect(response).to be_success
@@ -136,7 +149,8 @@ describe 'DELETE /api/v1/inventory_items/:id' do
 
   context 'authentication failed' do
     before do
-      delete "/api/v1/inventory_items/#{inventory_item.id}"
+      delete "/api/v1/inventory_items/#{inventory_item.id}",
+        headers: request_headers
     end
     it 'returns a bad response' do
       expect(response.body).to eq '{"error":"Not authorized"}'
@@ -147,15 +161,17 @@ end
 describe 'SHOW /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
-  let(:user)                 { create(:user) }
-  let(:item_params)          {{ user: user }}
-  let!(:inventory_item)      { create(:inventory_item, item_params) }
+  let(:workspace)            { create(:workspace) }
+  let(:item_params)          {{ workspace: workspace }}
+  let(:inventory_item)       { create(:inventory_item, item_params) }
+  let(:request_headers)      {{ 'workspace-id': workspace.id }}
   let(:valid_request_params) {{ access_token: access_token.token }}
 
   context 'receive inventory item' do
     before do
       get "/api/v1/inventory_items/#{inventory_item.id}",
-        params: valid_request_params
+        params: valid_request_params,
+        headers: request_headers
     end
     it 'returns a successful response' do
       expect(response).to be_success
@@ -164,7 +180,8 @@ describe 'SHOW /api/v1/inventory_items/:id' do
 
   context 'authentication failed' do
     before do
-      get "/api/v1/inventory_items/#{inventory_item.id}"
+      get "/api/v1/inventory_items/#{inventory_item.id}",
+        headers: request_headers
     end
     it 'returns a successful response' do
       expect(response.body).to eq '{"error":"Not authorized"}'

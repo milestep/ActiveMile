@@ -2,13 +2,16 @@ import React, { Component }                 from 'react';
 import moment                               from 'moment';
 import { bindActionCreators }               from 'redux';
 import { connect }                          from 'react-redux';
+import FormSelect                           from '../../layout/form/select';
 import FormDatePicker                       from '../../layout/form/datePicker';
 import { create  as createInventoryItem }   from '../../../actions/inventory';
 import { toaster }                          from '../../../actions/alerts';
 import * as utils                           from '../../../utils';
 
 @connect(
-  state => ({}),
+  state => ({
+    counterparties: state.counterparties.rest.items
+  }),
   dispatch => ({
     actions: bindActionCreators({
       createInventoryItem,
@@ -24,10 +27,15 @@ export default class InventoryForm extends Component {
       item: {
         name: null,
         date: moment()
-      }
+      },
+      inventory: this.createInventoryState(props)
     };
 
     this.toaster = props.actions.toaster();
+  }
+
+  createInventoryState(props) {
+    if (!props) props = this.props;
   }
 
   handleSubmit() {
@@ -83,6 +91,11 @@ export default class InventoryForm extends Component {
               required
             />
           </div>
+
+          <FormSelect
+            title="Counterparty"
+            name="counterparty"
+          />
 
           <div className="form-group">
             <label for="date">Date:</label>

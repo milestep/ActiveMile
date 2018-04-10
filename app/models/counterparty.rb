@@ -5,6 +5,7 @@ class Counterparty < ApplicationRecord
   has_many :registers
   has_many :client_registers, class_name: 'Register', foreign_key: :client_id
   has_many :manager_registers, class_name: 'Register', foreign_key: :sales_manager_id
+  has_many :inventory_items
 
   validates :name, :date, :type, :workspace_id, presence: true
   validates :type, acceptance: { accept: ['Client', 'Vendor' , 'Other'] }, unless: -> { workspace.feature.sales? }

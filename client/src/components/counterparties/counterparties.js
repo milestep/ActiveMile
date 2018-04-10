@@ -10,8 +10,8 @@ import Form                               from './form';
 @connect(
   state => ({
     currentFeatures: state.features,
-    counterparties: state.counterparties.items,
-    isFetching: state.counterparties.isFetching
+    counterparties: state.counterparties.rest.items,
+    isFetching: state.counterparties.rest.isFetching
   }),
   dispatch => ({
     actions: bindActionCreators({

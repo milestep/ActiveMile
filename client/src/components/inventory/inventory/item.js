@@ -58,7 +58,9 @@ export default class InventoryItem extends Component {
 
               <td className='col-xs-5'>{ item.name }</td>
 
-              <td className='col-xs-4'>{ moment(item.date).format("DD-MM-YYYY") }</td>
+              <td className='col-xs-3'>{ moment(item.date).format("DD-MM-YYYY") }</td>
+
+              <td className='col-xs-3'>name</td>
 
               <td>
                 <div className="btn-group pull-right" >

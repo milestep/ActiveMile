@@ -3,4 +3,5 @@ class InventoryItem < ApplicationRecord
   validates  :date, presence: true
 
   belongs_to :workspace
+  belongs_to :counterparty
 end

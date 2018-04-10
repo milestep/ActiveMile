@@ -13,7 +13,7 @@ import RegisterForm                         from './form'
 import RegistersList                        from './list'
 import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll                       from 'react-infinite-scroll-component';
 
 const monthsNames = moment.monthsShort()
 
@@ -128,13 +128,13 @@ export default class Registers extends Component {
 
     this.setState((prevState) => ({
       ...prevState,
-      registers: props.registers.reverse().splice(0, 20).reverse(),
+      registers: props.registers,
       filter
     }))
   }
 
   loadMore(props = false) {
-    props = this.props
+/*    props = this.props
 
     const register = props.registers.splice(0, 20)
 
@@ -142,7 +142,7 @@ export default class Registers extends Component {
 
     setTimeout(() => {
       this.setState({registers: registers.reverse()});
-    }, 800);
+    }, 800);*/
   }
 
   handleCreate(register) {

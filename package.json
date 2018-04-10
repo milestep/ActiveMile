@@ -68,6 +68,7 @@
     "redux-devtools": "^3.3.2",
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.2.0",
+    "redux-lazy-scroll": "^0.1.1",
     "redux-logger": "^3.0.6",
     "redux-rest-resource": "^0.12.6",
     "redux-thunk": "^2.2.0",

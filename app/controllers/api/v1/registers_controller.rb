@@ -13,7 +13,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
     end
 
     items = registers.extract_by_date(props)
-    render_api({ items: items, years: registers.years },
+    render_api({ items: items[0..19], years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end
 

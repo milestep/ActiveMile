@@ -13,6 +13,7 @@ import RegisterForm                         from './form'
 import RegistersList                        from './list'
 import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
+import InfiniteScroll                       from 'react-infinite-scroll-component';
 
 const monthsNames = moment.monthsShort()
 
@@ -132,6 +133,18 @@ export default class Registers extends Component {
     }))
   }
 
+  loadMore(props = false) {
+/*    props = this.props
+
+    const register = props.registers.splice(0, 20)
+
+    const registers = this.state.registers.reverse().concat(register)
+
+    setTimeout(() => {
+      this.setState({registers: registers.reverse()});
+    }, 800);*/
+  }
+
   handleCreate(register) {
     this.props.isCreatingFunk(true)
 
@@ -165,21 +178,21 @@ export default class Registers extends Component {
   }
 
   handleFilterChange = field => e => {
-    const { value } = e
+      const { value } = e ? e : " "
 
-    this.setState((prevState) => ({
-      current: {
-        ...prevState.current,
+      this.setState((prevState) => ({
+        current: {
+          ...prevState.current,
+          [field]: value,
+        }
+      }))
+
+      let current = Object.assign({}, {
+        ...this.state.current,
         [field]: value,
-      }
-    }))
+      })
 
-    let current = Object.assign({}, {
-      ...this.state.current,
-      [field]: value,
-    })
-
-    this.props.actions.fetchRegisters(current)
+      this.props.actions.fetchRegisters(current)
   }
 
   isModelsFetched(models, inputProps = false) {
@@ -261,6 +274,11 @@ export default class Registers extends Component {
                 current={this.state.current}
                 handleFilterChange={this.handleFilterChange}
               />
+              <InfiniteScroll
+                dataLength={this.state.registers.length}
+                next={this.loadMore.bind(this)}
+                hasMore={true}
+              >
               <table className="table table-hover">
                 <thead>
                   <tr>
@@ -283,6 +301,7 @@ export default class Registers extends Component {
                 </thead>
                 { registerList }
               </table>
+              </InfiniteScroll>
             </div>
 
             { isFormDataReady ?

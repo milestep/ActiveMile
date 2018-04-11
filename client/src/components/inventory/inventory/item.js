@@ -1,11 +1,11 @@
-import React, { Component, PropTypes }      from 'react';
-import moment                               from 'moment';
-import { connect }                          from 'react-redux';
-import { Link }                             from 'react-router';
-import { bindActionCreators }               from 'redux';
-import { destroy as destroyInventoryItem }  from '../../../actions/inventory';
-import { toaster }                          from '../../../actions/alerts';
-import * as utils                           from '../../../utils';
+import React, { Component, PropTypes }      from 'react'
+import moment                               from 'moment'
+import { connect }                          from 'react-redux'
+import { Link }                             from 'react-router'
+import { bindActionCreators }               from 'redux'
+import { destroy as destroyInventoryItem }  from '../../../actions/inventory'
+import { toaster }                          from '../../../actions/alerts'
+import * as utils                           from '../../../utils'
 
 @connect(
   state => ({
@@ -22,16 +22,16 @@ import * as utils                           from '../../../utils';
 export default class InventoryItem extends Component {
   static propTypes = {
     inventory: PropTypes.array.isRequired
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = { edit: null }
-    this.toaster = props.actions.toaster();
+    this.toaster = props.actions.toaster()
   }
 
   handleDestroy(id) {
-    const { actions } = this.props;
+    const { actions } = this.props
 
     if (confirm("Are you sure?")) {
       return new Promise((resolve, reject) => {
@@ -50,18 +50,28 @@ export default class InventoryItem extends Component {
   }
 
   render() {
+    const { counterparties, inventory } = this.props
+
     return (
       <tbody>
-        { this.props.inventory.map((item, index) => {
+        { inventory.map((item, index) => {
+          let currentCounterparty
+
+          counterparties.map((counterparty) => {
+            if (counterparty.id == item.counterparty_id) currentCounterparty = counterparty
+          })
+
+          const counterpartyName = (currentCounterparty)? currentCounterparty.name : null
+
           return (
             <tr key={ index }>
               <td className='col-xs-1'>{ index + 1 }</td>
 
-              <td className='col-xs-5'>{ item.name }</td>
+              <td className='col-xs-4'>{ item.name }</td>
 
-              <td className='col-xs-3'>{ moment(item.date).format("DD-MM-YYYY") }</td>
+              <td className='col-xs-2'>{ moment(item.date).format("DD-MM-YYYY") }</td>
 
-              <td className='col-xs-3'>name</td>
+              <td className='col-xs-3'>{ counterpartyName }</td>
 
               <td>
                 <div className="btn-group pull-right" >
@@ -81,10 +91,10 @@ export default class InventoryItem extends Component {
                 </div>
               </td>
             </tr>
-          );
+          )
         })}
       </tbody>
-    );
+    )
   }
 }
 

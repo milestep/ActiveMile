@@ -99,7 +99,14 @@ export default class InventoryForm extends Component {
   }
 
   render() {
-    const counterpartyOptions = this.props.counterparties.map((counterparty) => {
+    const { counterparties } = this.props
+    let filteredOptions = []
+
+    const filterCounterparties = counterparties.map((counterparty) => {
+      if (counterparty.type !== 'Client') filteredOptions.push(counterparty)
+    })
+
+    const counterpartyOptions = filteredOptions.map((counterparty) => {
       return {
         value: counterparty.id,
         label: counterparty.name
@@ -127,6 +134,7 @@ export default class InventoryForm extends Component {
             options={ counterpartyOptions }
             title="Counterparty:"
             name="counterparty"
+            required
           />
 
           <div className="form-group">
@@ -137,6 +145,7 @@ export default class InventoryForm extends Component {
               selected={ this.state.item.date }
               required
               name="date"
+              required
             />
           </div>
 

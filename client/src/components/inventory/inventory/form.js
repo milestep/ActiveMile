@@ -1,16 +1,16 @@
-import React, { Component }                 from 'react';
-import moment                               from 'moment';
-import { bindActionCreators }               from 'redux';
-import { connect }                          from 'react-redux';
-import FormSelect                           from '../../layout/form/select';
-import FormDatePicker                       from '../../layout/form/datePicker';
-import { create  as createInventoryItem }   from '../../../actions/inventory';
-import { toaster }                          from '../../../actions/alerts';
-import * as utils                           from '../../../utils';
+import React, { Component }                 from 'react'
+import moment                               from 'moment'
+import { bindActionCreators }               from 'redux'
+import { connect }                          from 'react-redux'
+import FormSelect                           from '../../layout/form/select'
+import FormDatePicker                       from '../../layout/form/datePicker'
+import { create  as createInventoryItem }   from '../../../actions/inventory'
+import { toaster }                          from '../../../actions/alerts'
+import * as utils                           from '../../../utils'
 
 @connect(
   state => ({
-    counterparties: state.counterparties.rest.items
+    counterparties: state.counterparties.app.items
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -21,89 +21,122 @@ import * as utils                           from '../../../utils';
 )
 export default class InventoryForm extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       item: {
         name: null,
-        date: moment()
-      },
-      inventory: this.createInventoryState(props)
-    };
+        date: moment(),
+        counterparty: {
+          value: null,
+          label: null
+        }
+      }
+    }
 
-    this.toaster = props.actions.toaster();
-  }
-
-  createInventoryState(props) {
-    if (!props) props = this.props;
+    this.toaster = props.actions.toaster()
   }
 
   handleSubmit() {
-    const { item } = this.state;
-    const { actions } = this.props;
+    const { name, date, counterparty} = this.state.item
+    const id = counterparty.value
+    const { actions } = this.props
+
+    const item = {
+      name: name,
+      date: date,
+      counterparty_id: id
+    }
 
     return new Promise((resolve, reject) => {
       actions.createInventoryItem(item)
         .then(res => {
-          this.toaster.success('Item has been successfully created');
-          resolve(res);
+          this.toaster.success('Item has been successfully created')
+          resolve(res)
         })
         .catch(err => {
-          if (utils.debug) console.error(err);
-          this.toaster.error('Could not create an item!');
+          if (utils.debug) console.error(err)
+          this.toaster.error('Could not create an item!')
           reject(err)
         })
     })
   }
 
-  handleChange(field, element) {
+  handleChange(field, event) {
     if (field == 'date') {
-      if (element.value) {
+      if (event.value) {
         this.setState((prevState) => ({
           item: {
             ...prevState.item,
-            date: element.value
+            date: event.value
           }
-        }));
+        }))
       }
+
+    } else if (field == 'counterparty') {
+      if (event.value) {
+        this.setState((prevState) => ({
+          item: {
+            ...prevState.item,
+            counterparty: {
+              value: event.value.value,
+              label: event.value.label
+            }
+          }
+        }))
+      }
+
     } else {
-      let input = element.target.value;
+      event.persist()
 
       this.setState((prevState) => ({
         item: {
           ...prevState.item,
-          [field]: input
+          [field]: event.target.value
         }
-      }));
+      }))
     }
   }
 
   render() {
+    const counterpartyOptions = this.props.counterparties.map((counterparty) => {
+      return {
+        value: counterparty.id,
+        label: counterparty.name
+      }
+    })
+
     return (
       <div className='col-sm-4'>
         <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
           <div className="form-group">
             <label for="name">Name:</label>
+
             <input
               onChange={ this.handleChange.bind(this, 'name') }
               className="form-control"
               id="name"
+              name="name"
               required
             />
           </div>
 
           <FormSelect
-            title="Counterparty"
+            handleChange={ this.handleChange.bind(this) }
+            value={ this.state.item.counterparty.value }
+            options={ counterpartyOptions }
+            title="Counterparty:"
             name="counterparty"
           />
 
           <div className="form-group">
             <label for="date">Date:</label>
+
             <FormDatePicker
               handleChange={ this.handleChange.bind(this) }
               selected={ this.state.item.date }
-              name="date"
               required
+              name="date"
             />
           </div>
 
@@ -113,6 +146,6 @@ export default class InventoryForm extends Component {
           >Submit</button>
         </Formsy.Form>
       </div>
-    );
+    )
   }
 }

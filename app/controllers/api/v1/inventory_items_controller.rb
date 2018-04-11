@@ -28,6 +28,6 @@ class Api::V1::InventoryItemsController < Api::V1::BaseController
   private
 
   def inventory_items_params
-    params.require(:inventory_item).permit(:name, :date)
+    params.require(:inventory_item).permit(:name, :date, :counterparty_id)
   end
 end

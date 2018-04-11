@@ -9,7 +9,8 @@ import * as utils                           from '../../../utils';
 
 @connect(
   state => ({
-    inventory: state.inventory.items
+    inventory: state.inventory.items,
+    counterparties: state.counterparties.app.items
   }),
   dispatch => ({
     actions: bindActionCreators({

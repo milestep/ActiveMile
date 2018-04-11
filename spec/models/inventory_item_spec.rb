@@ -12,5 +12,6 @@ RSpec.describe InventoryItem, type: :model do
 
   describe 'associations' do
     it { should belong_to(:workspace) }
+    it { should belong_to(:counterparty) }
   end
 end

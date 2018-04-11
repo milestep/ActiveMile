@@ -38,14 +38,19 @@ export default class InventoryForm extends Component {
   }
 
   handleSubmit() {
-    const { name, date, counterparty} = this.state.item
-    const id = counterparty.value
     const { actions } = this.props
+    const { name, date, counterparty} = this.state.item
+    const { value, label } = counterparty
 
     const item = {
       name: name,
       date: date,
-      counterparty_id: id
+      counterparty_id: value
+    }
+
+    if (value == null || label == null) {
+      this.toaster.error("Counterparty's field is required")
+      return
     }
 
     return new Promise((resolve, reject) => {
@@ -134,7 +139,6 @@ export default class InventoryForm extends Component {
             options={ counterpartyOptions }
             title="Counterparty:"
             name="counterparty"
-            required
           />
 
           <div className="form-group">

@@ -42,6 +42,9 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.toaster = props.actions.toaster();
+    this.state = {
+      isFetched: false
+    }
   }
 
   componentWillMount() {
@@ -51,12 +54,17 @@ export default class App extends Component {
 
   componentWillReceiveProps(newProps) {
     const { workspaces, actions } = newProps;
+    const { isFetched } = this.state;
 
     if (utils.empty(workspaces)) {
       if (actions.getCurrentWorkspace()) {
         actions.unsetCurrentWorkspace();
       }
-      this.fetchWorkspaces();
+
+      if (!isFetched) {
+        this.fetchWorkspaces();
+        this.setState({ isFetched: true });
+      }
     }
   }
 

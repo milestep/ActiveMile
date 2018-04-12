@@ -6,7 +6,6 @@ import apiReducers    from './api'
 import filterReducers from './filters'
 import features       from './features'
 import inventory      from './inventory'
-import counterparties from './counterparties'
 
 export default {
   auth,
@@ -15,7 +14,6 @@ export default {
   registers,
   features,
   inventory,
-  counterparties,
   ...filterReducers,
   ...apiReducers
 }

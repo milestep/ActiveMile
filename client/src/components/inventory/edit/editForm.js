@@ -16,7 +16,8 @@ import { update as updateInventoryItem,
   state => ({
     inventory: state.inventory.items,
     inventoryItem: state.inventory.item,
-    counterparties: state.counterparties.app.items
+    counterparties: state.counterparties.rest.items,
+    currentWorkspace: state.workspaces.app.current
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -64,7 +65,7 @@ export default class InventoryEditorsForm extends Component {
     })
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.fetchInventoryItem()
   }
 
@@ -81,27 +82,29 @@ export default class InventoryEditorsForm extends Component {
     const { item } = this.state
     let currentCounterparty
 
-    if (counterparty_id) {
-      const filterCounterparties = counterparties.map((counterparty) => {
-        if (counterparty.id == counterparty_id) currentCounterparty = counterparty
-      })
+    if (!counterparty_id) return
 
-      const counterpartyOption = {
-        value: currentCounterparty.id,
-        label: currentCounterparty.name
-      }
+    const filterCounterparties = counterparties.map((counterparty) => {
+      if (counterparty.id == counterparty_id) currentCounterparty = counterparty
+    })
 
-      this.setState({
-        item: {
-          name: name,
-          date: moment(date),
-          counterparty: {
-            value: counterpartyOption.value,
-            label: counterpartyOption.label
-          }
-        }
-      })
+    if (!currentCounterparty) return
+
+    const counterpartyOption = {
+      value: currentCounterparty.id,
+      label: currentCounterparty.name
     }
+
+    this.setState({
+      item: {
+        name: name,
+        date: moment(date),
+        counterparty: {
+          value: counterpartyOption.value,
+          label: counterpartyOption.label
+        }
+      }
+    })
   }
 
   handleChange(field, event) {
@@ -141,8 +144,11 @@ export default class InventoryEditorsForm extends Component {
   }
 
   render() {
-    const { counterparties } = this.props
+    const { counterparties, inventoryItem, currentWorkspace } = this.props
+    const { workspace_id } = inventoryItem
     let filteredOptions = []
+
+    if (!currentWorkspace) return null
 
     const filterCounterparties = counterparties.map((counterparty) => {
       if (counterparty.type !== 'Client') filteredOptions.push(counterparty)
@@ -155,56 +161,65 @@ export default class InventoryEditorsForm extends Component {
       }
     })
 
-    return (
-      <div className='col-sm-offset-4 col-sm-4'>
-        <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
-          <div className="form-group">
-            <label for="name">Name:</label>
+    if (workspace_id == currentWorkspace.id) {
+      return (
+        <div className='col-sm-offset-4 col-sm-4'>
+          <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
+            <div className="form-group">
+              <label for="name">Name:</label>
 
-            <input
-              onChange={ this.handleChange.bind(this, 'name') }
-              value={ this.state.item.name }
-              className="form-control"
-              name="name"
-              id="name"
-              required
-            />
-          </div>
-
-          <FormSelect
-            handleChange={ this.handleChange.bind(this) }
-            value={ this.state.item.counterparty.value }
-            options={ counterpartyOptions }
-            title="Counterparty:"
-            name="counterparty"
-          />
-
-          <div className="form-group">
-            <label for="date">Date:</label>
-
-            <FormDatePicker
-              handleChange={ this.handleChange.bind(this) }
-              selected={ this.state.item.date }
-              name="date"
-              id="date"
-              required
-            />
-          </div>
-
-          <div className="btn-group pull-right">
-            <button
-              type="submit"
-              className="btn btn-sm btn-danger"
-            >Update</button>
-
-            <div className="btn btn-sm btn-primary">
-              <Link to='/inventory'>
-                <span className='edited-button'>Cancel</span>
-              </Link>
+              <input
+                onChange={ this.handleChange.bind(this, 'name') }
+                value={ this.state.item.name }
+                className="form-control"
+                name="name"
+                id="name"
+                required
+              />
             </div>
-          </div>
-        </Formsy.Form>
-      </div>
-    )
+
+            <FormSelect
+              handleChange={ this.handleChange.bind(this) }
+              value={ this.state.item.counterparty.value }
+              options={ counterpartyOptions }
+              title="Counterparty:"
+              name="counterparty"
+            />
+
+            <div className="form-group">
+              <label for="date">Date:</label>
+
+              <FormDatePicker
+                handleChange={ this.handleChange.bind(this) }
+                selected={ this.state.item.date }
+                name="date"
+                id="date"
+                required
+              />
+            </div>
+
+            <div className="btn-group pull-right">
+              <button
+                type="submit"
+                className="btn btn-sm btn-danger"
+              >Update</button>
+
+              <div className="btn btn-sm btn-primary">
+                <Link to='/inventory'>
+                  <span className='edited-button'>Cancel</span>
+                </Link>
+              </div>
+            </div>
+          </Formsy.Form>
+        </div>
+      )
+
+    } else {
+      return (
+        <div>
+          <p>You're trying to edit item which doesn't belong to current workspace.</p>
+        </div>
+      )
+    }
   }
 }

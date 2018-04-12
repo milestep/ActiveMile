@@ -139,6 +139,7 @@ export default class InventoryForm extends Component {
             options={ counterpartyOptions }
             title="Counterparty:"
             name="counterparty"
+            required
           />
 
           <div className="form-group">
@@ -148,6 +149,7 @@ export default class InventoryForm extends Component {
               handleChange={ this.handleChange.bind(this) }
               selected={ this.state.item.date }
               required
+              id="date"
               name="date"
               required
             />

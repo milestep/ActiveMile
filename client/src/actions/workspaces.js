@@ -5,6 +5,8 @@ import { Toaster }                        from './alerts';
 import { actions as workspaceActions }    from '../resources/workspaces';
 import { actions as subscriptionActions } from './subscriptions';
 import WorkspaceActions                   from '../constants/workspaces';
+import { index as fetchCurrentInventory } from './inventory';
+import { show  as fetchCurrentFeatures }  from './features';
 import * as utils                         from '../utils';
 
 const COOKIE_NAME = 'current_workspace';
@@ -76,13 +78,17 @@ export const actions = {
 
     return function(dispatch) {
       const _actions = bindActionCreators({
-        ...subscriptionActions
+        ...subscriptionActions,
+        fetchCurrentInventory,
+        fetchCurrentFeatures,
       }, dispatch)
 
       dispatch({ type: CURRENT_WORKSPACE_SPECIFIY, payload: workspace })
 
       dispatch(actions.resolve())
 
+      _actions.fetchCurrentInventory();
+      _actions.fetchCurrentFeatures();
       _actions.fetchSubscriptions(true)
         .then(res => dispatch({ type: CURRENT_WORKSPACE_NEXT, payload: workspace }))
         .catch(err => dispatch({ type: CURRENT_WORKSPACE_NEXT, payload: workspace }))

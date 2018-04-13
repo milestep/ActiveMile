@@ -9,7 +9,9 @@ const apiReducers = {
     rest: workspaceReducers,
     app: workspaces
   }),
-  counterparties: counterpartyReducers,
+  counterparties: combineReducers({
+    rest: counterpartyReducers
+  }),
   articles: articleReducers,
 }
 

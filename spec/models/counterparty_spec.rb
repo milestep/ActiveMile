@@ -16,6 +16,7 @@ RSpec.describe Counterparty, type: :model do
       it { should have_many(:registers) }
       it { should have_many(:client_registers) }
       it { should have_many(:manager_registers) }
+      it { should have_many(:inventory_items) }
     end
 
     context 'validations exepect' do

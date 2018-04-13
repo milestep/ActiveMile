@@ -28,8 +28,14 @@ end
 describe 'POST /api/v1/inventory_items' do
   include_context :doorkeeper_app_with_token
 
+  let(:counterparty)    { create(:counterparty) }
   let(:workspace)       { create(:workspace) }
-  let(:item_params)     {{ workspace: workspace }}
+
+  let(:item_params)     {{
+    workspace: workspace,
+    counterparty: counterparty
+  }}
+
   let(:inventory_item)  { create(:inventory_item, item_params) }
   let(:request_headers) {{ 'workspace-id': workspace.id }}
 
@@ -37,7 +43,8 @@ describe 'POST /api/v1/inventory_items' do
     access_token: access_token.token,
     inventory_item: {
       name: 'Name',
-      date: Date.new
+      date: Date.new,
+      counterparty_id: counterparty.id
     }
   }}
 
@@ -74,8 +81,14 @@ end
 describe 'PATCH /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
+  let(:counterparty)    { create(:counterparty) }
   let(:workspace)       { create(:workspace) }
-  let(:item_params)     {{ workspace: workspace }}
+
+  let(:item_params)     {{
+    workspace: workspace,
+    counterparty: counterparty
+  }}
+
   let(:inventory_item)  { create(:inventory_item, item_params) }
   let(:request_headers) {{ 'workspace-id': workspace.id }}
 
@@ -83,7 +96,8 @@ describe 'PATCH /api/v1/inventory_items/:id' do
     access_token: access_token.token,
     inventory_item: {
       name: 'Name',
-      date: Date.new
+      date: Date.new,
+      counterparty_id: counterparty.id
     }
   }}
 
@@ -130,11 +144,17 @@ end
 describe 'DELETE /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
-  let(:workspace)            { create(:workspace) }
-  let(:item_params)          {{ workspace: workspace }}
-  let(:inventory_item)       { create(:inventory_item, item_params) }
-  let(:request_headers)      {{ 'workspace-id': workspace.id }}
-  let(:valid_request_params) {{ access_token: access_token.token }}
+  let(:counterparty)          { create(:counterparty) }
+  let(:workspace)             { create(:workspace) }
+
+  let(:item_params)     {{
+    workspace: workspace,
+    counterparty: counterparty
+  }}
+
+  let(:inventory_item)        { create(:inventory_item, item_params) }
+  let(:request_headers)       {{ 'workspace-id': workspace.id }}
+  let(:valid_request_params)  {{ access_token: access_token.token }}
 
   context 'delete inventory item' do
     before do
@@ -161,11 +181,17 @@ end
 describe 'SHOW /api/v1/inventory_items/:id' do
   include_context :doorkeeper_app_with_token
 
-  let(:workspace)            { create(:workspace) }
-  let(:item_params)          {{ workspace: workspace }}
-  let(:inventory_item)       { create(:inventory_item, item_params) }
-  let(:request_headers)      {{ 'workspace-id': workspace.id }}
-  let(:valid_request_params) {{ access_token: access_token.token }}
+  let(:counterparty)          { create(:counterparty) }
+  let(:workspace)             { create(:workspace) }
+
+  let(:item_params)     {{
+    workspace: workspace,
+    counterparty: counterparty
+  }}
+
+  let(:inventory_item)        { create(:inventory_item, item_params) }
+  let(:request_headers)       {{ 'workspace-id': workspace.id }}
+  let(:valid_request_params)  {{ access_token: access_token.token }}
 
   context 'receive inventory item' do
     before do

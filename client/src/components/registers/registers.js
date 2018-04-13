@@ -22,7 +22,7 @@ const monthsNames = moment.monthsShort()
     registers: state.registers.items,
     filter_years: state.registers.years,
     articles: state.articles.items,
-    counterparties: state.counterparties.items,
+    counterparties: state.counterparties.rest.items,
     nextWorkspace: state.workspaces.app.next,
     isCreating: state.registers.isCreating,
     isResolved: {

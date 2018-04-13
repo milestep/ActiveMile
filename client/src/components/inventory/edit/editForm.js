@@ -1,20 +1,23 @@
-import React, { Component }                 from 'react';
-import moment                               from 'moment';
-import { bindActionCreators }               from 'redux';
-import { connect }                          from 'react-redux';
-import { Link }                             from 'react-router';
-import { push }                             from 'react-router-redux';
-import FormDatePicker                       from '../../layout/form/datePicker';
-import { toaster }                          from '../../../actions/alerts';
-import * as utils                           from '../../../utils';
-import { update as updateInventoryItem,
-         show   as fetchInventoryItem }     from '../../../actions/inventory';
+import React, { Component }                 from 'react'
+import moment                               from 'moment'
+import { bindActionCreators }               from 'redux'
+import { connect }                          from 'react-redux'
+import { Link }                             from 'react-router'
+import { push }                             from 'react-router-redux'
+import FormSelect                           from '../../layout/form/select'
+import FormDatePicker                       from '../../layout/form/datePicker'
+import { toaster }                          from '../../../actions/alerts'
+import * as utils                           from '../../../utils'
 import                                           '../../../styles/inventory/buttons.css'
+import { update as updateInventoryItem,
+         show   as fetchInventoryItem }     from '../../../actions/inventory'
 
 @connect(
   state => ({
     inventory: state.inventory.items,
-    inventoryItem: state.inventory.item
+    inventoryItem: state.inventory.item,
+    counterparties: state.counterparties.rest.items,
+    currentWorkspace: state.workspaces.app.current
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -26,129 +29,211 @@ import                                           '../../../styles/inventory/butt
 )
 export default class InventoryEditorsForm extends Component {
   constructor(props) {
-    super(props);
-
+    super(props)
+    this.toaster = props.actions.toaster()
     this.state = {
       item: {
         name: '',
-        date: moment()
+        date: moment(),
+        counterparty: {
+          value: null,
+          label: null
+        }
       }
-    };
-
-    this.toaster = props.actions.toaster();
+    }
   }
 
   handleSubmit() {
-    const { actions, params, dispatch } = this.props;
-    const { id } = params;
-    let { item } = this.state;
+    const { actions, params, dispatch } = this.props
+    const { id } = params
+    let { item } = this.state
 
     item.date.add(1, 'days')
+    item.counterparty_id = item.counterparty.value
 
     return new Promise((resolve, reject) => {
       actions.updateInventoryItem(item, id)
         .then(res => {
-          dispatch(push('/inventory'));
-          this.toaster.success('Item has been successfully updated');
-          resolve(res);
+          dispatch(push('/inventory'))
+          this.toaster.success('Item has been successfully updated')
+          resolve(res)
         })
         .catch(err => {
-          if (utils.debug) console.error(err);
-          this.toaster.error('Could not update an item!');
+          if (utils.debug) console.error(err)
+          this.toaster.error('Could not update an item!')
           reject(err)
         })
     })
   }
 
-  componentDidMount() {
-    this.fetchInventoryItem();
+  componentWillMount() {
+    this.fetchInventoryItem()
   }
 
   fetchInventoryItem() {
-    const { actions, params } = this.props;
-    const { id } = params;
+    const { actions, params } = this.props
+    const { id } = params
 
-    actions.fetchInventoryItem(id);
+    actions.fetchInventoryItem(id)
   }
 
   componentWillReceiveProps(newProps) {
-    const { inventoryItem } = newProps;
-    const { item } = this.state;
+    const { inventoryItem, counterparties } = newProps
+    const { counterparty_id, date, name } = inventoryItem
+    const { item } = this.state
+    let currentCounterparty
 
-    if ( inventoryItem.date != item.date ) {
+    if (!counterparty_id) {
       this.setState({
         item: {
-          name: inventoryItem.name,
-          date: moment(inventoryItem.date)
+          name: name,
+          date: moment(date),
+          counterparty: {
+            value: null,
+            label: null
+          }
         }
-      });
+      })
+
+      return
     }
+
+    const filterCounterparties = counterparties.map((counterparty) => {
+      if (counterparty.id == counterparty_id) currentCounterparty = counterparty
+    })
+
+    if (!currentCounterparty) return
+
+    const counterpartyOption = {
+      value: currentCounterparty.id,
+      label: currentCounterparty.name
+    }
+
+    this.setState({
+      item: {
+        name: name,
+        date: moment(date),
+        counterparty: {
+          value: counterpartyOption.value,
+          label: counterpartyOption.label
+        }
+      }
+    })
   }
 
-  handleChange(field, element) {
+  handleChange(field, event) {
     if (field == 'date') {
-      if (element.value) {
+      if (event.value) {
         this.setState((prevState) => ({
           item: {
             ...prevState.item,
-            date: element.value
+            date: event.value
           }
-        }));
+        }))
+      }
+
+    } else if (field == 'counterparty') {
+      if (event.value) {
+        this.setState((prevState) => ({
+          item: {
+            ...prevState.item,
+            counterparty: {
+              value: event.value.value,
+              label: event.value.label
+            }
+          }
+        }))
       }
 
     } else {
-      let input = element.target.value;
+      event.persist()
 
       this.setState((prevState) => ({
         item: {
           ...prevState.item,
-          [field]: input
+          [field]: event.target.value
         }
-      }));
+      }))
     }
   }
 
   render() {
-    return (
-      <div className='col-sm-4'>
-        <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
-          <div className="form-group">
-            <label for="name">Name:</label>
-            <input
-              onChange={ this.handleChange.bind(this, 'name') }
-              value={ this.state.item.name }
-              className="form-control"
-              name="name"
-              id="name"
-              required
-            />
-          </div>
+    const { counterparties, inventoryItem, currentWorkspace } = this.props
+    const { workspace_id } = inventoryItem
+    let filteredOptions = []
 
-          <div className="form-group">
-            <label for="date">Date:</label>
-            <FormDatePicker
-              handleChange={ this.handleChange.bind(this) }
-              selected={ this.state.item.date }
-              name="date"
-              id="date"
-              required
-            />
-          </div>
+    if (!currentWorkspace) return null
 
-          <div className="btn-group pull-right">
-            <button
-              type="submit"
-              className="btn btn-sm btn-danger"
-            >Update</button>
+    const filterCounterparties = counterparties.map((counterparty) => {
+      if (counterparty.type !== 'Client') filteredOptions.push(counterparty)
+    })
 
-            <div className="btn btn-sm btn-primary">
-              <Link to='/inventory'>
-                <span className='edited-button'>Cancel</span>
-              </Link>
+    const counterpartyOptions = filteredOptions.map((counterparty) => {
+      return {
+        value: counterparty.id,
+        label: counterparty.name
+      }
+    })
+
+    if (workspace_id == currentWorkspace.id) {
+      return (
+        <div className='col-sm-offset-4 col-sm-4'>
+          <Formsy.Form onSubmit={ this.handleSubmit.bind(this) }>
+            <div className="form-group">
+              <label for="name">Name:</label>
+
+              <input
+                onChange={ this.handleChange.bind(this, 'name') }
+                value={ this.state.item.name }
+                className="form-control"
+                name="name"
+                id="name"
+                required
+              />
             </div>
-          </div>
-        </Formsy.Form>
-      </div>
-    );
+
+            <FormSelect
+              handleChange={ this.handleChange.bind(this) }
+              value={ this.state.item.counterparty.value }
+              options={ counterpartyOptions }
+              title="Counterparty:"
+              name="counterparty"
+            />
+
+            <div className="form-group">
+              <label for="date">Date:</label>
+
+              <FormDatePicker
+                handleChange={ this.handleChange.bind(this) }
+                selected={ this.state.item.date }
+                name="date"
+                id="date"
+                required
+              />
+            </div>
+
+            <div className="btn-group pull-right">
+              <button
+                type="submit"
+                className="btn btn-sm btn-danger"
+              >Update</button>
+
+              <div className="btn btn-sm btn-primary">
+                <Link to='/inventory'>
+                  <span className='edited-button'>Cancel</span>
+                </Link>
+              </div>
+            </div>
+          </Formsy.Form>
+        </div>
+      )
+
+    } else {
+      return (
+        <div>
+          <p>You're trying to edit item which doesn't belong to current workspace.</p>
+        </div>
+      )
+    }
   }
 }

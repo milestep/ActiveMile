@@ -10,8 +10,8 @@ import Form                               from './form';
 @connect(
   state => ({
     currentFeatures: state.features,
-    counterparties: state.counterparties.items,
-    isFetching: state.counterparties.isFetching
+    counterparties: state.counterparties.rest.items,
+    isFetching: state.counterparties.rest.isFetching
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -54,6 +54,13 @@ export default class Counterparties extends Component {
 
   componentWillUnmount() {
     this.props.actions.unsubscribe(this.subscriptions);
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { currentFeatures } = newProps;
+
+    this.types = ['Client', 'Vendor', 'Other']
+    if (currentFeatures && currentFeatures.sales) this.types.push('Sales')
   }
 
   handleDestroy(id) {

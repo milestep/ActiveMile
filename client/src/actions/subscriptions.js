@@ -18,6 +18,8 @@ export const actions = {
       return new Promise((resolve, reject) => {
         dispatch({ type: SUBSCRIBE, payload: models })
 
+        if (!dispatch(actions.fetchSubscriptions())) return
+
         dispatch(actions.fetchSubscriptions())
           .then(() => resolve())
           .catch(err => reject(err))

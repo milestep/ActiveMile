@@ -45,9 +45,10 @@ ActiveRecord::Schema.define(version: 20180406074403) do
   create_table "inventory_items", force: :cascade do |t|
     t.string   "name"
     t.date     "date"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.integer  "workspace_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.integer  "workspace_id",    null: false
+    t.integer  "counterparty_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|

@@ -1,6 +1,6 @@
 class Api::V1::InventoryItemsController < Api::V1::BaseController
   expose :item,  -> { current_workspace.inventory_items.find(params[:id]) }
-  expose :items, -> { current_workspace.inventory_items.all }
+  expose :items, -> { current_workspace.inventory_items }
 
   def index
     render_api(items, :ok, each_serializer: InventoryItemsSerializer)
@@ -28,6 +28,6 @@ class Api::V1::InventoryItemsController < Api::V1::BaseController
   private
 
   def inventory_items_params
-    params.require(:inventory_item).permit(:name, :date)
+    params.require(:inventory_item).permit(:name, :date, :counterparty_id)
   end
 end

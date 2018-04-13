@@ -18,7 +18,7 @@ import                                         '../../styles/reports/checkbox.cs
   registers: state.registers.items,
   articles: state.articles.items,
   filterYears: state.registers.years,
-  counterparties: state.counterparties.items,
+  counterparties: state.counterparties.rest.items,
   nextWorkspace: state.workspaces.app.next,
   isResolved: {
     articles: state.subscriptions.articles.resolved,

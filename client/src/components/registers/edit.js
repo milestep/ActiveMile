@@ -14,7 +14,7 @@ import RegisterForm                       from './form';
   state => ({
     register: state.registers.item,
     articles: state.articles.items,
-    counterparties: state.counterparties.items,
+    counterparties: state.counterparties.rest.items,
     isUpdating: state.registers.isUpdating,
     isFetching: {
       articles: state.articles.isFetching,

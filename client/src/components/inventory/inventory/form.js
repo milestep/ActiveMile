@@ -48,11 +48,6 @@ export default class InventoryForm extends Component {
       counterparty_id: value
     }
 
-    if (value == null || label == null) {
-      this.toaster.error("Counterparty's field is required")
-      return
-    }
-
     return new Promise((resolve, reject) => {
       actions.createInventoryItem(item)
         .then(res => {
@@ -139,7 +134,6 @@ export default class InventoryForm extends Component {
             options={ counterpartyOptions }
             title="Counterparty:"
             name="counterparty"
-            required
           />
 
           <div className="form-group">

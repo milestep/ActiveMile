@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 20180406074403) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "workspace_id",    null: false
-    t.integer  "counterparty_id", null: false
+    t.integer  "counterparty_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|

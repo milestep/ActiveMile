@@ -32,6 +32,9 @@ export default class Counterparties extends Component {
 
     this.types = ['Client', 'Vendor', 'Other'];
 
+    const { currentFeatures } = this.props;
+    if (currentFeatures && currentFeatures.sales) this.types.push('Sales');
+
     this.subscriptions = ['counterparties'];
 
     this.state = {
@@ -56,10 +59,8 @@ export default class Counterparties extends Component {
   componentWillReceiveProps(newProps) {
     const { currentFeatures } = newProps;
 
-    (currentFeatures && currentFeatures.sales) ?
-      this.types = ['Client', 'Vendor', 'Sales', 'Other']
-    :
-      this.types = ['Client', 'Vendor', 'Other'];
+    this.types = ['Client', 'Vendor', 'Other']
+    if (currentFeatures && currentFeatures.sales) this.types.push('Sales')
   }
 
   handleDestroy(id) {

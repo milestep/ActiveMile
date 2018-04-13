@@ -49,6 +49,7 @@ export default class InventoryEditorsForm extends Component {
     let { item } = this.state
 
     item.date.add(1, 'days')
+    item.counterparty_id = item.counterparty.value
 
     return new Promise((resolve, reject) => {
       actions.updateInventoryItem(item, id)
@@ -82,7 +83,20 @@ export default class InventoryEditorsForm extends Component {
     const { item } = this.state
     let currentCounterparty
 
-    if (!counterparty_id) return
+    if (!counterparty_id) {
+      this.setState({
+        item: {
+          name: name,
+          date: moment(date),
+          counterparty: {
+            value: null,
+            label: null
+          }
+        }
+      })
+
+      return
+    }
 
     const filterCounterparties = counterparties.map((counterparty) => {
       if (counterparty.id == counterparty_id) currentCounterparty = counterparty

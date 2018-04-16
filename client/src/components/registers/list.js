@@ -3,6 +3,7 @@ import { connect }                     from 'react-redux'
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
 import moment                          from 'moment';
+import InfiniteScroll                   from 'react-infinite-scroller';
 
 @connect(
   state => ({
@@ -17,6 +18,11 @@ export default class RegistersList extends Component {
     counterparties: PropTypes.array.isRequired,
     handleDestroy: PropTypes.func.isRequired
   };
+
+  loadFunc() {
+    console.log('loading...')
+    return null
+  }
 
   render() {
     const { registers, articles, counterparties, handleDestroy, currentFeatures } = this.props;
@@ -69,16 +75,27 @@ export default class RegistersList extends Component {
       )
     }).reverse()
 
+    if (registers.length) {
+      return (
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={this.loadFunc.bind(this)}
+          hasMore={true}
+          loader={<tr className="loader" key={0}><td>Loading ...</td></tr>}
+          element={'tbody'}
+        >
+          { registersList }
+        </InfiniteScroll>
+      )
+    }
+
     return(
       <tbody>
-        { registers.length ?
-          registersList :
-          <tr>
-            <td rowSpan="6">
-              There are no registers...
-            </td>
-          </tr>
-        }
+        <tr>
+          <td rowSpan="6">
+            There are no registers...
+          </td>
+        </tr>
       </tbody>
     );
   }

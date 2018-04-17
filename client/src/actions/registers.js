@@ -103,3 +103,24 @@ export function destroy(id){
     })
   }
 }
+
+export function fetchRegisters(page){
+  return function(dispatch, getState) {
+    return new Promise((resolve, reject) => {
+      let headers = {}
+      let body = { page: page }
+      headers['Authorization'] = `Bearer ${cookie.load('token')}`
+      headers['workspace-id'] = cookie.load('current_workspace').id
+
+      axios.post(`${API_URL}/cast`, body, { headers: headers })
+        .then(res => {
+          if (res.status == 200) dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
+          resolve(res)
+        })
+        .catch(e => {
+          console.error("error: ", e);
+          reject(e)
+        })
+    })
+  }
+}

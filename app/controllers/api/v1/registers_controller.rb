@@ -13,8 +13,34 @@ class Api::V1::RegistersController < Api::V1::BaseController
     end
 
     items = registers.extract_by_date(props)
-    render_api({ items: items, years: registers.years },
+    sorted_items = items.sort { |a, b|  b.created_at <=> a.created_at }
+    filtered_items = sorted_items.first(20)
+
+    render_api({ items: filtered_items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
+  end
+
+  def cast
+    props = {
+      years: params[:year],
+      months: params[:month]
+    }
+
+    unless props_valid?(props)
+      return render_api({ years: registers.years }, :ok)
+    end
+
+    items = registers.extract_by_date(props)
+    sorted_items = items.sort { |a, b|  b.created_at <=> a.created_at }
+    sliced_items = sorted_items.each_slice(20).to_a
+    returned_items = sliced_items[params[:page]]
+
+    render json: {}, status: 204 unless returned_items
+
+    if returned_items
+      render_api({ items: returned_items, years: registers.years },
+                   :ok, each_serializer: RegistersSerializer)
+    end
   end
 
   def show

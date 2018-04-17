@@ -14,6 +14,13 @@ export default function registers(state = {
         years: action.payload.years
       }
 
+    case "REGISTER/SCROLL":
+      return {
+        ...state,
+        items: [ ...state.items, ...action.payload.items ],
+        years: [ ...state.years ]
+      }
+
     case "REGISTER/SHOW":
       return {
         ...state,

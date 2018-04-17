@@ -3,12 +3,19 @@ import { connect }                     from 'react-redux'
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
 import moment                          from 'moment';
-import InfiniteScroll                   from 'react-infinite-scroller';
+import { bindActionCreators }          from 'redux'
+import InfiniteScroll                  from 'react-infinite-scroller';
+import { fetchRegisters }              from '../../actions/registers';
 
 @connect(
   state => ({
     currentFeatures: state.features,
     registers: state.registers.items
+  }),
+  dispatch => ({
+    actions: bindActionCreators({
+      fetchRegisters
+    }, dispatch)
   })
 )
 export default class RegistersList extends Component {
@@ -19,9 +26,19 @@ export default class RegistersList extends Component {
     handleDestroy: PropTypes.func.isRequired
   };
 
-  loadFunc() {
-    console.log('loading...')
-    return null
+  constructor(props) {
+      super(props);
+      this.state = {
+        hasMoreItems: true
+      };
+  }
+
+  loadFunc(page) {
+    const { actions } = this.props
+    actions.fetchRegisters(page)
+      .then(res => {
+        if (res.status == 204) this.setState({ hasMoreItems: false })
+      })
   }
 
   render() {
@@ -73,15 +90,15 @@ export default class RegistersList extends Component {
           </td>
         </tr>
       )
-    }).reverse()
+    })
 
     if (registers.length) {
       return (
         <InfiniteScroll
           pageStart={0}
           loadMore={this.loadFunc.bind(this)}
-          hasMore={true}
-          loader={<tr className="loader" key={0}><td>Loading ...</td></tr>}
+          hasMore={this.state.hasMoreItems}
+          loader={<tr className="loader" key={0}><td><b>Loading ...</b></td></tr>}
           element={'tbody'}
         >
           { registersList }

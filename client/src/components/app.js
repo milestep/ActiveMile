@@ -5,7 +5,6 @@ import { bindActionCreators }             from 'redux';
 import { getCurrentUser }                 from '../helpers/currentUser';
 import { actions as workspaceActions }    from '../resources/workspaces';
 import { actions as workspaceAppActions } from '../actions/workspaces';
-import { show as fetchCurrentFeatures }   from '../actions/features';
 import { toaster }                        from '../actions/alerts';
 import { logout }                         from '../actions/auth';
 import Header                             from '../components/layout/header/header';
@@ -21,7 +20,6 @@ import * as utils                         from '../utils';
     actions: bindActionCreators({
       ...workspaceActions,
       ...workspaceAppActions,
-      fetchCurrentFeatures,
       toaster,
       logout
     }, dispatch)
@@ -49,7 +47,6 @@ export default class App extends Component {
 
   componentWillMount() {
     this.fetchWorkspaces();
-    this.fetchCurrentFeatures();
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,13 +63,6 @@ export default class App extends Component {
         this.setState({ isFetched: true });
       }
     }
-  }
-
-  fetchCurrentFeatures() {
-    const { actions } = this.props;
-    let currentWorkspace = cookie.load('current_workspace');
-
-    if (currentWorkspace) actions.fetchCurrentFeatures(currentWorkspace.id);
   }
 
   fetchWorkspaces() {

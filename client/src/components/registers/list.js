@@ -5,7 +5,9 @@ import * as utils                      from '../../utils';
 import moment                          from 'moment';
 import { bindActionCreators }          from 'redux'
 import InfiniteScroll                  from 'react-infinite-scroller';
-import { fetchRegisters }              from '../../actions/registers';
+import { fetchRegistersOnScroll }      from '../../actions/registers';
+
+let page = 0
 
 @connect(
   state => ({
@@ -14,7 +16,7 @@ import { fetchRegisters }              from '../../actions/registers';
   }),
   dispatch => ({
     actions: bindActionCreators({
-      fetchRegisters
+      fetchRegistersOnScroll
     }, dispatch)
   })
 )
@@ -27,15 +29,26 @@ export default class RegistersList extends Component {
   };
 
   constructor(props) {
-      super(props);
-      this.state = {
-        hasMoreItems: true
-      };
+    super(props);
+    this.state = {
+      hasMoreItems: true
+    };
   }
 
-  loadFunc(page) {
-    const { actions } = this.props
-    actions.fetchRegisters(page)
+  componentWillReceiveProps(newProps) {
+    const { props } = this
+
+    if (props.current !== newProps.current) {
+      this.setState({ hasMoreItems: true })
+      page = 0
+    }
+  }
+
+  fetchRegistersOnScroll() {
+    const { actions, current } = this.props
+    page++
+
+    actions.fetchRegistersOnScroll(page, current)
       .then(res => {
         if (res.status == 204) this.setState({ hasMoreItems: false })
       })
@@ -96,7 +109,7 @@ export default class RegistersList extends Component {
       return (
         <InfiniteScroll
           pageStart={0}
-          loadMore={this.loadFunc.bind(this)}
+          loadMore={this.fetchRegistersOnScroll.bind(this)}
           hasMore={this.state.hasMoreItems}
           loader={<tr className="loader" key={0}><td><b>Loading ...</b></td></tr>}
           element={'tbody'}

@@ -165,7 +165,7 @@ export default class Registers extends Component {
   }
 
   handleFilterChange = field => e => {
-    const { value } = e
+    let value = (!e) ? null : e.value
 
     this.setState((prevState) => ({
       current: {
@@ -198,7 +198,7 @@ export default class Registers extends Component {
   }
 
   createRegisterList() {
-    const { registers } = this.state
+    const { registers, current } = this.state
     const { articles, counterparties } = this.props
     const isListDataReady = this.isModelsFetched(this.subscriptions)
 
@@ -208,6 +208,7 @@ export default class Registers extends Component {
       if (registers.length) {
         registerList = (
           <RegistersList
+            current={current}
             registers={registers}
             articles={articles}
             counterparties={counterparties}

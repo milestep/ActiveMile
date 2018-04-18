@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
       resources :registers, except: [:new] do
         collection do
-          post :cast
+          post :fetch_on_scroll
         end
       end
     end

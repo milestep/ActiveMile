@@ -104,7 +104,7 @@ export function destroy(id){
   }
 }
 
-export function fetchRegisters(page){
+export function fetchRegistersOnScroll(page, params){
   return function(dispatch, getState) {
     return new Promise((resolve, reject) => {
       let headers = {}
@@ -112,7 +112,7 @@ export function fetchRegisters(page){
       headers['Authorization'] = `Bearer ${cookie.load('token')}`
       headers['workspace-id'] = cookie.load('current_workspace').id
 
-      axios.post(`${API_URL}/cast`, body, { headers: headers })
+      axios.post(`${API_URL}/fetch_on_scroll`, body, { params, headers })
         .then(res => {
           if (res.status == 200) dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
           resolve(res)

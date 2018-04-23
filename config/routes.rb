@@ -13,13 +13,8 @@ Rails.application.routes.draw do
       resources :articles, except: [:show, :new]
       resources :counterparties, except: [:show, :new]
       resources :features, only: [:show, :update]
+      resources :registers, except: [:new]
       resources :inventory_items
-
-      resources :registers, except: [:new] do
-        collection do
-          post :fetch_on_scroll
-        end
-      end
     end
   end
 

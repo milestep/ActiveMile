@@ -5,9 +5,9 @@ import * as utils                      from '../../utils';
 import moment                          from 'moment';
 import { bindActionCreators }          from 'redux'
 import InfiniteScroll                  from 'react-infinite-scroller';
-import { fetchRegistersOnScroll }      from '../../actions/registers';
+import { index as fetchRegisters }     from '../../actions/registers';
 
-let page = 0
+var page = 0
 
 @connect(
   state => ({
@@ -16,7 +16,7 @@ let page = 0
   }),
   dispatch => ({
     actions: bindActionCreators({
-      fetchRegistersOnScroll
+      fetchRegisters
     }, dispatch)
   })
 )
@@ -30,9 +30,7 @@ export default class RegistersList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      hasMoreItems: true
-    };
+    this.state = { hasMoreItems: true };
   }
 
   componentWillReceiveProps(newProps) {
@@ -44,13 +42,18 @@ export default class RegistersList extends Component {
     }
   }
 
+  componentWillMount() {
+    page = 0
+  }
+
   fetchRegistersOnScroll() {
     const { actions, current } = this.props
     page++
 
-    actions.fetchRegistersOnScroll(page, current)
+    actions.fetchRegisters(current, page)
       .then(res => {
-        if (res.status == 204) this.setState({ hasMoreItems: false })
+        if (res.status == 204)
+          this.setState({ hasMoreItems: false })
       })
   }
 

@@ -12,32 +12,18 @@ class Api::V1::RegistersController < Api::V1::BaseController
       return render_api({ years: registers.years }, :ok)
     end
 
-    items = registers.extract_by_date(props)
-    sorted_items = items.sort { |a, b|  b.date <=> a.date }
-    filtered_items = sorted_items.first(20)
-
-    render_api({ items: filtered_items, years: registers.years },
-                 :ok, each_serializer: RegistersSerializer)
-  end
-
-  def fetch_on_scroll
-    props = {
-      years: params[:year],
-      months: params[:month]
-    }
-
-    unless props_valid?(props)
-      return render_api({ years: registers.years }, :ok)
-    end
+    per_page = 20
+    page = params[:page].to_i
 
     items = registers.extract_by_date(props)
-    sorted_items = items.sort { |a, b|  b.date <=> a.date }
-    sliced_items = sorted_items.each_slice(20).to_a
-    returned_items = sliced_items[params[:page]]
+            .offset(per_page * page).limit(per_page)
 
-    return render json: {}, status: 204 unless returned_items
+    return render json: {}, status: 204 if items.empty? && page != 0
 
-    render_api({ items: returned_items, years: registers.years },
+    return render_api({ items: items, years: registers.years }, 206,
+                          each_serializer: RegistersSerializer) unless page == 0
+
+    render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end
 

@@ -15,6 +15,7 @@ import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
 
 const monthsNames = moment.monthsShort()
+const page = 0
 
 @connect(
   state => ({
@@ -88,7 +89,8 @@ export default class Registers extends Component {
 
   componentWillMount() {
     const { current } = this.state
-    this.props.actions.fetchRegisters(current)
+
+    this.props.actions.fetchRegisters(current, page)
     this.props.actions.subscribe(this.subscriptions)
   }
 
@@ -111,7 +113,7 @@ export default class Registers extends Component {
       if (typeof current.month != 'number')
         current.month = monthsNames.indexOf(current.month)
 
-      this.props.actions.fetchRegisters(current)
+      this.props.actions.fetchRegisters(current, page)
     }
 
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
@@ -179,7 +181,7 @@ export default class Registers extends Component {
       [field]: value,
     })
 
-    this.props.actions.fetchRegisters(current)
+    this.props.actions.fetchRegisters(current, page)
   }
 
   isModelsFetched(models, inputProps = false) {

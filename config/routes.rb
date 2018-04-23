@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       resources :registers, except: [:new]
       resources :features, only: [:show, :update]
       resources :inventory_items
+      resources :holidays
     end
   end
 

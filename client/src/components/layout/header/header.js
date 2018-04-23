@@ -112,6 +112,14 @@ export default class Header extends Component {
         }
       ]);
 
+      Array.prototype.push.apply(navAfterReports, [
+        {
+          to: '/holidays',
+          title: 'Holidays',
+          onClick: this.toggleCollapse
+        }
+      ]);
+
       Array.prototype.push.apply(navItemsRight, [{
         to: '/workspaces',
         title: 'Workspaces',
@@ -126,6 +134,14 @@ export default class Header extends Component {
       }]);
 
     } else {
+      Array.prototype.push.apply(navAfterReports, [
+        {
+          to: '/holidays',
+          title: 'Holidays',
+          onClick: this.toggleCollapse
+        }
+      ]);
+
       Array.prototype.push.apply(navItemsRight, [{
         to: '/login',
         title: 'Login',

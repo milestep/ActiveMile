@@ -12,6 +12,7 @@ import {
   Workspaces,
   Articles,
   Inventory,
+  Holiday,
   Counterparties,
   Registers,
   RegistersEditor,
@@ -20,6 +21,7 @@ import {
   Charts,
   Features,
   InventoryItemsEditor,
+  HolidaysItemsEditor,
   NotFound }                 from '../components';
 import requireAuth           from '../containers/requireAuth';
 import RequireWorkspace      from '../containers/requireWorkspace';
@@ -32,6 +34,8 @@ const routes = (
     <Route path="workspaces" component={requireAuth(Workspaces)} />
     <Route path="inventory" component={requireAuth(Inventory)} />
     <Route path="inventory/:id/edit" component={requireAuth(InventoryItemsEditor)} />
+    <Route path="holidays" component={(Holiday)} />
+    <Route path="holidays/:id/edit" component={requireAuth(HolidaysItemsEditor)} />
     <Route path="/features/:id/" component={RequireWorkspace(Features)} />
     <Route path="articles" component={RequireWorkspace(Articles)} />
     <Route path="counterparties" component={RequireWorkspace(Counterparties)} />

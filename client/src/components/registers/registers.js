@@ -88,9 +88,6 @@ export default class Registers extends Component {
   }
 
   componentWillMount() {
-    const { current } = this.state
-
-    this.props.actions.fetchRegisters(current, page)
     this.props.actions.subscribe(this.subscriptions)
   }
 
@@ -107,6 +104,9 @@ export default class Registers extends Component {
   }
 
   isNextWorkspaceChanged() {
+    const { lastModel } = this.state
+    const { dispatch } = this.props
+
     if (this.props.currentWorkspace.id != this.props.nextWorkspace.id) {
       let current = Object.assign({}, this.state.current)
 
@@ -114,11 +114,13 @@ export default class Registers extends Component {
         current.month = monthsNames.indexOf(current.month)
 
       this.props.actions.fetchRegisters(current, page)
+        .then(res => {
+          dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+        })
     }
 
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
-
 
   createRegistersState(props = false) {
     if (!props) props = this.props
@@ -167,6 +169,7 @@ export default class Registers extends Component {
   }
 
   handleFilterChange = field => e => {
+    const { dispatch } = this.props
     let value = (!e) ? null : e.value
 
     this.setState((prevState) => ({
@@ -182,6 +185,9 @@ export default class Registers extends Component {
     })
 
     this.props.actions.fetchRegisters(current, page)
+      .then(res => {
+        dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+      })
   }
 
   isModelsFetched(models, inputProps = false) {
@@ -201,7 +207,7 @@ export default class Registers extends Component {
 
   createRegisterList() {
     const { registers, current } = this.state
-    const { articles, counterparties } = this.props
+    const { articles, counterparties, dispatch } = this.props
     const isListDataReady = this.isModelsFetched(this.subscriptions)
 
     let registerList
@@ -213,6 +219,7 @@ export default class Registers extends Component {
             current={current}
             registers={registers}
             articles={articles}
+            dispatch={dispatch}
             counterparties={counterparties}
             handleDestroy={this.handleDestroy}
           />

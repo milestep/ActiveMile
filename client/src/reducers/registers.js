@@ -10,16 +10,15 @@ export default function registers(state = {
     case "REGISTER/FETCH":
       return {
         ...state,
-        years: action.payload.years,
-        items: action.payload.items.sort(function(a, b) {
-               return new Date(b.value) - new Date(a.value)})
+        items: action.payload.items,
+        years: action.payload.years
       }
 
     case "REGISTER/SCROLL":
       return {
         ...state,
         items: [ ...state.items, ...action.payload.items ],
-        years: [ ...state.years ]
+        years: action.payload.years
       }
 
     case "REGISTER/SHOW":

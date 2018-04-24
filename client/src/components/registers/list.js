@@ -47,12 +47,14 @@ export default class RegistersList extends Component {
   }
 
   fetchRegistersOnScroll() {
-    const { actions, current } = this.props
+    const { actions, current, dispatch } = this.props
     page++
 
     actions.fetchRegisters(current, page)
       .then(res => {
-        if (res.status == 204)
+        dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
+
+        if (res.data.items.length < 20)
           this.setState({ hasMoreItems: false })
       })
   }

@@ -13,15 +13,9 @@ class Api::V1::RegistersController < Api::V1::BaseController
     end
 
     per_page = 20
-    page = params[:page].to_i
 
     items = registers.extract_by_date(props)
-            .offset(per_page * page).limit(per_page)
-
-    return render json: {}, status: 204 if items.empty? && page != 0
-
-    return render_api({ items: items, years: registers.years }, 206,
-                          each_serializer: RegistersSerializer) unless page == 0
+            .offset(params[:page].to_i * per_page).limit(per_page)
 
     render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)

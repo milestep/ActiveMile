@@ -88,7 +88,15 @@ export default class Registers extends Component {
   }
 
   componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions)
+    const { current } = this.state
+    const { dispatch, actions } = this.props
+
+    actions.fetchRegisters(current, page)
+      .then(res => {
+        dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+      })
+
+    actions.subscribe(this.subscriptions)
   }
 
   componentWillUnmount() {
@@ -105,21 +113,24 @@ export default class Registers extends Component {
 
   isNextWorkspaceChanged() {
     const { lastModel } = this.state
-    const { dispatch } = this.props
+    const { actions,
+            dispatch,
+            nextWorkspace,
+            currentWorkspace } = this.props
 
-    if (this.props.currentWorkspace.id != this.props.nextWorkspace.id) {
+    if (currentWorkspace.id != nextWorkspace.id) {
       let current = Object.assign({}, this.state.current)
 
       if (typeof current.month != 'number')
         current.month = monthsNames.indexOf(current.month)
 
-      this.props.actions.fetchRegisters(current, page)
+      actions.fetchRegisters(current, page)
         .then(res => {
           dispatch({ type: 'REGISTER/FETCH', payload: res.data });
         })
     }
 
-    return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
+    actions.isNextWorkspaceChanged(nextWorkspace.id)
   }
 
   createRegistersState(props = false) {

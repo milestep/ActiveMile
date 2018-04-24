@@ -12,8 +12,8 @@ Rails.application.routes.draw do
       resources :workspaces, except: [:show, :new]
       resources :articles, except: [:show, :new]
       resources :counterparties, except: [:show, :new]
-      resources :registers, except: [:new]
       resources :features, only: [:show, :update]
+      resources :registers, except: [:new]
       resources :inventory_items
       resources :holidays
     end

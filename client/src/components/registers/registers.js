@@ -15,6 +15,7 @@ import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
 
 const monthsNames = moment.monthsShort()
+const page = 0
 
 @connect(
   state => ({
@@ -87,8 +88,6 @@ export default class Registers extends Component {
   }
 
   componentWillMount() {
-    const { current } = this.state
-    this.props.actions.fetchRegisters(current)
     this.props.actions.subscribe(this.subscriptions)
   }
 
@@ -105,18 +104,23 @@ export default class Registers extends Component {
   }
 
   isNextWorkspaceChanged() {
+    const { lastModel } = this.state
+    const { dispatch } = this.props
+
     if (this.props.currentWorkspace.id != this.props.nextWorkspace.id) {
       let current = Object.assign({}, this.state.current)
 
       if (typeof current.month != 'number')
         current.month = monthsNames.indexOf(current.month)
 
-      this.props.actions.fetchRegisters(current)
+      this.props.actions.fetchRegisters(current, page)
+        .then(res => {
+          dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+        })
     }
 
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
-
 
   createRegistersState(props = false) {
     if (!props) props = this.props
@@ -165,7 +169,8 @@ export default class Registers extends Component {
   }
 
   handleFilterChange = field => e => {
-    const { value } = e
+    const { dispatch } = this.props
+    let value = (!e) ? null : e.value
 
     this.setState((prevState) => ({
       current: {
@@ -179,7 +184,10 @@ export default class Registers extends Component {
       [field]: value,
     })
 
-    this.props.actions.fetchRegisters(current)
+    this.props.actions.fetchRegisters(current, page)
+      .then(res => {
+        dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+      })
   }
 
   isModelsFetched(models, inputProps = false) {
@@ -198,8 +206,8 @@ export default class Registers extends Component {
   }
 
   createRegisterList() {
-    const { registers } = this.state
-    const { articles, counterparties } = this.props
+    const { registers, current } = this.state
+    const { articles, counterparties, dispatch } = this.props
     const isListDataReady = this.isModelsFetched(this.subscriptions)
 
     let registerList
@@ -208,8 +216,10 @@ export default class Registers extends Component {
       if (registers.length) {
         registerList = (
           <RegistersList
+            current={current}
             registers={registers}
             articles={articles}
+            dispatch={dispatch}
             counterparties={counterparties}
             handleDestroy={this.handleDestroy}
           />

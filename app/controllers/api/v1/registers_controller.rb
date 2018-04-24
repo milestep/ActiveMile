@@ -12,7 +12,11 @@ class Api::V1::RegistersController < Api::V1::BaseController
       return render_api({ years: registers.years }, :ok)
     end
 
+    per_page = 20
+
     items = registers.extract_by_date(props)
+            .offset(params[:page].to_i * per_page).limit(per_page)
+
     render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end

@@ -80,7 +80,7 @@ export const actions = {
       const _actions = bindActionCreators({
         ...subscriptionActions,
         fetchCurrentInventory,
-        fetchCurrentFeatures,
+        fetchCurrentFeatures
       }, dispatch)
 
       dispatch({ type: CURRENT_WORKSPACE_SPECIFIY, payload: workspace })

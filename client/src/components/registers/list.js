@@ -3,11 +3,21 @@ import { connect }                     from 'react-redux'
 import { Link }                        from 'react-router';
 import * as utils                      from '../../utils';
 import moment                          from 'moment';
+import { bindActionCreators }          from 'redux'
+import InfiniteScroll                  from 'react-infinite-scroller';
+import { index as fetchRegisters }     from '../../actions/registers';
+
+var page = 0
 
 @connect(
   state => ({
     currentFeatures: state.features,
     registers: state.registers.items
+  }),
+  dispatch => ({
+    actions: bindActionCreators({
+      fetchRegisters
+    }, dispatch)
   })
 )
 export default class RegistersList extends Component {
@@ -17,6 +27,37 @@ export default class RegistersList extends Component {
     counterparties: PropTypes.array.isRequired,
     handleDestroy: PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.state = { hasMoreItems: true };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { props } = this
+
+    if (props.current !== newProps.current) {
+      this.setState({ hasMoreItems: true })
+      page = 0
+    }
+  }
+
+  componentWillMount() {
+    page = 0
+  }
+
+  fetchRegistersOnScroll() {
+    const { actions, current, dispatch } = this.props
+    page++
+
+    actions.fetchRegisters(current, page)
+      .then(res => {
+        dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
+
+        if (res.data.items.length < 20)
+          this.setState({ hasMoreItems: false })
+      })
+  }
 
   render() {
     const { registers, articles, counterparties, handleDestroy, currentFeatures } = this.props;
@@ -67,18 +108,29 @@ export default class RegistersList extends Component {
           </td>
         </tr>
       )
-    }).reverse()
+    })
+
+    if (registers.length) {
+      return (
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={this.fetchRegistersOnScroll.bind(this)}
+          hasMore={this.state.hasMoreItems}
+          loader={<tr className="loader" key={0}><td><b>Loading ...</b></td></tr>}
+          element={'tbody'}
+        >
+          { registersList }
+        </InfiniteScroll>
+      )
+    }
 
     return(
       <tbody>
-        { registers.length ?
-          registersList :
-          <tr>
-            <td rowSpan="6">
-              There are no registers...
-            </td>
-          </tr>
-        }
+        <tr>
+          <td rowSpan="6">
+            There are no registers...
+          </td>
+        </tr>
       </tbody>
     );
   }

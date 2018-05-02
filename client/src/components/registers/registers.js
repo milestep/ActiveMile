@@ -118,7 +118,7 @@ export default class Registers extends Component {
             nextWorkspace,
             currentWorkspace } = this.props
 
-    if (currentWorkspace.id != nextWorkspace.id) {
+    if (nextWorkspace.id && currentWorkspace.id != nextWorkspace.id) {
       let current = Object.assign({}, this.state.current)
 
       if (typeof current.month != 'number')

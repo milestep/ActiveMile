@@ -26,4 +26,11 @@ class Register < ApplicationRecord
     term = value.kind_of?(Array) ? 'IN (?)' : '= ?'
     where("cast(extract(#{name.to_s} from date) as integer) #{term}", value)
   }
+
+  scope :by_page, -> (page) {
+    if (page)
+      per_page = 20
+      offset(page.to_i * per_page).limit(per_page)
+    end
+  }
 end

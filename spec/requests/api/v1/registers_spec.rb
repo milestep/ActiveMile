@@ -13,28 +13,42 @@ describe 'GET /api/v1/registers' do
     counterparty: counterparty
   }}
 
-  let!(:register_1) { create(:register, register_params) }
-  let!(:register_2) { create(:register, register_params) }
+  let!(:registers) {create_list(:register, 26, register_params)}
 
-  let(:request_params) {{
+  let!(:request_params) {{
+    year: 1.days.ago.year.to_s,
+    month: 1.days.ago.mon.to_s, 
+    page: 0,
     access_token: access_token.token
   }}
 
-  let(:request_headers) {{
-    'workspace-id': workspace.id,
-    'year': 2.days.ago.year.to_s,
-    'month': 2.days.ago.mon.to_s
+  let!(:request_headers) {{
+    'workspace-id' => workspace.id
   }}
 
-  context 'returns all registers' do
+  context 'returns all registers with page parameter' do
     before do
       get '/api/v1/registers',
         params: request_params,
         headers: request_headers
     end
 
+    it 'retrives 20 registers' do
+      expect(json["items"]).to have(20).items
+    end
+  end
+
+
+  context 'returns all registers without page parameter' do
+    before do
+      request_params['page'] = nil
+      get '/api/v1/registers',
+        params: request_params,
+        headers: request_headers
+    end
+
     it 'retrives all registers' do
-      expect(json).to have(2).items
+      expect(json['items']).to have(registers.length).items
     end
   end
 

@@ -39,7 +39,7 @@ import                                         '../../styles/reports/checkbox.cs
 export default class Reports extends Component {
   constructor(props) {
     super(props)
-    
+
     this.types = ['Revenue', 'Cost']
     this.subscriptions = ['articles', 'counterparties']
     this.strategy = this.setStrategy()
@@ -220,7 +220,6 @@ export default class Reports extends Component {
             sheet="tablexls"
             buttonText="Download as XLS"/>
             <table id="table-to-xls" className='display_none'>
-            <thead>
               <tr>
                 <th>Month Names</th>
                 {filtersNamesTable}
@@ -237,9 +236,8 @@ export default class Reports extends Component {
                 <td>Profit</td>
                 {commonTable}
               </tr>
-              </thead>
             </table>
-          </div>
+        </div>
 
         <div className="reports-filter">
           <Filter />

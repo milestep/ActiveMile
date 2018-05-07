@@ -85,9 +85,9 @@ export default class ReportsOld extends Component {
         display_total: false,
         display_avg: false,
     }
-    // this.totalPrint = this.totalPrint.bind(this);
-    // this.avgPrint = this.avgPrint.bind(this);
-    // after ret statement, commented for warning skipping
+    
+    this.totalPrint = this.totalPrint.bind(this);
+    this.avgPrint = this.avgPrint.bind(this);
   }
 
   componentWillMount() {

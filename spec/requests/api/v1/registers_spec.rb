@@ -15,14 +15,20 @@ describe 'GET /api/v1/registers' do
 
   let!(:registers) {create_list(:register, 26, register_params)}
 
-  let!(:request_params) {{
+  let(:request_params) {{
     year: 1.days.ago.year.to_s,
     month: 1.days.ago.mon.to_s, 
     page: 0,
     access_token: access_token.token
   }}
 
-  let!(:request_headers) {{
+  let(:request_params_no_page) {{
+    year: 1.days.ago.year.to_s,
+    month: 1.days.ago.mon.to_s, 
+    access_token: access_token.token
+  }}
+
+  let(:request_headers) {{
     'workspace-id' => workspace.id
   }}
 
@@ -38,12 +44,11 @@ describe 'GET /api/v1/registers' do
     end
   end
 
-
   context 'returns all registers without page parameter' do
     before do
       request_params['page'] = nil
       get '/api/v1/registers',
-        params: request_params,
+        params: request_params_no_page,
         headers: request_headers
     end
 

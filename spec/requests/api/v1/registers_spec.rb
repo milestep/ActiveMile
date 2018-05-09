@@ -46,7 +46,6 @@ describe 'GET /api/v1/registers' do
 
   context 'returns all registers without page parameter' do
     before do
-      request_params['page'] = nil
       get '/api/v1/registers',
         params: request_params_no_page,
         headers: request_headers

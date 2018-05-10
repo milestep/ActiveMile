@@ -15,24 +15,24 @@ describe 'GET /api/v1/registers' do
 
   let!(:registers) {create_list(:register, 26, register_params)}
 
-  let(:request_params) {{
-    year: 1.days.ago.year.to_s,
-    month: 1.days.ago.mon.to_s, 
-    page: 0,
-    access_token: access_token.token
-  }}
-
-  let(:request_params_no_page) {{
-    year: 1.days.ago.year.to_s,
-    month: 1.days.ago.mon.to_s, 
-    access_token: access_token.token
-  }}
-
   let(:request_headers) {{
     'workspace-id' => workspace.id
   }}
 
-  context 'returns all registers with page parameter' do
+  let(:request_params) {{
+    year: 1.days.ago.year.to_s,
+    month: 1.days.ago.mon.to_s, 
+    access_token: access_token.token,
+    page: 0
+  }}
+
+  let(:request_params_without_page) {{
+    year: 1.days.ago.year.to_s,
+    month: 1.days.ago.mon.to_s, 
+    access_token: access_token.token
+  }}
+
+  context 'returns registers with page parameter' do
     before do
       get '/api/v1/registers',
         params: request_params,
@@ -47,7 +47,7 @@ describe 'GET /api/v1/registers' do
   context 'returns all registers without page parameter' do
     before do
       get '/api/v1/registers',
-        params: request_params_no_page,
+        params: request_params_without_page,
         headers: request_headers
     end
 
@@ -127,8 +127,8 @@ describe 'PATCH /api/v1/registers/:id' do
 
   before do
     patch "/api/v1/registers/#{register.id}",
-          params: request_params,
-          headers: request_headers
+      params: request_params,
+      headers: request_headers
     register.reload
   end
 

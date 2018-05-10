@@ -7,52 +7,54 @@ describe 'GET /api/v1/registers' do
   let(:article)      { create(:article) }
   let(:counterparty) { create(:counterparty) }
 
-  let(:register_params) {{
-    workspace: workspace,
-    article: article,
-    counterparty: counterparty
-  }}
-
-  let!(:registers) {create_list(:register, 26, register_params)}
-
   let(:request_headers) {{
     'workspace-id' => workspace.id
   }}
 
-  context 'returns registers with page parameter' do
-    let(:request_params) {{
-      year: 1.days.ago.year.to_s,
-      month: 1.days.ago.mon.to_s, 
-      access_token: access_token.token,
-      page: 0
+  context 'return registers' do
+    let(:register_params) {{
+      workspace: workspace,
+      article: article,
+      counterparty: counterparty
     }}
-
-    before do
-      get '/api/v1/registers',
-        params: request_params,
-        headers: request_headers
+  
+    let!(:registers) {create_list(:register, 26, register_params)}
+      
+    context 'with page parameter' do
+      let(:request_params) {{
+        year: 1.days.ago.year.to_s,
+        month: 1.days.ago.mon.to_s, 
+        access_token: access_token.token,
+        page: 0
+      }}
+  
+      before do
+        get '/api/v1/registers',
+          params: request_params,
+          headers: request_headers
+      end
+  
+      it 'retrives 20 registers' do
+        expect(json["items"]).to have(20).items
+      end
     end
-
-    it 'retrives 20 registers' do
-      expect(json["items"]).to have(20).items
-    end
-  end
-
-  context 'returns all registers without page parameter' do
-    let(:request_params_without_page) {{
-      year: 1.days.ago.year.to_s,
-      month: 1.days.ago.mon.to_s, 
-      access_token: access_token.token
-    }}
-
-    before do
-      get '/api/v1/registers',
-        params: request_params_without_page,
-        headers: request_headers
-    end
-
-    it 'retrives all registers' do
-      expect(json['items']).to have(registers.length).items
+  
+    context 'without page parameter' do
+      let(:request_params_without_page) {{
+        year: 1.days.ago.year.to_s,
+        month: 1.days.ago.mon.to_s, 
+        access_token: access_token.token
+      }}
+  
+      before do
+        get '/api/v1/registers',
+          params: request_params_without_page,
+          headers: request_headers
+      end
+  
+      it 'retrives all registers' do
+        expect(json['items']).to have(registers.length).items
+      end
     end
   end
 

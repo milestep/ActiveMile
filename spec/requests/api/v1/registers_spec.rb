@@ -19,20 +19,14 @@ describe 'GET /api/v1/registers' do
     'workspace-id' => workspace.id
   }}
 
-  let(:request_params) {{
-    year: 1.days.ago.year.to_s,
-    month: 1.days.ago.mon.to_s, 
-    access_token: access_token.token,
-    page: 0
-  }}
-
-  let(:request_params_without_page) {{
-    year: 1.days.ago.year.to_s,
-    month: 1.days.ago.mon.to_s, 
-    access_token: access_token.token
-  }}
-
   context 'returns registers with page parameter' do
+    let(:request_params) {{
+      year: 1.days.ago.year.to_s,
+      month: 1.days.ago.mon.to_s, 
+      access_token: access_token.token,
+      page: 0
+    }}
+
     before do
       get '/api/v1/registers',
         params: request_params,
@@ -45,6 +39,12 @@ describe 'GET /api/v1/registers' do
   end
 
   context 'returns all registers without page parameter' do
+    let(:request_params_without_page) {{
+      year: 1.days.ago.year.to_s,
+      month: 1.days.ago.mon.to_s, 
+      access_token: access_token.token
+    }}
+
     before do
       get '/api/v1/registers',
         params: request_params_without_page,

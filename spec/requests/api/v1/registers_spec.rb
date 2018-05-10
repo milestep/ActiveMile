@@ -7,34 +7,54 @@ describe 'GET /api/v1/registers' do
   let(:article)      { create(:article) }
   let(:counterparty) { create(:counterparty) }
 
-  let(:register_params) {{
-    workspace: workspace,
-    article: article,
-    counterparty: counterparty
-  }}
-
-  let!(:register_1) { create(:register, register_params) }
-  let!(:register_2) { create(:register, register_params) }
-
-  let(:request_params) {{
-    access_token: access_token.token
-  }}
-
   let(:request_headers) {{
-    'workspace-id': workspace.id,
-    'year': 2.days.ago.year.to_s,
-    'month': 2.days.ago.mon.to_s
+    'workspace-id' => workspace.id
   }}
 
-  context 'returns all registers' do
-    before do
-      get '/api/v1/registers',
-        params: request_params,
-        headers: request_headers
+  context 'return registers' do
+    let(:register_params) {{
+      workspace: workspace,
+      article: article,
+      counterparty: counterparty
+    }}
+  
+    let!(:registers) {create_list(:register, 26, register_params)}
+      
+    context 'with page parameter' do
+      let(:request_params) {{
+        year: 1.days.ago.year.to_s,
+        month: 1.days.ago.mon.to_s, 
+        access_token: access_token.token,
+        page: 0
+      }}
+  
+      before do
+        get '/api/v1/registers',
+          params: request_params,
+          headers: request_headers
+      end
+  
+      it 'retrives 20 registers' do
+        expect(json["items"]).to have(20).items
+      end
     end
-
-    it 'retrives all registers' do
-      expect(json).to have(2).items
+  
+    context 'without page parameter' do
+      let(:request_params_without_page) {{
+        year: 1.days.ago.year.to_s,
+        month: 1.days.ago.mon.to_s, 
+        access_token: access_token.token
+      }}
+  
+      before do
+        get '/api/v1/registers',
+          params: request_params_without_page,
+          headers: request_headers
+      end
+  
+      it 'retrives all registers' do
+        expect(json['items']).to have(registers.length).items
+      end
     end
   end
 
@@ -109,8 +129,8 @@ describe 'PATCH /api/v1/registers/:id' do
 
   before do
     patch "/api/v1/registers/#{register.id}",
-          params: request_params,
-          headers: request_headers
+      params: request_params,
+      headers: request_headers
     register.reload
   end
 

@@ -50,7 +50,8 @@ export default class Reports extends Component {
       filters: this.stateCreator.getInitialState(),
       displayAvg: false,
       displayTotal: false,
-      openedArticles: []
+      openedArticles: [],
+      registers_list: []
     }
   }
 
@@ -65,6 +66,10 @@ export default class Reports extends Component {
   }
 
   componentWillMount() {
+    this.props.actions.subscribe(this.subscriptions)
+  }
+
+  componentDidMount() {
     this.fetchRegisters()
   }
 
@@ -86,9 +91,9 @@ export default class Reports extends Component {
     this.fetchRegisters()
   }
 
-  onDataReceived() {
+  onDataReceived(res) {
     this.updateYears()
-    this.initializeState()
+    this.initializeState(res)
   }
 
   fetchRegisters() {
@@ -98,17 +103,16 @@ export default class Reports extends Component {
       { filter_by: this.props.strategy }
     )
 
-    actions.fetchRegisters(params).then(() => {
-      actions.subscribe(this.subscriptions)
-        .then(() => this.onDataReceived())
-        .catch(err => console.error(err))
+    actions.fetchRegisters(params).then(res => {
+      this.onDataReceived(res)
     })
   }
 
-  initializeState() {
-    var { registers, articles, counterparties } = this.props
-
+  initializeState(res) {
+    var { articles, counterparties } = this.props
+    var registers = res.data.items
     this.setState({
+      registers_list: registers,
       filters: this.stateCreator.generateState({
         registers, articles, counterparties
       })
@@ -233,7 +237,7 @@ export default class Reports extends Component {
                 {commonTable}
               </tr>
             </table>
-          </div>
+        </div>
 
         <div className="reports-filter">
           <Filter />
@@ -267,17 +271,17 @@ export default class Reports extends Component {
               <div className="col-md-2 revenue"><p>Revenue:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <p className="blue">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : revenue}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : revenue}
                 </p>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="blue">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.revenue)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.average.revenue)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="blue">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.revenue)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.total.revenue)}
                 </b>
               </div>
             </div>
@@ -303,17 +307,17 @@ export default class Reports extends Component {
               <div className="col-md-2"><p>Cost:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <p className="red">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : cost}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : cost}
                 </p>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="red">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.cost)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.average.cost)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="red">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.cost)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.total.cost)}
                 </b>
               </div>
             </div>
@@ -339,17 +343,17 @@ export default class Reports extends Component {
               <div className="col-md-2"><p>Profit:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <p className="green">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : profit}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : profit}
                 </p>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="green">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.average.profit)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.average.profit)}
                 </b>
               </div>
               <div className={this.state.displayTotal ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="green">
-                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.props.registers)) ? 0 : Math.round(filters.total.profit)}
+                  {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : Math.round(filters.total.profit)}
                 </b>
               </div>
             </div>

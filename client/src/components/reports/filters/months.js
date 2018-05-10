@@ -5,7 +5,7 @@ import SelectFilter         from '../selectFilter'
 export default class MonthsFilter extends Component {
   constructor(props) {
     super(props)
-
+    
     var strategy = props.strategy
     this.onTabClick = strategy.onTabClick.bind(strategy)
     this.onSelectChange = strategy.onSelectChange.bind(strategy)

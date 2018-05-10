@@ -24,7 +24,7 @@ export class ReportsStateCreator {
 
     this.setTotalProfitValue()
     this.setAverageValues()
-
+    
     return this.state
   }
 
@@ -47,7 +47,7 @@ export class ReportsStateCreator {
 
       const localStorage = this.state.items[articleType]
       const currentFilter = this.strategy.getCurrentFilterByDate(register.date)
-      const initialValues = this.getInitialValues(currentFilter, value)
+      const initialValues = this.getInitialValues(currentFilter, valueAbs)
 
       const localArticle = this.searchItem(localStorage.articles, articleId)
       const localCounterparty = localArticle ?
@@ -88,7 +88,7 @@ export class ReportsStateCreator {
 
   setTotalProfitValue() {
     var { total } = this.state
-    total.profit = total.revenue - total.cost
+    total.profit = total.revenue + total.cost
   }
 
   setAverageValues() {
@@ -105,18 +105,18 @@ export class ReportsStateCreator {
   }
 
   incrementTotalValue() {
-    const { type, value } = this.current
-    this.state.total[type] += value
+    const { type, valueAbs } = this.current
+    this.state.total[type] += valueAbs
   }
 
-  incrementLocalValue(storage, value) {
+  incrementLocalValue(storage, valueAbs) {
     var localValue = this.searchLocalValue(storage)
     var { initialValues } = this.current
 
     if (!localValue) {
       storage.values = _.cloneDeep(initialValues)
     } else {
-      localValue.value += value
+      localValue.value += valueAbs
     }
   }
 

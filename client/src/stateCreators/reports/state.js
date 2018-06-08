@@ -113,7 +113,11 @@ export class ReportsStateCreator {
     if (!localValue) {
       storage.values = _.cloneDeep(initialValues)
     } else {
-      this.current.type == 'revenue' ? localValue.value += valueAbs : localValue.value -= valueAbs
+        if (this.current.type == 'revenue') {
+          localValue.value += valueAbs
+        } else {
+          localValue.value -= valueAbs
+      }
     }
   }
 

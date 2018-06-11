@@ -16,15 +16,14 @@ export class ReportsStateCreator {
       const { localStorage, value, valueAbs } = current
 
       this.incrementTotalValue()
-      this.incrementLocalValue(this.state.profit, valueAbs)
+      this.incrementProfitValue(this.state.profit, valueAbs)
       this.incrementLocalValue(localStorage, value)
-
       this.mergeArticles()
     })
 
     this.setTotalProfitValue()
     this.setAverageValues()
-    
+
     return this.state
   }
 
@@ -98,10 +97,9 @@ export class ReportsStateCreator {
 
     for (var type in average) {
       var value = total[type] / appliedLength
-      newAverage[type] = Math.ceil(value)
+      newAverage[type] = Math.ceil(value);
     }
-
-    this.state.average = newAverage
+     this.state.average = newAverage
   }
 
   incrementTotalValue() {
@@ -112,7 +110,20 @@ export class ReportsStateCreator {
   incrementLocalValue(storage, valueAbs) {
     var localValue = this.searchLocalValue(storage)
     var { initialValues } = this.current
+    if (!localValue) {
+      storage.values = _.cloneDeep(initialValues)
+    } else {
+        if (this.current.type == 'revenue') {
+          localValue.value += valueAbs
+        } else {
+          localValue.value -= valueAbs
+      }
+    }
+  }
 
+  incrementProfitValue(storage, valueAbs) {
+    var localValue = this.searchLocalValue(storage)
+    var { initialValues } = this.current
     if (!localValue) {
       storage.values = _.cloneDeep(initialValues)
     } else {

@@ -1,5 +1,5 @@
 import React, { Component }      from 'react';
-import Formsy, 
+import Formsy,
   { Decorator as FormsyElement } from 'formsy-react';
 import Select                    from 'react-select';
 
@@ -7,7 +7,7 @@ import Select                    from 'react-select';
 export default class FormSelect extends Component {
   constructor(props) {
     super(props);
-    
+
     this.handleBlur = this.handleBlur.bind(this)
     this.changeValue = this.changeValue.bind(this)
   }
@@ -25,12 +25,12 @@ export default class FormSelect extends Component {
   }
 
   getRequiredMessage() {
-    const { 
-      value, 
-      isBlured, 
+    const {
+      value,
+      isBlured,
       validationErrors,
-      showRequired, 
-      showError 
+      showRequired,
+      showError
     } = this.props;
 
     if (isBlured && ((!value || !value.value) && showRequired() && !showError())) {
@@ -59,7 +59,7 @@ export default class FormSelect extends Component {
   }
 
   getClassName() {
-    const { 
+    const {
       isBlured, className, showError, showRequired
     } = this.props;
     let newClassName = 'form-group' + (className || '');

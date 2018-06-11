@@ -34,8 +34,8 @@ export default class ArticlesList extends Component {
     const { type, toggleArticle, openedArticles } = this.props
 
     const articles = type.articles.map((article, index) => (
-      <div class="panel panel-default">
-        <div class="panel-heading" key={index}>
+      <div key={index} class="panel panel-default">
+        <div class="panel-heading" >
         <div className="row">
           <div className="col-md-1"><p>{article.item.title}</p></div>
           <div className="col-md-1">

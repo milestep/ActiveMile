@@ -220,22 +220,24 @@ export default class Reports extends Component {
             sheet="tablexls"
             buttonText="Download as XLS"/>
             <table id="table-to-xls" className='display_none'>
-              <tr>
-                <th>Month Names</th>
-                {filtersNamesTable}
-              </tr>
-              <tr>
-                <td>Revenue</td>
-                {revenueTable}
-              </tr>
-              <tr>
-                <td>Cost</td>
-                {costTable}
-              </tr>
-              <tr>
-                <td>Profit</td>
-                {commonTable}
-              </tr>
+              <tbody>
+                <tr>
+                  <th>Month Names</th>
+                  {filtersNamesTable}
+                </tr>
+                <tr>
+                  <td>Revenue</td>
+                  {revenueTable}
+                </tr>
+                <tr>
+                  <td>Cost</td>
+                  {costTable}
+                </tr>
+                <tr>
+                  <td>Profit</td>
+                  {commonTable}
+                </tr>
+              </tbody>
             </table>
         </div>
 
@@ -270,9 +272,9 @@ export default class Reports extends Component {
               <div className="clearfix"></div>
               <div className="col-md-2 revenue"><p>Revenue:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                <p className="blue">
+                <b className="blue">
                   {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : revenue}
-                </p>
+                </b>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="blue">
@@ -306,9 +308,9 @@ export default class Reports extends Component {
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Cost:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                <p className="red">
+                <b className="red">
                   {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : cost}
-                </p>
+                </b>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="red">
@@ -342,9 +344,9 @@ export default class Reports extends Component {
             <div className="row reports-list-heading">
               <div className="col-md-2"><p>Profit:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
-                <p className="green">
+                <b className="green">
                   {(_.isEmpty(appliedFilters) || _.isEmpty(this.state.registers_list)) ? 0 : profit}
-                </p>
+                </b>
               </div>
               <div className={this.state.displayAvg ? 'col-md-1 pull-right' : 'display_none'}>
                 <b className="green">

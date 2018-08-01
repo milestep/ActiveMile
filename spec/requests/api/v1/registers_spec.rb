@@ -22,8 +22,8 @@ describe 'GET /api/v1/registers' do
       
     context 'with page parameter' do
       let(:request_params) {{
-        year: 1.days.ago.year.to_s,
-        month: 1.days.ago.mon.to_s, 
+        year: Date.current.year.to_s,
+        month: Date.current.mon.to_s, 
         access_token: access_token.token,
         page: 0
       }}
@@ -41,8 +41,8 @@ describe 'GET /api/v1/registers' do
   
     context 'without page parameter' do
       let(:request_params_without_page) {{
-        year: 1.days.ago.year.to_s,
-        month: 1.days.ago.mon.to_s, 
+        year: Date.current.year.to_s,
+        month: Date.current.mon.to_s, 
         access_token: access_token.token
       }}
   

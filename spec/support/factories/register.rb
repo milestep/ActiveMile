@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :register do
-    date             { Faker::Date.between(2.days.ago, Date.today) }
+    date             { Date.current }
     value            { Faker::Number.between(1, 10) }
     note             { Faker::Lorem.word }
     article          factory: :article

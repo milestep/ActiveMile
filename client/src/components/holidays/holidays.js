@@ -1,7 +1,7 @@
 import React, { Component }       from 'react';
 import HolidayItemsList           from './holidays/holidays_list'
 import HolidaysForm               from './holidays/holidays_form'
-
+import { getCurrentUser }         from '../../helpers/currentUser'
 export default class Holidays extends Component {
   render() {
     return (
@@ -9,8 +9,7 @@ export default class Holidays extends Component {
         <h3>Holidays</h3>
 
         <HolidayItemsList />
-
-        <HolidaysForm />
+        { getCurrentUser() != null ? <HolidaysForm /> : null }
       </div>
     );
   }

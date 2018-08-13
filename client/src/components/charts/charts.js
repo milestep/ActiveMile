@@ -8,6 +8,8 @@ import {index as fetchRegisters}        from '../../actions/registers'
 import {toaster}                        from '../../actions/alerts';
 import moment                           from 'moment';
 import {setStatePromise, defaultMonths} from '../../utils'
+import {actions as articlesActions}     from '../../resources/articles'
+
 import {
   HighchartsChart,
   Chart,
@@ -36,6 +38,7 @@ const monthsNames = moment.monthsShort();
     actions: bindActionCreators({
       ...subscriptionActions,
       ...workspaceActions,
+      ...articlesActions,
       toaster,
       fetchRegisters
     }, dispatch)
@@ -67,6 +70,23 @@ export default class Charts extends Component {
     if (this.isNextWorkspaceChanged()) {
       this.props.actions.fetchRegisters({ year: this.state.currentYear, month: defaultMonths() })
         .then(() => this.createReportState())
+    }
+  }
+
+  createInitialState() {
+    const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth() + 1
+
+    return {
+      registers: [],
+      current: {
+        year: year,
+        month: month
+      },
+      filter: {
+        years: []
+      }
     }
   }
 

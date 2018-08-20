@@ -54,7 +54,7 @@ export default class RegistersList extends Component {
         .then(res => {
           dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
 
-          if (res.data.items.length < 12)
+          if (res.data.items.length < 20)
             this.setState({ hasMoreItems: false })  
         })
     }

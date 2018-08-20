@@ -29,7 +29,7 @@ class Register < ApplicationRecord
 
   scope :by_page, -> (page) {
     if (page)
-      per_page = 120
+      per_page = 20
       offset(page.to_i * per_page).limit(per_page)
     end
   }

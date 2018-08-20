@@ -34,8 +34,8 @@ describe 'GET /api/v1/registers' do
           headers: request_headers
       end
   
-      it 'retrives 26 registers' do
-        expect(json["items"]).to have(26).items
+      it 'retrives 20 registers' do
+        expect(json["items"]).to have(20).items
       end
     end
   

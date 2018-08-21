@@ -47,17 +47,11 @@ export default class RegistersList extends Component {
   }
 
   fetchRegistersOnScroll() {
-    const { actions, current, dispatch, register } = this.props
+    const { actions, current, dispatch } = this.props
+    page++
 
-    if (register && register.id == page) {
-      actions.fetchRegisters(current, page)
-        .then(res => {
-          dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
-
-          if (res.data.items.length < 20)
-            this.setState({ hasMoreItems: false })  
-        })
-    }
+    actions.fetchRegisters(current, page)
+      .then(res => this.setState({ hasMoreItems: res.data.has_more_items }))
   }
 
   render() {
@@ -117,6 +111,7 @@ export default class RegistersList extends Component {
           pageStart={0}
           loadMore={this.fetchRegistersOnScroll.bind(this)}
           hasMore={this.state.hasMoreItems}
+          loader={<tr className="loader" key={0}><td><b>Loading ...</b></td></tr>}
           element={'tbody'}
         >
           { registersList }

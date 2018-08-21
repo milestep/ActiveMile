@@ -13,7 +13,12 @@ export function index(params, page) {
 
       axios.get(API_URL, { params, headers })
         .then(res => {
-          dispatch({ type: 'REGISTER/FETCH', payload: res.data });
+          if (page == 0) {
+            dispatch({ type: 'REGISTER/FETCH', payload: res.data })
+          } else {
+            dispatch({ type: 'REGISTER/SCROLL', payload: res.data })
+          }
+          
           resolve(res)
         })
         .catch(e => {

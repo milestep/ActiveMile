@@ -14,13 +14,9 @@ class Api::V1::RegistersController < Api::V1::BaseController
 
     items = registers.extract_by_date(props).by_page(params[:page]) 
 
-    next_page_registers = registers.extract_by_date(props).by_page(params[:page].to_i + 1)
+    next_page_registers = registers.extract_by_date(props).by_page(params[:page].to_i)
 
-    if next_page_registers.length == 0
-      has_more_items = false 
-    else
-      has_more_items = true
-    end   
+    has_more_items = next_page_registers.empty? 
  
     render_api({ items: items, years: registers.years, has_more_items: has_more_items },
                  :ok, each_serializer: RegistersSerializer)

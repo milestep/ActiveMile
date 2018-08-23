@@ -12,8 +12,8 @@ class Api::V1::RegistersController < Api::V1::BaseController
       return render_api({ years: registers.years }, :ok)
     end
 
-    items = registers.extract_by_date(props).by_page(params[:page]) 
- 
+    items = registers.extract_by_date(props).by_page(params[:page])
+
     render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end

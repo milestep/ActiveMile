@@ -7,6 +7,7 @@ import filterReducers from './filters'
 import features       from './features'
 import inventory      from './inventory'
 import holidays       from './holidays'
+import reports        from './reports'
 
 export default {
   auth,
@@ -16,6 +17,7 @@ export default {
   features,
   inventory,
   holidays,
+  reports,
   ...filterReducers,
   ...apiReducers
 }

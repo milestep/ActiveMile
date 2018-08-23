@@ -84,7 +84,16 @@ export default class Header extends Component {
         to: '/counterparties',
         title: 'Counterparties',
         onClick: this.toggleCollapse
-      }, {
+      },
+      //
+      {
+        to: '/reportNew',
+        title: 'TEST',
+        onClick: this.toggleCollapse
+      },
+      //
+
+      {
         to: '/registers',
         title: 'Registers',
         onClick: this.toggleCollapse

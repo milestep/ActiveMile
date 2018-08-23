@@ -1,6 +1,9 @@
 import React, { Component, PropTypes }  from 'react'
 import { connect }                      from 'react-redux'
 
+// import { index as fetchReports }          from '../../actions/reports'
+
+
 export default class ArticlesList extends Component {
   static propTypes = {
     type: PropTypes.object.isRequired,
@@ -44,6 +47,7 @@ export default class ArticlesList extends Component {
             </button>
           </div>
             <div className={this.props.fetchClassName(this.props.displayTotal, this.props.displayAvg)}>
+            {/* VALUES REVENUE, COST */}
               {article.values.map((values, index) => (
                 <div key={index}>
                   <div className="col-md-1"><p>{Math.round(values.value)}</p></div>

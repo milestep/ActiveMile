@@ -14,9 +14,12 @@ import { ReportsStateCreator }            from '../../stateCreators/reports'
 import ArticlesList                       from './articlesList'
 import                                         '../../styles/reports/checkbox.css'
 
+import { index as fetchReports }          from '../../actions/reports'
+
 @connect(state => ({
   registers: state.registers.items,
   articles: state.articles.items,
+  reports: state.reports.items,
   filterYears: state.registers.years,
   counterparties: state.counterparties.rest.items,
   nextWorkspace: state.workspaces.app.next,
@@ -33,6 +36,7 @@ import                                         '../../styles/reports/checkbox.cs
     ...subscriptionActions,
     ...workspaceActions,
     fetchRegisters,
+    fetchReports,
     toaster,
   }, dispatch)
 }))
@@ -71,6 +75,13 @@ export default class Reports extends Component {
 
   componentDidMount() {
     this.fetchRegisters()
+    this.fetchReports()
+    // console.log('-')
+  }
+
+  fetchReports() {
+    const { actions } = this.props;
+    actions.fetchReports()
   }
 
   componentWillUnmount() {
@@ -102,7 +113,6 @@ export default class Reports extends Component {
       this.strategy.getAppliedFilters({ pluck: 'value' }),
       { filter_by: this.props.strategy }
     )
-
     actions.fetchRegisters(params).then(res => {
       this.onDataReceived(res)
     })
@@ -111,6 +121,7 @@ export default class Reports extends Component {
   initializeState(res) {
     var { articles, counterparties } = this.props
     var registers = res.data.items
+
     this.setState({
       registers_list: registers,
       filters: this.stateCreator.generateState({
@@ -270,6 +281,7 @@ export default class Reports extends Component {
                 <b>AVG</b>
               </div>
               <div className="clearfix"></div>
+
               <div className="col-md-2 revenue"><p>Revenue:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <b className="blue">
@@ -306,6 +318,7 @@ export default class Reports extends Component {
 
           <div className="fake-panel">
             <div className="row reports-list-heading">
+
               <div className="col-md-2"><p>Cost:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <b className="red">
@@ -342,6 +355,7 @@ export default class Reports extends Component {
 
           <div className="fake-panel">
             <div className="row reports-list-heading">
+
               <div className="col-md-2"><p>Profit:</p></div>
               <div className={this.fetchClassName(this.state.displayTotal, this.state.displayAvg)}>
                 <b className="green">
@@ -363,5 +377,6 @@ export default class Reports extends Component {
         </div>
       </div>
     )
+
   }
 }

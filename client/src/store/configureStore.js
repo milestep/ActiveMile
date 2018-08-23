@@ -21,6 +21,10 @@ export default function configureStore(initialState, middleware) {
   const reducer = combineReducers(reducers)
   const store = createStore(reducer, applyMiddleware(...middlewares))
 
+  // store.subscribe(() =>{
+  //   console.log('SUBSCRIBE', store.getState())
+  // });
+
   if (module.hot) {
     module.hot.accept('../reducers', () => {
       const nextRootReducer = require('../reducers')

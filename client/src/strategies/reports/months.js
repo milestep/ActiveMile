@@ -27,7 +27,6 @@ class MonthsStrategy extends ReportsStrategy {
     return { component: MonthsFilter }
   }
 
-
   /*
    * Helper methods
    */

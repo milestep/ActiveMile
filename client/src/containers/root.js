@@ -25,6 +25,8 @@ import {
   NotFound }                 from '../components';
 import requireAuth           from '../containers/requireAuth';
 import RequireWorkspace      from '../containers/requireWorkspace';
+//
+import reportNew from '../components/reports/index_new'
 
 const routes = (
   <Route path="/" component={App}>
@@ -35,6 +37,7 @@ const routes = (
     <Route path="inventory" component={requireAuth(Inventory)} />
     <Route path="inventory/:id/edit" component={requireAuth(InventoryItemsEditor)} />
     <Route path="holidays" component={(Holiday)} />
+    <Route path="/reportNew" component={(reportNew)} />
     <Route path="holidays/:id/edit" component={requireAuth(HolidaysItemsEditor)} />
     <Route path="/features/:id/" component={RequireWorkspace(Features)} />
     <Route path="articles" component={RequireWorkspace(Articles)} />

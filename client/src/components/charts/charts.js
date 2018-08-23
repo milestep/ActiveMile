@@ -131,7 +131,6 @@ export default class Charts extends Component {
       currentYear,
       chartsData: chartsData
     });
-
   }
 
   handleYearChange = e => {

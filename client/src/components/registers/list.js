@@ -51,7 +51,10 @@ export default class RegistersList extends Component {
     page++
 
     actions.fetchRegisters(current, page)
-      .then(res => this.setState({ hasMoreItems: res.data.has_more_items }))
+      .then(res => {
+        if (res.data.items.length < 20)
+          this.setState({hasMoreItems: false})
+      })
   }
 
   render() {

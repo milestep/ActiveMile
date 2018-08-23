@@ -49,7 +49,6 @@ export const actions = {
 }
 
 // Hidden Actions
-
 function loadModel(model) {
   return function(dispatch) {
     dispatch(moveToPending(model))

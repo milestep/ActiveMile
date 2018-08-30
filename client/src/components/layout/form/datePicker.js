@@ -46,7 +46,6 @@ export default class FormDatePicker extends Component {
   render() {
     const { className } = this.props;
     const wrapperClass = `form-group ${className ? ' ' + className : ''}`;
-
     return (
       <div className={wrapperClass}>
         {this.getLabel()}

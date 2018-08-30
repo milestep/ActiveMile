@@ -53,14 +53,14 @@ export default class Charts extends Component {
     this.state = this.createInitialState()
   }
 
-  componentWillMount() {
-    this.props.actions.subscribe(this.subscriptions)
-      .then(() => {
+  componentDidMount() {
+    this.props.actions.fetchArticles()
+      .then((res) => {
         this.props.actions.fetchRegisters({year: this.state.currentYear, month: defaultMonths()})
           .then(() => {
             if (!this.props.registers.length) {
               this.toaster.warning('There is no data for charts')
-            }
+            } 
             this.createReportState()
           })
       })
@@ -117,6 +117,7 @@ export default class Charts extends Component {
     const {currentYear} = this.state
     this.state = this.createInitialState()
     let chartsData = Object.assign([], this.state.chartsData);
+
     registers.forEach(register => {
       let dataNow = new Date(register.date)
       let modelMoun = monthsNames[dataNow.getMonth()]

@@ -52,10 +52,8 @@ export default class RegistersList extends Component {
 
     actions.fetchRegisters(current, page)
       .then(res => {
-        dispatch({ type: 'REGISTER/SCROLL', payload: res.data });
-
         if (res.data.items.length < 20)
-          this.setState({ hasMoreItems: false })
+          this.setState({hasMoreItems: false})
       })
   }
 

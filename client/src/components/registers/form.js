@@ -211,7 +211,7 @@ export default class RegisterForm extends Component {
 
     const optionsFilter = (...type) => {
       counterpartyOptions.filter((counterparty) => {
-        if (counterparty.type == type[0] || counterparty.type == type[1]) {
+        if (counterparty.type == type[0] || counterparty.type == type[2]) {
           counterparty.type == 'sales' ?
             salesOptions.push(counterparty)
           :

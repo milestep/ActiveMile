@@ -209,20 +209,19 @@ export default class RegisterForm extends Component {
       }
     });
 
-    const optionsFilter = (...type) => {
+    const optionsFilter = (type) => {
       counterpartyOptions.filter((counterparty) => {
-        if (counterparty.type == type[0] || counterparty.type == type[2]) {
+        if (counterparty.type == type[0] || counterparty.type == type[1]) {
           counterparty.type == 'sales' ?
             salesOptions.push(counterparty)
           :
             clientOptions.push(counterparty);
-        } else {
-          filteredCounterpartyOptions.push(counterparty);
         }
+        filteredCounterpartyOptions.push(counterparty);
       });
     }
 
-    optionsFilter('sales', 'client');
+    optionsFilter(['sales', 'client']);
 
     return(
       <Formsy.Form

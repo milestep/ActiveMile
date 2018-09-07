@@ -13,6 +13,7 @@ import RegisterForm                         from './form'
 import RegistersList                        from './list'
 import RegistersFilter                      from './filter'
 import * as utils                           from '../../utils'
+import { actions as counterpartyActions }   from '../../resources/counterparties';
 
 const monthsNames = moment.monthsShort()
 const page = 0
@@ -35,6 +36,7 @@ const page = 0
     actions: bindActionCreators({
       ...subscriptionActions,
       ...workspaceActions,
+      ...counterpartyActions,
       toaster,
       fetchRegisters,
       createRegister,
@@ -60,7 +62,7 @@ export default class Registers extends Component {
 
   constructor(props) {
     super(props)
-
+    
     this.state = this.createInitialState()
     this.subscriptions = ['articles', 'counterparties']
 
@@ -79,10 +81,12 @@ export default class Registers extends Component {
       registers: [],
       current: {
         year: year,
-        month: month
+        month: month,
+        counterparty_id: null
       },
       filter: {
-        years: []
+        years: [],
+        counterparties: []
       }
     }
   }
@@ -90,6 +94,12 @@ export default class Registers extends Component {
   componentWillMount() {
     const { current } = this.state
     const { dispatch, actions } = this.props
+    
+    actions.fetchCounterpartys()
+      .then(res => {
+
+        this.state.filter.counterparties = res.body
+      })
 
     actions.fetchRegisters(current, page)
       .then(res => {
@@ -136,7 +146,7 @@ export default class Registers extends Component {
   createRegistersState(props = false) {
     if (!props) props = this.props
 
-    let filter = { years: props.filter_years },
+    let filter = { years: props.filter_years , counterparties: this.state.filter.counterparties},
         current = Object.assign({}, this.state.current),
         registers = []
 

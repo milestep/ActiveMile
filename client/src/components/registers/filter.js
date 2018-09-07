@@ -19,7 +19,10 @@ export default class RegistersFilter extends Component {
       }),
       months: monthsNames.map((monthName, index) => {
         return { value: index + 1, label: monthName };
-      })
+      }),
+      counterparties: filter.counterparties.map((cp) => {
+        return { value: cp.id, label: cp.name}
+      }) 
     }
 
     return(
@@ -37,6 +40,13 @@ export default class RegistersFilter extends Component {
           onChange={handleFilterChange('month')}
           options={options.months}
           value={current.month}
+        />
+        <Select
+          name="counterparty"
+          className="registers-filter-select"
+          onChange={handleFilterChange('counterparty_id')}
+          options={options.counterparties}
+          value={current.counterparty_id}
         />
       </div>
     )

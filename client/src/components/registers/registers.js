@@ -61,6 +61,7 @@ export default class Registers extends Component {
   }
 
   constructor(props) {
+    
     super(props)
     this.state = this.createInitialState()
     this.subscriptions = ['articles', 'counterparties']

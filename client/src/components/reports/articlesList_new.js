@@ -89,7 +89,7 @@ export default class TestNEW extends Component {
     console.log('current_month: ', current)
 
 
-    return(
+    return (
       <div className="col-md-12">
         <div className="fake-panel">
           <div className="reports-list-heading">
@@ -108,54 +108,54 @@ export default class TestNEW extends Component {
             );
         })} */}
 
-                {this.props.reports.reports['Revenue'].map((report, index) => {
+        {this.props.reports.reports['Revenue'].map((report, index) => {
 
-                  return (
-                    <div key={index} className="panel panel-default">
-                      <div class="panel-heading clearfix">
-                        <div className="col-md-1"><p>{report.article.title}</p></div>
-                        <div className="col-md-1">
-                          <button onClick={this.toggleContent} className="btn btn-default btn-xs">
-                            <i className={`fa fa-angle-${this.state.showContent ? "up" : "down"}`}></i>
-                          </button>
-                        </div>
+          return (
+            <div key={index} className="panel panel-default">
+              <div class="panel-heading clearfix">
+                <div className="col-md-1"><p>{report.article.title}</p></div>
+                <div className="col-md-1">
+                  <button onClick={this.toggleContent} className="btn btn-default btn-xs">
+                    <i className={`fa fa-angle-${this.state.showContent ? "up" : "down"}`}></i>
+                  </button>
+                </div>
 
-                        <div className="col-md-1"><p>{report.value}</p></div>
-                      </div>
-                      {this.state.showContent &&
-                        <div className="panel-body">
-                          {report.counterparties.map((counterparty, index) => {
-                            if(counterparty.counterparty)
-                              return(
-                                <div key={index} className="row">
-                                  <div className="col-md-2"><p>{counterparty.counterparty.name}</p></div>
-                                  <div className="col-md-1"><p>{counterparty.value}</p></div>
-                                </div>
-                              );
-                            else
-                              return(
-                                <div key={index} className="row">
-                                  <div className="col-md-2"> — </div>
-                                  <div className="col-md-1"><p>{counterparty.value}</p></div>
-                                </div>
-                              );
-                          })}
+                <div className="col-md-1"><p>{report.value}</p></div>
+              </div>
+              {this.state.showContent &&
+                <div className="panel-body">
+                  {report.counterparties.map((counterparty, index) => {
+                    if (counterparty.counterparty)
+                      return (
+                        <div key={index} className="row">
+                          <div className="col-md-2"><p>{counterparty.counterparty.name}</p></div>
+                          <div className="col-md-1"><p>{counterparty.value}</p></div>
                         </div>
-                      }
-                    </div>
-                  );
+                      );
+                    else
+                      return (
+                        <div key={index} className="row">
+                          <div className="col-md-2"> — </div>
+                          <div className="col-md-1"><p>{counterparty.value}</p></div>
+                        </div>
+                      );
                   })}
+                </div>
+              }
+            </div>
+          );
+        })}
 
-      <div className="fake-panel">
-        <div className="reports-list-heading">
-          <div className="col-md-2"><p>Cost:</p></div>
-          <div className="col-md-1"><b className="red">{this.props.reports.sum.Cost}</b></div>
+        <div className="fake-panel">
+          <div className="reports-list-heading">
+            <div className="col-md-2"><p>Cost:</p></div>
+            <div className="col-md-1"><b className="red">{this.props.reports.sum.Cost}</b></div>
+          </div>
         </div>
-      </div>
 
-      <div className="clearfix"></div>
+        <div className="clearfix"></div>
 
-      {this.props.reports.reports['Cost'].map((report, index) => {
+        {this.props.reports.reports['Cost'].map((report, index) => {
           return (
             <div key={index} className="panel panel-default">
               <div class="panel-heading clearfix">
@@ -172,15 +172,15 @@ export default class TestNEW extends Component {
               {this.state.showContent &&
                 <div className="panel-body">
                   {report.counterparties.map((counterparty, index) => {
-                    if(counterparty.counterparty)
-                      return(
+                    if (counterparty.counterparty)
+                      return (
                         <div key={index} className="row">
                           <div className="col-md-2"><p>{counterparty.counterparty.name}</p></div>
                           <div className="col-md-1"><p>{counterparty.value}</p></div>
                         </div>
                       );
                     else
-                      return(
+                      return (
                         <div key={index} className="row">
                           <div className="col-md-2"> — </div>
                           <div className="col-md-1"><p>{counterparty.value}</p></div>

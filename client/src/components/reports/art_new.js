@@ -1,65 +1,37 @@
-import React, { Component, PropTypes }    from 'react'
-import { bindActionCreators }             from 'redux'
-import { connect }                        from 'react-redux'
-import { toaster }                        from '../../actions/alerts'
-import { actions as subscriptionActions } from '../../actions/subscriptions'
-import { actions as workspaceActions }    from '../../actions/workspaces'
-import { index as fetchRegisters }        from '../../actions/registers'
-import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
-import                                         '../../styles/reports/checkbox.css'
-
-import { index as fetchReports }          from '../../actions/reports'
+import React, { Component, PropTypes } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import '../../styles/reports/checkbox.css'
+import { index as fetchReports } from '../../actions/reports'
 import moment from 'moment';
 
 @connect(state => ({
-  registers: state.registers.items,
-  articles: state.articles.items,
-  filterYears: state.registers.years,
-  counterparties: state.counterparties.rest.items,
-  nextWorkspace: state.workspaces.app.next,
-  reports: state.reports.items,
-  isResolved: {
-    articles: state.subscriptions.articles.resolved,
-    counterparties: state.subscriptions.counterparties.resolved
-  }
+  reports: state.reports.items
 }), dispatch => ({
-  strategies: bindActionCreators({
-    months: monthsStrategy,
-    years: yearsStrategy
-  }, dispatch),
   actions: bindActionCreators({
-    ...subscriptionActions,
-    ...workspaceActions,
-    fetchRegisters,
-    //
     fetchReports,
-    toaster,
   }, dispatch)
 }))
 
 export default class ArtNew extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      month: {
-          Jan:false,
-          Feb:false,
-          Mar:false,
-          Apr:false,
-          May:false,
-          Jun:false,
-          Jul:false,
-          Aug:false,
-          Sep:false,
-          Oct:false,
-          Nov:false,
-          Dec:false,
-      }
+      year: 2018,
+      '1': false,
+      '2': false,
+      '3': false,
+      '4': false,
+      '5': false,
+      '6': false,
+      '7': false,
+      '8': false,
+      '9': false,
+      '10': false,
+      '11': false,
+      '12': false
+
     }
-
-    this.toggleContent = this.toggleContent.bind(this)
-
   }
 
   componentDidMount() {
@@ -71,163 +43,131 @@ export default class ArtNew extends Component {
     actions.fetchReports()
   }
 
-  toggleContent(event) {
-    event.preventDefault()
-    const {showContent} = this.state
-    this.setState({
-      showContent: !showContent
+  updateYear(value) {
+    this.setState({ year: value }, () => {
+      this.props.actions.fetchReports({
+        year: [this.state.year],
+        month: this.filteredMonth(),
+        filter_by: 'month'
+      })
     })
   }
 
-  monthClick(month) {
-   this.setState({
-     month: {
-       ...this.state.month,
-       [month]: !this.state.month[month]
-     }
-   })
-   console.log("скотиняка: ", this.state.month[month])
+  filteredMonth() {
+    let result = [];
+    for (let i = 1; i < 13; i++) {
+      if (this.state[i.toString()]) {
+        result.push(i)
+      }
+    }
+    return result;
   }
 
+  updateMonths(value) {
+    this.setState({ [value]: !this.state[value] }, () => {
+      this.props.actions.fetchReports({
+        year: [this.state.year],
+        month: this.filteredMonth(),
+        filter_by: 'month'
+      })
+    })
 
+  }
 
   render() {
-    if (!this.props.reports.reports) return null
+    let elements = document.getElementsByClassName('month-item');
 
-    const revenue = this.props.reports.reports["Revenue"];
-    const cost = this.props.reports.reports["Cost"];
-
-    const revData = [];
-    for (const key in revenue) {
-      if (revenue[key].length === 0) {
-        // console.log("-----")
-      } else {
-        const rev = revenue[key].map((report, index) => {
-          switch (report.date) {
-            case 'Jan':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Feb':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Mar':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Apr':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'May':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Jun':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Jul':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Aug':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Sep':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Oct':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Nov':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-            case 'Dec':
-              console.log(report.article.title)
-              console.log(report.value)
-              break;
-          }
-        })
+    for (let e = 0; e < elements.length; e++) {
+      elements[e].onclick = function () {
+        this.classList.toggle('month-active')
       }
-     }
+    }
+
+    const { reports } = this.props;
+    const date = Object.keys(reports).map((date) => {
+       const month = moment(new Date(date)).format("MMM");
+       return month;
+    })
+
+    const dataRevenue = Object.values(reports).map((register) => {
+      return register['Revenue'] !== undefined ? register['Revenue'].total : 0;
+    })
+
+    const dataCost = Object.values(reports).map((register) => {
+      return register['Cost'] !== undefined ? register['Cost'].total : 0;
+    })
+
+    const profit = Object.values(reports).map((register) => {
+      return register.profit !== undefined ? register.profit : 0;
+    })
 
     return (
-      <div className="container">
+      <div>
+        <div className="container">
+          <input
+            type="number"
+            min="1900"
+            max="2118"
+            step="1"
+            value={this.state.year}
+            className="select-data"
+            onChange={(e) => {
+              this.updateYear(e.target.value)
+              e.preventDefault()
+            }}
+          />
 
-        <div className="month-aug">
-          <hr/>
-          <p>AUG</p>
-          <b className="blue">{this.props.reports.sum["Aug"]["Revenue"]}</b>
-
-          {this.props.reports.reports["Revenue"]["Aug"].map((report, index) => {
-            return(
-              <div key={index}>
-                <li>{report.article.title}</li>
-                <li>{report.value}</li>
-
-                {report.counterparties.map((counterparty, index) => {
-                  if (counterparty.counterparty) {
-                    return(
-                      <ul style={{listStyleType: "none"}} key={index}>
-                        <li>{counterparty.counterparty.name}</li>
-                        <li>{counterparty.value}</li>
-                      </ul>
-                    );
-                  } else {
-                    return(
-                      <ul style={{listStyleType: "none"}} key={index}>
-                        <li>—</li>
-                        <li>{counterparty.value}</li>
-                      </ul>
-                    );
-                  }
-                })}
-              </div>
-            );
-          })}
-
-          <b className="red">{this.props.reports.sum["Aug"]["Cost"]}</b>
-
-          {this.props.reports.reports["Cost"]["Aug"].map((report, index) => {
-            return(
-              <div key={index}>
-                <li>{report.article.title}</li>
-                <li>{report.value}</li>
-
-                {report.counterparties.map((counterparty, index) => {
-                  if (counterparty.counterparty) {
-                    return(
-                      <ul key={index}>
-                        <li>{counterparty.counterparty.name}</li>
-                        <li>{counterparty.value}</li>
-                      </ul>
-                    );
-                  } else {
-                    return(
-                      <ul key={index}>
-                        <li>—</li>
-                        <li>{counterparty.value}</li>
-                      </ul>
-                    );
-                  }
-                })}
-              </div>
-            );
-          })}
-
-          <b className="green">{this.props.reports.result["Aug"]}</b>
+          <button className="month-item" onClick={() => { this.updateMonths('1') }}>Jan</button>
+          <button className="month-item" onClick={() => { this.updateMonths('2') }}>Feb</button>
+          <button className="month-item" onClick={() => { this.updateMonths('3') }}>Mar</button>
+          <button className="month-item" onClick={() => { this.updateMonths('4') }}>Apr</button>
+          <button className="month-item" onClick={() => { this.updateMonths('5') }}>May</button>
+          <button className="month-item" onClick={() => { this.updateMonths('6') }}>Jun</button>
+          <button className="month-item" onClick={() => { this.updateMonths('7') }}>Jul</button>
+          <button className="month-item" onClick={() => { this.updateMonths('8') }}>Aug</button>
+          <button className="month-item" onClick={() => { this.updateMonths('9') }}>Sep</button>
+          <button className="month-item" onClick={() => { this.updateMonths('10') }}>Oct</button>
+          <button className="month-item" onClick={() => { this.updateMonths('11') }}>Nov</button>
+          <button className="month-item" onClick={() => { this.updateMonths('12') }}>Dec</button>
         </div>
-        <hr/>
+
+        {date.map((m, index) => {
+          return <div key={index} style={{ width: 70, display: 'inline-block' }}>{m}</div>;
+        })
+        }
+        <div className="clearfix"></div>
+        {dataRevenue.map((el, index) => {
+          return <div key={index} style={{ width: 70, display: 'inline-block' }} className='blue'>{el}</div>;
+        })
+        }
+
+        {Object.values(reports).map((rev) => {
+          if (rev.Revenue !== undefined) {
+            return Object.keys(rev.Revenue).map((title, index) => {
+              if (title !== 'total') {
+                return <div key={index}>{title}</div>
+              }
+            })
+          }
+          Object.entries(reports).map((value) => {
+            console.log(value);
+          })
+        })}
+
+        <div className="clearfix"></div>
+        {dataCost.map((el, index) => {
+          return <div key={index} style={{ width: 70, display: 'inline-block' }} className='red'>{el}</div>;
+        })
+        }
+
+        <div className="clearfix"></div>
+        {profit.map((p, index) => {
+          return <div key={index} style={{ width: 70, display: 'inline-block' }} className='green'>{p}</div>;
+        })
+        }
 
       </div>
     );
-
   }
 }
 

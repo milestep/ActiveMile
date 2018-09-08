@@ -12,7 +12,7 @@ class Api::V1::RegistersController < Api::V1::BaseController
       return render_api({ years: registers.years }, :ok)
     end
 
-    items = registers.extract_by_date(props).by_page(params[:page]).order(created_at: :desc) 
+    items = registers.by_counterparty(params[:counterparty_id]).extract_by_date(props).by_page(params[:page]).order(created_at: :desc) 
     render_api({ items: items, years: registers.years },
                  :ok, each_serializer: RegistersSerializer)
   end

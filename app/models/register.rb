@@ -33,4 +33,8 @@ class Register < ApplicationRecord
       offset(page.to_i * per_page).limit(per_page)
     end
   }
+
+  scope :by_counterparty, -> (cp_id) {
+    where(counterparty_id: cp_id) if cp_id
+  }
 end

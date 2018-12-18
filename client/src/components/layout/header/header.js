@@ -76,7 +76,7 @@ export default class Header extends Component {
     let workspacesList = [];
 
     if (loggedIn) {
-      Array.prototype.push.apply(navItems, [{
+      navItems.push({
         to: '/articles',
         title: 'Articles',
         onClick: this.toggleCollapse
@@ -92,9 +92,9 @@ export default class Header extends Component {
         to: '/charts',
         title: 'Charts',
         onClick: this.toggleCollapse
-      }]);
+      })
 
-      Array.prototype.push.apply(reports, [{
+      reports.push({
         to: 'reports_by_months',
         title: 'Monthly',
         onClick: this.toggleCollapse
@@ -102,7 +102,7 @@ export default class Header extends Component {
         to: '/reports_by_years',
         title: 'By year',
         onClick: this.toggleCollapse
-       }]);
+       });
 
       Array.prototype.push.apply(navAfterReports, [
         {
@@ -132,7 +132,6 @@ export default class Header extends Component {
           this.toggleCollapse.call(this);
         }
       }]);
-
     } else {
       Array.prototype.push.apply(navAfterReports, [
         {
@@ -168,43 +167,25 @@ export default class Header extends Component {
       );
     });
 
+    if (loggedIn && reports) { navItems.push(<Dropdown key='999' title='Reports' list={reports}/>) }
+
     return (
       <nav className="site-nav">
-        { navItems ?
-          <ul className="nav navbar-nav">
-            { navItems }
-          </ul>
-        : null }
+        { navItems ? 
+          <ul className="nav navbar-nav"> <Dropdown title='Accounting' list={navItems} /></ul> :
+          null }
 
-        { (loggedIn && reports) ?
-          <ul className="nav navbar-nav">
-            <Dropdown
-              title='Reports'
-              list={reports}
-            />
-          </ul>
-        : null }
+        { navAfterReports ? 
+          <ul className="nav navbar-nav"> <Dropdown title='Utils' list={navAfterReports} /></ul> :
+          null }
 
-        { navAfterReports ?
-          <ul className="nav navbar-nav">
-            { navAfterReports }
-          </ul>
-        : null }
+        { navItemsRight ? 
+          <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul> :
+          null}
 
-        { navItemsRight ?
-          <ul className="nav navbar-nav navbar-right">
-            { navItemsRight }
-          </ul>
-         : null}
-
-        { (loggedIn && currentWorkspace) ?
-          <ul className="nav navbar-nav navbar-main">
-            <Dropdown
-              title={currentWorkspace.title}
-              list={workspacesList}
-            />
-          </ul>
-        : null }
+        { (loggedIn && currentWorkspace) ? 
+          <ul className="nav navbar-nav navbar-main"> <Dropdown title={currentWorkspace.title} list={workspacesList} /></ul> : 
+          null }
       </nav>
     );
   }

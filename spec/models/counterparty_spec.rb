@@ -9,6 +9,7 @@ RSpec.describe Counterparty, type: :model do
       it { should be_valid(:date) }
       it { should be_valid(:type) }
       it { should be_valid(:workspace_id) }
+      it { should be_valid(:salary) }
     end
 
     context 'associations should' do

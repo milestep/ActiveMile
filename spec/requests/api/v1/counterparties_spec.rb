@@ -57,6 +57,7 @@ describe 'POST /api/v1/counterparties' do
       name: 'Anton',
       date: Date.tomorrow.to_s,
       type: 'Client',
+      salary: 56
     }
   }}
 

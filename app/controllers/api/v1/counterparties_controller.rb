@@ -31,6 +31,6 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
   private
 
   def counterparty_params
-    params.require(:counterparty).permit(:name, :date, :type, :active)
+    params.require(:counterparty).permit(:name, :date, :type, :active, :salary)
   end
 end

@@ -35,6 +35,7 @@ export default class Form extends Component {
         label: counterparty.type
       },
       active: counterparty.active,
+      salary: counterparty.salary
     } : {
       name: '',
       date: moment(),
@@ -42,6 +43,7 @@ export default class Form extends Component {
         value: types[0],
         label: types[0]
       },
+      salary: undefined
     }, next = {};
 
     for (let i in prev) {
@@ -140,6 +142,16 @@ export default class Form extends Component {
           isBlured={counterparty.type.blured}
           selectClassName={editing ? "select-sm" : false}
           options={typeOptions}
+          handleChange={this.handleChange}
+          required
+        />
+
+        <FormInput
+          name="salary"
+          placeholder="Enter amount"
+          value={counterparty.salary.value}
+          isBlured={counterparty.type.blured}
+          inputClassName={editing ? "input-sm" : false}
           handleChange={this.handleChange}
           required
         />

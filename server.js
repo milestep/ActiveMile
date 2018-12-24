@@ -15,12 +15,10 @@ app.use('/api', proxy({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(__dirname, 'client/src')));
-// app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/src/index.html'));
-  // res.sendFile(path.join(__dirname, 'client/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
 
 const server = http.createServer(app);

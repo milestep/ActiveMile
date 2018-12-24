@@ -56,7 +56,6 @@ export function login(data, router) {
       'grant_type': 'password'
     });
     const url = `${apiEndpoint}/oauth/token?${stringifiedParams}`;
-    const { email, password } = data;
     const body = JSON.stringify(data);
     const errHandler = new ErrorThrower(dispatch, {
       type: LOGIN_FAILURE
@@ -65,8 +64,6 @@ export function login(data, router) {
     axios.post(url, body, { headers })
       .then((res) => {
         if (res && res.status == 200) {
-          const { query } = router.location;
-          const redirectTo = (query && query.redirectTo) ? query.redirectTo : '/';
           const { data } = res;
 
           dispatch({
@@ -77,7 +74,7 @@ export function login(data, router) {
           });
 
           saveAuthToken(data);
-          dispatch(push(redirectTo));
+          dispatch(push("/registers"));
           new Toaster(dispatch).success('Login successfully');
         }
       })

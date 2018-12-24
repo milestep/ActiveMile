@@ -148,7 +148,7 @@ export default class Form extends Component {
 
         <FormInput
           name="salary"
-          placeholder="Enter amount"
+          placeholder="Salary"
           value={counterparty.salary.value}
           isBlured={counterparty.type.blured}
           inputClassName={editing ? "input-sm" : false}

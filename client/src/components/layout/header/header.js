@@ -92,6 +92,10 @@ export default class Header extends Component {
         to: '/charts',
         title: 'Charts',
         onClick: this.toggleCollapse
+      }, {
+        to: '/forecast',
+        title: 'Forecast',
+        onClick: this.toggleCollapse
       })
 
       reports.push({

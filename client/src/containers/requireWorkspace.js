@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect }                     from 'react-redux';
 import { browserHistory }              from 'react-router';
 import requireAuth                     from './requireAuth';
+import { push, replace }           from 'react-router-redux';
+import { actions } from '../actions/workspaces';
 
 export default function(WrappedComponent, options) {
   @connect(state => ({
@@ -18,6 +20,15 @@ export default function(WrappedComponent, options) {
       if (currentWorkspace && isResolved) {
         let params = Object.assign({}, this.props, options)
         return <WrappedComponent { ...params } />
+      }
+
+      if (!currentWorkspace && !isFetching && !isResolved) {
+        options.update();
+        return(
+          <div>
+            Wait...
+          </div>
+        );
       }
 
       if (!currentWorkspace && isResolved) {

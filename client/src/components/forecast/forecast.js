@@ -45,6 +45,7 @@ export default class Forecast extends React.Component {
 
   componentWillMount() {
     this.props.actions.subscribe(this.subscriptions);
+    this.countSalarys(this.props.counterparties);
   }
 
   componentWillUnmount() {
@@ -61,7 +62,7 @@ export default class Forecast extends React.Component {
   }
 
   countSalarys(item) {
-    let newState = { Client: 0, Vendor: 0, Other: 0 }
+    let newState = { Client: 0, Vendor: 0, Other: 0, Sales: 0 }
     item.forEach((val, ind) => {
       let type = val.type, curSalary = item[ind].salary
       newState[type] = newState[type] + curSalary
@@ -73,7 +74,7 @@ export default class Forecast extends React.Component {
     console.log(this.state)
   }
 
-  getCurentPerson(person, type, i) {
+  getCurentPersons(person, type, i) {
     if (type == person.type) {
       return(
         <li className="list-group-item" key={i}>
@@ -96,7 +97,7 @@ export default class Forecast extends React.Component {
             <div>{this.types[0]}</div>
             <ul className="list-group">
               {this.props.counterparties.map((person, i) =>
-                this.getCurentPerson(person, this.types[0], i)
+                this.getCurentPersons(person, this.types[0], i)
               )}
                 <li className="list-group-item">
                   <div className="row">
@@ -106,18 +107,21 @@ export default class Forecast extends React.Component {
                 </li>
             </ul>
 
-            <div>{this.types[1]} + {this.types[2]}</div>
+            <div>{this.types[1]} + {this.types[2]} {this.types[3] ? '+ '+this.types[3] : ''}</div>
             <ul className="list-group">
-              {this.props.counterparties.map((person, i) =>
-                this.getCurentPerson(person, this.types[1], i)
-              )}
-              {this.props.counterparties.map((person, i) =>
-                this.getCurentPerson(person, this.types[2], i)
-              )}
+              {this.props.counterparties.map((person, i) => this.getCurentPersons(person, this.types[1], i))}
+              {this.props.counterparties.map((person, i) => this.getCurentPersons(person, this.types[2], i))}
+              {this.state[this.types[3]] ?
+                this.props.counterparties.map((person, i) =>
+                this.getCurentPersons(person, this.types[3], i))
+                : null
+              }
                 <li className="list-group-item">
                   <div className="row">
                     <span className='col-md-6 text-right'>Sum: </span>
-                    <span className='col-md-6'>{this.state[this.types[1]] + this.state[this.types[2]]}</span>
+                    <span className='col-md-6'>{this.state[this.types[1]]
+                                              + this.state[this.types[2]]
+                                              + (this.state[this.types[3]] || 0) }</span>
                   </div>
                 </li>
             </ul>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181218133259) do
+ActiveRecord::Schema.define(version: 20190102122747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 20181218133259) do
     t.datetime "updated_at",                     null: false
     t.boolean  "active",          default: true
     t.integer  "registers_count", default: 0
-    t.integer  "salary"
+    t.integer  "salary",          default: 0
     t.index ["workspace_id"], name: "index_counterparties_on_workspace_id", using: :btree
   end
 

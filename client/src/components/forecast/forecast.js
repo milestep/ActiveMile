@@ -38,7 +38,8 @@ export default class Forecast extends React.Component {
 
     this.state = {
       editedCounterparty: null,      
-      sum: 0
+      revenue: 0,
+      costs: 0
     };
     this.toaster = props.actions.toaster();
   }
@@ -64,23 +65,33 @@ export default class Forecast extends React.Component {
   countSalarys(item) {
     let newState = { Client: 0, Vendor: 0, Other: 0, Sales: 0 }
     item.forEach((val, ind) => {
-      let type = val.type, curSalary = item[ind].salary
-      newState[type] = newState[type] + curSalary
+      if (val.active) {
+      let type = val.type, curSalary = item[ind].salary;
+      newState[type] = newState[type] + curSalary}
     })
+
     this.setState(newState)
+    setTimeout(() => {
+      this.setSums();
+    }, 0)
   }
 
-  oncl() {
-    console.log(this.state)
+  setSums() {
+    this.setState({
+      revenue: this.state[this.types[0]],
+      costs: this.state[this.types[1]]
+          + this.state[this.types[2]]
+          + (this.state[this.types[3]] || 0)
+    })    
   }
 
   getCurentPersons(person, type, i) {
-    if (type == person.type) {
+    if (type == person.type && person.active) {
       return(
         <li className="list-group-item" key={i}>
           <div className="row">
-            <span className='col-md-6' onClick={() => {this.oncl()}}>{ person.name }</span>
-            <span className='col-md-6'>{ person.salary }</span>
+            <span className='col-md-6'>{ person.name }</span>
+            <span className='col-md-6'>{ person.salary.toLocaleString() }</span>
           </div>
         </li>
       )
@@ -99,10 +110,10 @@ export default class Forecast extends React.Component {
               {this.props.counterparties.map((person, i) =>
                 this.getCurentPersons(person, this.types[0], i)
               )}
-                <li className="list-group-item">
+                <li className="list-group-item list-group-item-success">
                   <div className="row">
-                    <span className='col-md-6 text-right'>Sum: </span>
-                    <span className='col-md-6'>{this.state[this.types[0]]}</span>
+                    <span className='col-md-6 text-right'><b>Total: </b></span>
+                    <span className='col-md-6'><b>{this.state.revenue.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -116,14 +127,21 @@ export default class Forecast extends React.Component {
                 this.getCurentPersons(person, this.types[3], i))
                 : null
               }
-                <li className="list-group-item">
+                <li className="list-group-item list-group-item-danger">
                   <div className="row">
-                    <span className='col-md-6 text-right'>Sum: </span>
-                    <span className='col-md-6'>{this.state[this.types[1]]
-                                              + this.state[this.types[2]]
-                                              + (this.state[this.types[3]] || 0) }</span>
+                    <span className='col-md-6 text-right'><b>Total: </b></span>
+                    <span className='col-md-6'><b>{this.state.costs.toLocaleString()}</b></span>
                   </div>
                 </li>
+            </ul>
+
+            <ul className="list-group">
+              <li className="list-group-item list-group-item-info">
+                <div className="row">
+                  <span className='col-md-6 text-right'><b>Forecast: </b></span>
+                  <span className='col-md-6'><b>{(this.state.revenue - this.state.costs).toLocaleString()}</b></span>
+                </div>
+              </li>
             </ul>
 
           </div>

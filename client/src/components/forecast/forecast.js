@@ -38,7 +38,7 @@ export default class Forecast extends React.Component {
 
     this.state = {
       editedCounterparty: null,      
-      receipts: 0,
+      revenue: 0,
       costs: 0
     };
     this.toaster = props.actions.toaster();
@@ -78,7 +78,7 @@ export default class Forecast extends React.Component {
 
   setSums() {
     this.setState({
-      receipts: this.state[this.types[0]],
+      revenue: this.state[this.types[0]],
       costs: this.state[this.types[1]]
           + this.state[this.types[2]]
           + (this.state[this.types[3]] || 0)
@@ -113,7 +113,7 @@ export default class Forecast extends React.Component {
                 <li className="list-group-item list-group-item-success">
                   <div className="row">
                     <span className='col-md-6 text-right'><b>Total: </b></span>
-                    <span className='col-md-6'><b>{this.state.receipts.toLocaleString()}</b></span>
+                    <span className='col-md-6'><b>{this.state.revenue.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -139,7 +139,7 @@ export default class Forecast extends React.Component {
               <li className="list-group-item list-group-item-info">
                 <div className="row">
                   <span className='col-md-6 text-right'><b>Forecast: </b></span>
-                  <span className='col-md-6'><b>{(this.state.receipts - this.state.costs).toLocaleString()}</b></span>
+                  <span className='col-md-6'><b>{(this.state.revenue - this.state.costs).toLocaleString()}</b></span>
                 </div>
               </li>
             </ul>

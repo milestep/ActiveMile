@@ -38,8 +38,8 @@ export default class Forecast extends React.Component {
 
     this.state = {
       editedCounterparty: null,      
-      sum1: 0,
-      sum2: 0
+      receipts: 0,
+      costs: 0
     };
     this.toaster = props.actions.toaster();
   }
@@ -78,8 +78,8 @@ export default class Forecast extends React.Component {
 
   setSums() {
     this.setState({
-      sum1: this.state[this.types[0]],
-      sum2: this.state[this.types[1]]
+      receipts: this.state[this.types[0]],
+      costs: this.state[this.types[1]]
           + this.state[this.types[2]]
           + (this.state[this.types[3]] || 0)
     })    
@@ -91,7 +91,7 @@ export default class Forecast extends React.Component {
         <li className="list-group-item" key={i}>
           <div className="row">
             <span className='col-md-6'>{ person.name }</span>
-            <span className='col-md-6'>{ person.salary }</span>
+            <span className='col-md-6'>{ person.salary.toLocaleString() }</span>
           </div>
         </li>
       )
@@ -113,7 +113,7 @@ export default class Forecast extends React.Component {
                 <li className="list-group-item list-group-item-success">
                   <div className="row">
                     <span className='col-md-6 text-right'><b>Total: </b></span>
-                    <span className='col-md-6'><b>{this.state.sum1.toLocaleString()}</b></span>
+                    <span className='col-md-6'><b>{this.state.receipts.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -130,7 +130,7 @@ export default class Forecast extends React.Component {
                 <li className="list-group-item list-group-item-danger">
                   <div className="row">
                     <span className='col-md-6 text-right'><b>Total: </b></span>
-                    <span className='col-md-6'><b>{this.state.sum2.toLocaleString()}</b></span>
+                    <span className='col-md-6'><b>{this.state.costs.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -139,7 +139,7 @@ export default class Forecast extends React.Component {
               <li className="list-group-item list-group-item-info">
                 <div className="row">
                   <span className='col-md-6 text-right'><b>Forecast: </b></span>
-                  <span className='col-md-6'><b>{(this.state.sum1 - this.state.sum2).toLocaleString()}</b></span>
+                  <span className='col-md-6'><b>{(this.state.receipts - this.state.costs).toLocaleString()}</b></span>
                 </div>
               </li>
             </ul>

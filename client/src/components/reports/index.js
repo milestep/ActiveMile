@@ -15,27 +15,28 @@ import ArticlesList                       from './articlesList'
 import                                         '../../styles/reports/checkbox.css'
 
 @connect(state => ({
-  registers: state.registers.items,
-  articles: state.articles.items,
-  filterYears: state.registers.years,
-  counterparties: state.counterparties.rest.items,
-  nextWorkspace: state.workspaces.app.next,
-  isResolved: {
-    articles: state.subscriptions.articles.resolved,
-    counterparties: state.subscriptions.counterparties.resolved
-  }
-}), dispatch => ({
-  strategies: bindActionCreators({
-    months: monthsStrategy,
-    years: yearsStrategy
-  }, dispatch),
-  actions: bindActionCreators({
-    ...subscriptionActions,
-    ...workspaceActions,
-    fetchRegisters,
-    toaster,
-  }, dispatch)
+    registers: state.registers.items,
+    articles: state.articles.items,
+    filterYears: state.registers.years,
+    counterparties: state.counterparties.rest.items,
+    nextWorkspace: state.workspaces.app.next,
+    isResolved: {
+      articles: state.subscriptions.articles.resolved,
+      counterparties: state.subscriptions.counterparties.resolved
+    }
+  }), dispatch => ({
+    strategies: bindActionCreators({
+      months: monthsStrategy,
+      years: yearsStrategy
+    }, dispatch),
+    actions: bindActionCreators({
+      ...subscriptionActions,
+      ...workspaceActions,
+      fetchRegisters,
+      toaster,
+    }, dispatch)
 }))
+
 export default class Reports extends Component {
   constructor(props) {
     super(props)
@@ -208,6 +209,12 @@ export default class Reports extends Component {
     const commonTable = filters.profit.values.map((profit, index) => {
       return(<td key={index}>{Math.round(profit.value)}</td>)
     })
+
+
+
+          { console.log(_.now(), this) }
+
+
 
     return(
       <div className='row'>

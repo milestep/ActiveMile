@@ -269,6 +269,7 @@ DEPENDENCIES
   foreman
   listen (~> 3.0.5)
   pg (~> 0.18)
+  pry
   pry-rails
   puma (~> 3.0)
   rack-cors

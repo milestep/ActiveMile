@@ -18,6 +18,7 @@ gem 'listen', '~> 3.0.5'
 gem 'slim'
 gem 'fastercsv'
 gem 'csv'
+gem 'pry'
 
 group :development, :test do
   gem 'byebug', platform: :mri

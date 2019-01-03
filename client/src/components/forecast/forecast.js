@@ -69,19 +69,15 @@ export default class Forecast extends React.Component {
       let type = val.type, curSalary = item[ind].salary;
       newState[type] = newState[type] + curSalary}
     })
-
-    this.setState(newState)
-    setTimeout(() => {
-      this.setSums();
-    }, 0)
+    this.setState({...newState, ...this.setSums(newState)})
   }
 
-  setSums() {
-    this.setState({
-      revenue: this.state[this.types[0]],
-      costs: this.state[this.types[1]]
-          + this.state[this.types[2]]
-          + (this.state[this.types[3]] || 0)
+  setSums(newState) {
+    return({
+      revenue: newState.Client,
+      costs:   newState.Vendor
+             + newState.Other
+             + (newState.Sales || 0)
     })    
   }
 

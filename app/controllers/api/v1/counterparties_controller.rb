@@ -3,7 +3,7 @@ class Api::V1::CounterpartiesController < Api::V1::BaseController
     current_workspace.counterparties.find(params[:id])
   }
   expose :counterparties, -> {
-    current_workspace.counterparties
+    current_workspace.counterparties.order(created_at: :asc)
   }
 
   def index

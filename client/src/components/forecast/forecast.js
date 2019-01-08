@@ -4,6 +4,7 @@ import { connect }                        from 'react-redux';
 import { actions as counterpartyActions } from '../../resources/counterparties';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
+import InlineEditable from "react-inline-editable-field";
 
 @connect(
   state => ({
@@ -37,10 +38,11 @@ export default class Forecast extends React.Component {
     this.subscriptions = ['counterparties'];
 
     this.state = {
-      editedCounterparty: null,      
+      editedCounterparty: null,
       revenue: 0,
-      costs: 0
-    };
+      costs: 0,
+      counterUsers: {}
+    }
     this.toaster = props.actions.toaster();
   }
 
@@ -64,37 +66,61 @@ export default class Forecast extends React.Component {
 
   countSalarys(item) {
     let newState = { Client: 0, Vendor: 0, Other: 0, Sales: 0 }
+    let counterlist = {}
     item.forEach((val, ind) => {
       if (val.active) {
-      let type = val.type, curSalary = item[ind].salary;
-      newState[type] = newState[type] + curSalary}
+        let type = val.type, curSalary = item[ind].salary;
+        newState[type] = newState[type] + curSalary
+      }
+      counterlist = {...counterlist, [item[ind].id]: item[ind].salary}
     })
-
-    this.setState(newState)
-    setTimeout(() => {
-      this.setSums();
-    }, 0)
+    this.setState({...newState, ...this.setSums(newState), counterUsers: counterlist})
   }
 
-  setSums() {
-    this.setState({
-      revenue: this.state[this.types[0]],
-      costs: this.state[this.types[1]]
-          + this.state[this.types[2]]
-          + (this.state[this.types[3]] || 0)
-    })    
+  setSums(newState) {
+    return({
+      revenue: newState.Client,
+      costs:   newState.Vendor
+      + newState.Other
+      + (newState.Sales || 0)
+    })
   }
 
   getCurentPersons(person, type, i) {
-    if (type == person.type && person.active) {
+    if (type == person.type && person.active && this.state.counterUsers[person.id] !== undefined) {
       return(
         <li className="list-group-item" key={i}>
           <div className="row">
             <span className='col-md-6'>{ person.name }</span>
-            <span className='col-md-6'>{ person.salary.toLocaleString() }</span>
+            <div onFocus={this.validationInput}>
+              <InlineEditable content={ this.state.counterUsers[person.id] } nputType="input" onBlur={(value) => {this.countingNewData(value, person.id)}}/>
+            </div>
           </div>
         </li>
       )
+    }
+  }
+
+  validationInput(e){
+    e.target.oninput = function (e) {
+      e.target.value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    }
+  }
+
+  countingNewData(value, id = text) {
+    if (value) {
+      let totalRevenue = this.state.revenue
+      let totalCosts = this.state.costs
+      this.props.counterparties.forEach((item, key) => {
+        if(item.type === "Client" && item.id === id) {
+          totalRevenue = this.state.revenue - this.state.counterUsers[id] + +value
+        } else if(item.id === id) {
+          totalCosts = this.state.costs - this.state.counterUsers[id] + +value
+        }
+      })
+      let newValue = this.state.counterUsers
+      newValue[id] = +value
+      this.setState({revenue: totalRevenue, costs: totalCosts, counterUsers: newValue})
     }
   }
 

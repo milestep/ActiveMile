@@ -4,7 +4,7 @@ import { connect }                        from 'react-redux';
 import { actions as counterpartyActions } from '../../resources/counterparties';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
-import InlineEditable from "react-inline-editable-field";
+import InlineEditable                     from 'react-inline-editable-field';
 
 @connect(
   state => ({

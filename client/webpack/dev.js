@@ -48,6 +48,9 @@ module.exports = function() {
         chunkModules: false,
         modules: false
       }
+    },
+    resolve: {
+      extensions: ['.js', '.jsx' ]
     }
   });
 };

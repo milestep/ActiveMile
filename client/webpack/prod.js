@@ -9,6 +9,9 @@ module.exports = function() {
     externals: {
       'app-config': JSON.stringify(require('./../config/prod.json'))
     },
+    resolve: {
+      extensions: ['.js', '.jsx' ]
+    },
     plugins: [
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.DefinePlugin({

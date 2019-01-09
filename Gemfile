@@ -16,6 +16,8 @@ gem 'decent_exposure', github: 'hashrocket/decent_exposure', branch: 'master'
 gem 'figaro'
 gem 'listen', '~> 3.0.5'
 gem 'slim'
+gem 'fastercsv'
+gem 'csv'
 
 group :development, :test do
   gem 'byebug', platform: :mri

@@ -78,14 +78,16 @@
     "url-loader": "^0.5.8",
     "webpack": "^3.0.0",
     "webpack-cleanup-plugin": "^0.5.1",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "react-inline-editable-field": "1.0.6"
   },
   "devDependencies": {
     "eslint": "^4.1.1",
     "eslint-loader": "^1.6.3",
     "eslint-plugin-react": "^7.1.0",
     "nodemon": "^1.11.0",
-    "webpack-dev-server": "^2.5.0"
+    "webpack-dev-server": "^2.5.0",
+    "react-inline-editable-field": "1.0.6"
   },
   "engines": {
     "node": "8.1.2",

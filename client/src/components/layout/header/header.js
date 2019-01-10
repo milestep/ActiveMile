@@ -109,6 +109,10 @@ export default class Header extends Component {
         to: '/reports_by_years',
         title: 'By year',
         onClick: this.toggleCollapse
+       }, {
+        to: '/reports/months',
+        title: 'By months',
+        onClick: this.toggleCollapse
        });
 
       Array.prototype.push.apply(navAfterReports, [

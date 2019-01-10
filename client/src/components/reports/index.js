@@ -209,13 +209,7 @@ export default class Reports extends Component {
     const commonTable = filters.profit.values.map((profit, index) => {
       return(<td key={index}>{Math.round(profit.value)}</td>)
     })
-
-
-
-          { console.log(_.now(), this) }
-
-
-
+    
     return(
       <div className='row'>
         <div>

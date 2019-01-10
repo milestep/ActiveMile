@@ -1,4 +1,8 @@
 class Counterparty < ApplicationRecord
+
+  scope :by_year, lambda { |year| where('extract(year from created_at) = ?', year) }
+  scope :by_months, lambda { |month| where('extract(month from created_at) = ?', month) }
+
   self.inheritance_column = nil
 
   belongs_to  :workspace

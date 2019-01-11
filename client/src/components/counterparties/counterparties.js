@@ -127,7 +127,6 @@ export default class Counterparties extends Component {
   }
 
   render() {
-    console.log(this)
     return(
       <div>
         <h3>Counterparties</h3>

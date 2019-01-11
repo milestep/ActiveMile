@@ -17,7 +17,7 @@ export default class Reports extends React.Component {
     this.state = {
       isLoaded: false,
       data: undefined,
-      requestsMonths: [],
+      requestsMonths: [0],
       requestYear: []
     }
 
@@ -34,6 +34,7 @@ export default class Reports extends React.Component {
     }
 
     this.toaster = props.actions.toaster();
+    this.handleChange = this.handleChange.bind(this)
   }
 
   componentDidMount() {
@@ -58,6 +59,10 @@ export default class Reports extends React.Component {
     .then(response => response.json())
     .then(data => {this.setState({data, isLoaded: true})})
     .catch(e => {this.toaster.error('Could not connect to API'); console.error(e)})
+  }
+
+  handleChange(date) {
+    console.log(date);
   }
 
   getRow(person, i) {
@@ -91,8 +96,12 @@ export default class Reports extends React.Component {
     )
   }
 
+  viewData() {
+    return JSON.stringify(this.state.data)
+  }
+
   render() {
-    {if (this.state.data) { console.log(this.state.data.slice(-1)[0].months)} }
+    { console.log(this.state.data) }
     if (!this.state.isLoaded) {
       return(
       <div>
@@ -105,12 +114,6 @@ export default class Reports extends React.Component {
         <div>
           <h3 style={this.titleStyle}>Report by months: </h3>
 
-          <select className="form-control" style={this.titleStyle}>
-            <option>2007</option>
-            <option>2007</option>
-            <option>2007</option>
-          </select>
-
           <div className='btn-group'>
             {this.months.map((month, i) => this.getMonthsButtons(month, i))}
           </div>
@@ -122,8 +125,9 @@ export default class Reports extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.data.map((person, i) => this.getRow(person, i))}
+              {/*this.state.data.map((person, i) => this.getRow(person, i))*/}
             </tbody>
+            {this.viewData()}
           </table>
         </div>
       )

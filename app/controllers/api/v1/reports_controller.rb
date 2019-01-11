@@ -1,24 +1,30 @@
 class Api::V1::ReportsController < Api::V1::BaseController
   def index
-    @counterparties = []
-    counterparties = current_workspace.counterparties.where(active: true)
-    revenue = counterparties.where(type: 'Client').sum(:salary)
-    costs = counterparties.where.not(type: 'Client').sum(:salary)
+    @report = {}
+    @months = request.headers["months"].split(",")
 
-    counterparties.each do |var|
-      @counterparties.push(ReportsSerializer.new(var))
+    @months.each do |month|
+      counterparties_serialized = []
+      month = month.to_i + 1
+      counterparties = get_counterparties_by_months(month)
+      cur_revenue = counterparties.where(type: 'Client').sum(:salary)
+      cur_cost = counterparties.where.not(type: 'Client').sum(:salary)
+      cur_counts = {revenue: cur_revenue, cost: cur_cost}
+
+      counterparties.each do |var|
+        counterparties_serialized.push(ReportsSerializer.new(var))
+      end
+
+      @report[month] = { users: counterparties_serialized, counts: cur_counts }
     end
 
-    bla = get_by_months request.headers["months"]
-
-    @counterparties.push({ revenue: revenue, costs: costs, months: bla })
-    render_api(@counterparties, :ok)
+    render_api(@report, :ok)
   end
 
   private
 
-  def get_by_months(namberOfMonths)
-    current_workspace.counterparties.where(active: true).by_months(namberOfMonths)
+  def get_counterparties_by_months(namberOfMonths)
+    current_workspace.counterparties.where(active: true).by_year(2018).by_months(namberOfMonths)
   end
 
   # def counterparty_params

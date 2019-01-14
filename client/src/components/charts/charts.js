@@ -68,8 +68,10 @@ export default class Charts extends Component {
 
   componentWillReceiveProps() {
     if (this.isNextWorkspaceChanged()) {
-      this.props.actions.fetchRegisters({ year: this.state.currentYear, month: defaultMonths() })
+      this.props.actions.fetchArticles().then(()=>{
+        this.props.actions.fetchRegisters({ year: this.state.currentYear, month: defaultMonths() })
         .then(() => this.createReportState())
+      })
     }
   }
 
@@ -117,7 +119,6 @@ export default class Charts extends Component {
     const {currentYear} = this.state
     this.state = this.createInitialState()
     let chartsData = Object.assign([], this.state.chartsData);
-
     registers.forEach(register => {
       let dataNow = new Date(register.date)
       let modelMoun = monthsNames[dataNow.getMonth()]

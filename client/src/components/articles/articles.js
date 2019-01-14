@@ -4,6 +4,7 @@ import { connect }                        from 'react-redux';
 import { toaster }                        from '../../actions/alerts';
 import { actions as articleActions }      from '../../resources/articles';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
+import { actions as workspaceActions }    from '../../actions/workspaces'
 import ArticlesList                       from './list';
 import ArticleForm                        from './form';
 import * as utils                         from '../../utils';
@@ -12,12 +13,14 @@ import * as utils                         from '../../utils';
   state => ({
     articles: state.articles.items,
     isFetching: state.articles.isFetching,
-    isCreating: state.articles.isCreating
+    isCreating: state.articles.isCreating,
+    nextWorkspace: state.workspaces.app.next,
   }),
   dispatch => ({
     actions: bindActionCreators({
       ...articleActions,
       ...subscriptionActions,
+      ...workspaceActions,
       toaster
     }, dispatch)
   })
@@ -64,8 +67,8 @@ export default class Articles extends Component {
     this.props.actions.unsubscribe(this.subscriptions);
   }
 
-  componentWillReceiveProps(newProps) {
-    const { articles } = newProps;
+  updateArticlesState(props) {
+    const { articles } = props;
     const prevArticles = this.state.articles.all;
 
     if (articles !== prevArticles) {
@@ -73,6 +76,14 @@ export default class Articles extends Component {
         articles: this.getArticlesState(articles)
       });
     }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)){
+      this.props.actions.fetchArticles().then(()=>{
+        this.updateArticlesState(newProps)
+      })
+    } else this.updateArticlesState(newProps)
   }
 
   getArticlesState(articles) {

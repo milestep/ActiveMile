@@ -140,7 +140,7 @@ export default class Header extends Component {
         }
       }]);
     } else {
-      Array.prototype.push.apply(navAfterReports, [
+          Array.prototype.push.apply(navAfterReports, [
         {
           to: '/holidays',
           title: 'Holidays',
@@ -179,11 +179,11 @@ export default class Header extends Component {
 
     return (
       <nav className="site-nav">
-        { navItems ? 
+        { (loggedIn && navItems) ? 
           <ul className="nav navbar-nav"> <Dropdown title='Accounting' list={navItems} /></ul> :
           null }
 
-        { navAfterReports ? 
+        { (loggedIn && navAfterReports) ? 
           <ul className="nav navbar-nav"> <Dropdown title='Utils' list={navAfterReports} /></ul> :
           null }
 

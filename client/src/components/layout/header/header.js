@@ -140,7 +140,7 @@ export default class Header extends Component {
         }
       }]);
     } else {
-          Array.prototype.push.apply(navAfterReports, [
+      Array.prototype.push.apply(navAfterReports, [
         {
           to: '/holidays',
           title: 'Holidays',
@@ -175,31 +175,37 @@ export default class Header extends Component {
       );
     });
 
-    if (loggedIn && reports) { navItems.push(<Dropdown key='999' title='Reports' list={reports}/>) }
+    if (loggedIn) {
+      if (reports)
+        navItems.push(<Dropdown key='999' title='Reports' list={reports}/>);
 
-    return (
+      return (
+        <nav className="site-nav">
+          { navItems ? 
+            <ul className="nav navbar-nav"> <Dropdown title='Accounting' list={navItems}/> </ul> :
+            null }
+  
+          { navAfterReports && 
+            <ul className="nav navbar-nav"> <Dropdown title='Utils' list={navAfterReports} /></ul> }
+  
+          { forecast && 
+            <ul className="nav navbar-nav"> {forecast} </ul> }
+  
+          { navItemsRight && 
+            <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul> }
+  
+          { (currentWorkspace) && 
+            <ul className="nav navbar-nav navbar-main"> <Dropdown title={currentWorkspace.title} list={workspacesList} /></ul> }
+        </nav>
+      );
+    } else return (
       <nav className="site-nav">
-        { (loggedIn && navItems) ? 
-          <ul className="nav navbar-nav"> <Dropdown title='Accounting' list={navItems} /></ul> :
-          null }
-
-        { (loggedIn && navAfterReports) ? 
-          <ul className="nav navbar-nav"> <Dropdown title='Utils' list={navAfterReports} /></ul> :
-          null }
-
-        { forecast ? 
-          <ul className="nav navbar-nav"> {forecast} </ul> :
-          null}
-
-        { navItemsRight ? 
-          <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul> :
-          null}
-
-        { (loggedIn && currentWorkspace) ? 
-          <ul className="nav navbar-nav navbar-main"> <Dropdown title={currentWorkspace.title} list={workspacesList} /></ul> : 
-          null }
+      { navItemsRight && 
+        <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul>}
       </nav>
-    );
+    )
+
+    
   }
 
   render() {

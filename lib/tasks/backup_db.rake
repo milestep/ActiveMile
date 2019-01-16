@@ -1,14 +1,15 @@
 namespace :db do
   task :dump do
-    path_folder = "#{ Rails.root }"
-    number_file = Dir.glob(File.join(path_folder,'**', '*')).select { |file| File.file?(file) }.count
-    dumpfile = "#{ path_folder }/#{ Time.now.strftime("%Y%m%d%H%M%S") }.sql"
+    path_folder = File.join(Dir.home, "backUP")
+    name_backup = Time.now.strftime("%Y%m%d%H%M%S")
+    Dir.mkdir(path_folder) unless File.exists?(path_folder)
+    number_file = Dir["#{path_folder}/**/*"].length
+    dumpfile = "#{ path_folder }/#{ name_backup }.sql"
     production = Rails.application.config.database_configuration['production']
     if number_file == 3
-      File.delete(Dir.glob("#{ path_folder }/*.sql").sort_by{ |f| File.mtime(f) }.first)
-      system "'PGPASSWORD=\"#{ production['password'] }\" pg_dump #{ production['database'] }' > #{ dumpfile }"
-    else
-      system "'PGPASSWORD=\"#{ production['password'] }\" pg_dump #{ production['database'] }' > #{ dumpfile }"
+      oldest_file = Dir["#{ path_folder }/*.sql"].sort_by{ |f| File.mtime(f) }.first
+      File.delete(oldest_file)
     end
+    system "'PGPASSWORD=\"#{ production['password'] }\" pg_dump #{ production['database'] }' > #{ dumpfile }"
   end
 end

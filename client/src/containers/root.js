@@ -23,7 +23,8 @@ import {
   InventoryItemsEditor,
   HolidaysItemsEditor,
   NotFound,
-  Forecast }                 from '../components';
+  Forecast,
+  BackReports }              from '../components';
 import requireAuth           from '../containers/requireAuth';
 import RequireWorkspace      from '../containers/requireWorkspace';
 
@@ -55,6 +56,7 @@ export default class Root extends Component {
         <Route path="reports_old" component={RequireWorkspace(ReportsOld)} />
         <Route path="charts" component={RequireWorkspace(Charts)} />
         <Route path="forecast" component={RequireWorkspace(Forecast)} />
+        <Route path="reports/months" component={BackReports} store={store} />
         <Route path='*' component={NotFound} />
       </Route>
     );

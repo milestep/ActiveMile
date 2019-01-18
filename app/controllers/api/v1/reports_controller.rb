@@ -1,44 +1,63 @@
 class Api::V1::ReportsController < Api::V1::BaseController
+  # attr_accessor :val
+
   def index
+    @totals = {}
     report = {}
     months = request.headers["months"]
     year = request.headers["year"]
 
-    counterparties_by_month(months, year).each do |item|
-
-      # report[item['type']] = report.keys.include?(item['type']) ? report[item['type']] + '1' : '0'
-      # counterparties_serialized.each {|key, value| puts "#{key} is #{value}" }
-
-      # report[month] = { users: counterparties_serialized, revenue: cur_revenue, cost: cur_cost, profit: cur_profit }
-
-
-
-      if report.keys.include?(item['type'])
-        report[item['type']][item['title']] = {}
-      else
-        report[item['type']] = Hash[item['title'], {}]
+    report = counterparties_by_month(months, year).group_by{ |item| item['type'] }
+    report.each { |key, val| report[key] = report[key].group_by{|item| item['title']} }
+    report.each do |key, val|
+      report[key].each do |key2, val2|
+        report[key][key2] = group_by_month report[key][key2], months
       end
     end
 
-    report[:total], report[:profit], report[:avg] = 0, 0, 0
+    report.merge!(Hash[:totals, @totals])
+
+    # puts @val
     render_api(report, :ok)
   end
 
   private
 
-  def counterparties_by_month(namber_of_month, year)
+  def add(a, b)
+    a.map.with_index { |item, ind| item + b[ind] }
+  end
+
+  def group_by_month(obj, months)
+    person_values = {}
+    obj.each do |item|
+      monthly_sums = Array.new(months.split(',').length, 0)
+      item_index_of_month = (Date.parse item['date']).month - 1
+      monthly_sums[item_index_of_month] += item['value']
+      person_values.merge!( Hash[item['name'], monthly_sums] ) { |key, v1, v2| add(v1, v2) }
+      @totals.merge!( Hash[item['type'], monthly_sums] ) { |key, v1, v2| add(v1, v2) }
+    end
+    p person_values
+    puts
+    puts
+    return person_values
+  end
+
+  def counterparties_by_month(number_of_month, year)
     ActiveRecord::Base.connection.execute("
-      SELECT registers.date, registers.value, counterparties.name, articles.type, articles.title
-      FROM registers 
+      SELECT registers.date, 
+        CASE
+          WHEN articles.type = 'Cost' THEN -registers.value
+          ELSE registers.value
+        END,
+      counterparties.name, articles.type, articles.title
+      FROM registers
       INNER JOIN counterparties ON counterparties.id = registers.counterparty_id
       INNER JOIN articles ON registers.article_id = articles.id
       WHERE registers.workspace_id = #{current_workspace.id}
       AND extract(year from registers.date) = #{year}
-      AND extract(month from registers.date) IN (#{namber_of_month})
-      ")
+      AND extract(month from registers.date) IN (#{number_of_month})
+    ")
   end
-
-
 
   # def counterparty_params
   #   params.require(:counterparties).permit(:name, :date, :type, :active, :salary)

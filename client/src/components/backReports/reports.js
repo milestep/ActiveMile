@@ -112,9 +112,16 @@ export default class Reports extends React.Component {
     if (1) {
       return(
       <div>
+        <h3 style={this.titleStyle}>Report by months: </h3>
+        <input value={this.state.requestYear} onChange={this.handleChange}  name="year"
+        style={this.titleStyle} type="number" step="1" min="2000" max="2100"/>
+        <div className='btn-group'>
+        {this.months.map((month, i) => this.getMonthsButtons(month, i))}
+        </div>
         <h3>One second</h3>
         <button onClick={() => {this.getData()}}>Get data</button>
-      </div>        
+        <div>{JSON.stringify(this.state.data)}</div>  
+      </div>    
       )
     } else {
       return(

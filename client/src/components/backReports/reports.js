@@ -132,6 +132,7 @@ export default class Reports extends React.Component {
           <div className='btn-group'>
             {this.months.map((month, i) => this.getMonthsButtons(month, i))}
           </div>
+
           <table class="table">
             <thead>
               <tr>
@@ -141,25 +142,108 @@ export default class Reports extends React.Component {
                 })}
               </tr>
             </thead>
-            <tbody>
-              {Object.keys(this.state.data["Revenue"]).map((item, i) => {
-                return(
-                  Object.keys(this.state.data["Revenue"][item]).map((item2, i2) => {
+              <tbody>
+                <tr>
+                  <td>Monthly revenue:</td>
+                  {this.state.data.totals.Revenue.map((val, i) => {
                     return(
-                      <tr key={i2}>
-                        <th>{item2}</th>
-                        {this.state.data["Revenue"][item][item2].map((i3) => {
-                          return(
-                            <th>{i3}</th>
-                          )
-                        })}
-                      </tr>
+                      <td key={i}>{val}</td>
                     )
-                  })
+                  })}
+                </tr>
+              </tbody>
+              {Object.keys(this.state.data["Revenue"]).map((type, i) => {
+                return(
+                  <tbody key={i}>
+                    <tr>
+                      <td>{type}</td>
+                    </tr>                 
+                    {Object.keys(this.state.data["Revenue"][type]).map((counterparty, i2) => {
+                      return(
+                        <tr key={i2}>
+                          <td>{counterparty}</td>
+                          {this.state.data["Revenue"][type][counterparty].map((val, i3) => {
+                            return(
+                              <td key={i3}>{val}</td>
+                            )
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
                 )
               })}
+          </table>
+
+          <hr/>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                {this.state.requestsMonths.sort(this.compareNumeric).map((item, i) => {
+                  return(<th scope="col" key={item}>{this.months[item]}</th>)
+                })}
+              </tr>
+            </thead>
+              <tbody>
+                <tr>
+                  <td>Monthly cost:</td>
+                  {this.state.data.totals.Cost.map((val, i) => {
+                    return(
+                      <td key={i}>{val}</td>
+                    )
+                  })}
+                </tr>
+              </tbody>
+              {Object.keys(this.state.data["Cost"]).map((type, i) => {
+                return(
+                  <tbody key={i}>
+                    <tr>
+                      <td>{type}</td>
+                    </tr>                 
+                    {Object.keys(this.state.data["Cost"][type]).map((counterparty, i2) => {
+                      return(
+                        <tr key={i2}>
+                          <td>{counterparty}</td>
+                          {this.state.data["Cost"][type][counterparty].map((val, i3) => {
+                            return(
+                              <td key={i3}>{val}</td>
+                            )
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                )
+              })}
+          </table>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Revenue</th>
+                <th>Cost</th>
+                <th>Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total:</td>
+                <td>{this.state.data.totals.Total.Revenue}</td>
+                <td>{this.state.data.totals.Total.Cost}</td>
+                <td>{this.state.data.totals.Total.Profit}</td>
+              </tr>
+              <tr>
+                <td>AVG:</td>
+                <td>{this.state.data.totals.AVG.Revenue}</td>
+                <td>{this.state.data.totals.AVG.Cost}</td>
+                <td>{this.state.data.totals.AVG.Profit}</td>
+              </tr>
             </tbody>
           </table>
+
         </div>
       )
     }

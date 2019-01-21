@@ -2,7 +2,18 @@ class Api::V1::ReportsController < Api::V1::BaseController
   # attr_accessor :val
 
   def index
-    @totals = {}
+    @totals = {
+     "Total" => {
+        "Revenue" => 0,
+        "Cost" => 0,
+        "Profit" => 0
+      },
+      "AVG" => {
+        "Revenue" => 0,
+        "Cost" => 0,
+        "Profit" => 0
+      }
+    }
     report = {}
     months = request.headers["months"]
     year = request.headers["year"]
@@ -15,9 +26,13 @@ class Api::V1::ReportsController < Api::V1::BaseController
       end
     end
 
-    report.merge!(Hash[:totals, @totals])
+    report.merge!( Hash[:totals, 
+      @totals.each { |type, val|
+        @totals["Total"][type] = val.inject(0, :+) if val.kind_of?(Array)
+        @totals["AVG"][type] = AVG(val, months) if val.kind_of?(Array)
+      }]
+    )
 
-    # puts @val
     render_api(report, :ok)
   end
 
@@ -25,6 +40,10 @@ class Api::V1::ReportsController < Api::V1::BaseController
 
   def add(a, b)
     a.map.with_index { |item, ind| item + b[ind] }
+  end
+
+  def AVG(val, months)
+    (((val.inject(0, :+)) / months.split(',').length) * 100).to_i.to_f / 100
   end
 
   def group_by_month(obj, months)
@@ -36,9 +55,6 @@ class Api::V1::ReportsController < Api::V1::BaseController
       person_values.merge!( Hash[item['name'], monthly_sums] ) { |key, v1, v2| add(v1, v2) }
       @totals.merge!( Hash[item['type'], monthly_sums] ) { |key, v1, v2| add(v1, v2) }
     end
-    p person_values
-    puts
-    puts
     return person_values
   end
 

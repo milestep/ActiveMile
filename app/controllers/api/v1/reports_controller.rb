@@ -1,5 +1,5 @@
 class Api::V1::ReportsController < Api::V1::BaseController
-  # attr_accessor :val
+  before_action :validator
 
   def index
     @totals = {
@@ -75,7 +75,11 @@ class Api::V1::ReportsController < Api::V1::BaseController
     ")
   end
 
-  # def counterparty_params
-  #   params.require(:counterparties).permit(:name, :date, :type, :active, :salary)
-  # end
+  def validator
+    a = (/[0-9]/=~request.headers["months"][0]) != 0
+    b = (/[0-9]/=~request.headers["year"][0]) != 0
+    if (a || b)
+      render_api({}, :ok)
+    end
+  end
 end

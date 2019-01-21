@@ -62,10 +62,6 @@ export default class Reports extends React.Component {
     .catch(e => {this.toaster.error('Could not connect to API'); console.error(e)})
   }
 
-  handleChange(date) {
-    console.log(date);
-  }
-
   getRow(person, i) {
     return(
       <tr key={i}>
@@ -91,6 +87,11 @@ export default class Reports extends React.Component {
     }
   }
 
+  compareNumeric(a, b) {
+    if (a > b) return 1;
+    if (a < b) return -1;
+  }
+
   getMonthsButtons(name, i) {
     return(
       <button className={'btn btn-'+this.getBntStatus(i)} onClick={() => {this.changeMonthsOfRequest(i)}} key={i}>{name}</button>
@@ -107,9 +108,8 @@ export default class Reports extends React.Component {
   }
 
   render() {
-    console.log(this.state.data)
     {/*if (!this.state.isLoaded) {*/}
-    if (1) {
+    if (!this.state.isLoaded) {
       return(
       <div>
         <h3 style={this.titleStyle}>Report by months: </h3>
@@ -135,22 +135,29 @@ export default class Reports extends React.Component {
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Names: </th>
-                {Object.keys(this.state.data).map((item, i) => {
-                  return(<th scope="col" key={item}>{this.months[item-1]}</th>)
+                <th></th>
+                {this.state.requestsMonths.sort(this.compareNumeric).map((item, i) => {
+                  return(<th scope="col" key={item}>{this.months[item]}</th>)
                 })}
               </tr>
             </thead>
             <tbody>
-              {Object.keys(this.state.data).map((item, i) => {
-                return(this.state.data[item].users == false ?
-                null :
-                this.state.data[item].users.map((val, key) => {
-                  return(
-                    <tr key={key}>
-                      <th>{val.name}</th>
-                    </tr>
-                )}))})}
+              {Object.keys(this.state.data["Revenue"]).map((item, i) => {
+                return(
+                  Object.keys(this.state.data["Revenue"][item]).map((item2, i2) => {
+                    return(
+                      <tr key={i2}>
+                        <th>{item2}</th>
+                        {this.state.data["Revenue"][item][item2].map((i3) => {
+                          return(
+                            <th>{i3}</th>
+                          )
+                        })}
+                      </tr>
+                    )
+                  })
+                )
+              })}
             </tbody>
           </table>
         </div>

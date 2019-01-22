@@ -37,8 +37,6 @@ class Api::V1::ReportsController < Api::V1::BaseController
       }]
     )
 
-    p @totals
-
     render_api(report, :ok)
   end
 

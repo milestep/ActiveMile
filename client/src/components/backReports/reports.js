@@ -18,7 +18,8 @@ export default class Reports extends React.Component {
       isLoaded: false,
       data: undefined,
       requestsMonths: [0,1,2,3,4,5,6,7,8,9,10,11],
-      requestYear: (new Date()).getFullYear()
+      requestYear: (new Date()).getFullYear(),
+      minimize: true
     }
 
     this.months = [
@@ -26,6 +27,8 @@ export default class Reports extends React.Component {
       'May', 'Jun', 'Jul', 'Aug',
       'Sep', 'Oct', 'Nov', 'Dec'
     ]
+
+    this.types = ["Revenue", "Cost"]
 
     this.titleStyle = {
       width: '200px', 
@@ -39,7 +42,6 @@ export default class Reports extends React.Component {
 
   componentDidMount() {
     this.setState({...this.props.route.store.getState()});
-    this.getData();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -60,15 +62,6 @@ export default class Reports extends React.Component {
     .then(response => response.json())
     .then(data => {this.setState({data, isLoaded: true})})
     .catch(e => {this.toaster.error('Could not connect to API'); console.error(e)})
-  }
-
-  getRow(person, i) {
-    return(
-      <tr key={i}>
-        <th>{i}</th>
-        <td>{person.name}</td>
-      </tr>
-    )
   }
 
   changeMonthsOfRequest(indexOfMonth) {
@@ -94,7 +87,8 @@ export default class Reports extends React.Component {
 
   getMonthsButtons(name, i) {
     return(
-      <button className={'btn btn-'+this.getBntStatus(i)} onClick={() => {this.changeMonthsOfRequest(i)}} key={i}>{name}</button>
+      <button className={'btn btn-'+this.getBntStatus(i)} 
+      onClick={() => {this.changeMonthsOfRequest(i)}} key={i}>{name}</button>
     )
   }
 
@@ -102,14 +96,28 @@ export default class Reports extends React.Component {
     return JSON.stringify(this.state.data)
   }
 
+  toggleMinimize() {
+    this.setState({minimize: !this.state.minimize})
+  }
+
+  getTypesSum(type, clas) {
+    let x = Array(this.state.requestsMonths.length).fill(0)
+    for (var counterparty in this.state.data[clas][type]) {
+      x.forEach((item, ind)=>{
+        x[ind] += this.state.data[clas][type][counterparty][ind]
+      })
+    }
+
+    return x.map((val, key) => {
+      return <td key={key}>{val}</td>
+    })
+  }
 
   handleChange(event) {
     this.setState({requestYear: event.target.value});
   }
 
   render() {
-    console.log(this.state.data)
-    {/*if (!this.state.isLoaded) {*/}
     if (!this.state.isLoaded) {
       return(
       <div>
@@ -121,8 +129,8 @@ export default class Reports extends React.Component {
         </div>
         <h3>One second</h3>
         <button onClick={() => {this.getData()}}>Get data</button>
-        <div>{JSON.stringify(this.state.data)}</div>  
-      </div>    
+        <div>{JSON.stringify(this.state.data)}</div>
+      </div>
       )
     } else {
       return(
@@ -131,94 +139,63 @@ export default class Reports extends React.Component {
           <input value={this.state.requestYear} onChange={this.handleChange}  name="year"
                  style={this.titleStyle} type="number" step="1" min="2000" max="2100"/>
           <div className='btn-group'>
-            {this.months.map((month, i) => this.getMonthsButtons(month, i))}
+            {this.months ?
+             this.months.map((month, i) => this.getMonthsButtons(month, i)) :
+             null}
           </div>
+          <button className="btn" onClick={()=>{this.toggleMinimize()}}>
+            {this.state.minimize ? "Advanced report" : "Short report"}
+          </button>
 
-          <table class="table">
-            <thead>
-              <tr>
-                <th></th>
-                {this.state.requestsMonths.sort(this.compareNumeric).map((item, i) => {
-                  return(<th scope="col" key={item}>{this.months[item]}</th>)
-                })}
-              </tr>
-            </thead>
-              <tbody>
-                <tr>
-                  <td>Monthly revenue:</td>
-                  {this.state.data.totals.Revenue.map((val, i) => {
-                    return(
-                      <td key={i}>{val}</td>
-                    )
-                  })}
-                </tr>
-              </tbody>
-              {Object.keys(this.state.data["Revenue"]).map((type, i) => {
-                return(
-                  <tbody key={i}>
-                    <tr>
-                      <td>{type}</td>
-                    </tr>                 
-                    {Object.keys(this.state.data["Revenue"][type]).map((counterparty, i2) => {
-                      return(
-                        <tr key={i2}>
-                          <td>{counterparty}</td>
-                          {this.state.data["Revenue"][type][counterparty].map((val, i3) => {
-                            return(
-                              <td key={i3}>{val}</td>
-                            )
-                          })}
-                        </tr>
-                      )
-                    })}
+          {this.types.map((clas, index)=>{
+            return(
+              <table className="table table-bordered" key={index}>
+                <thead className="thead-dark">
+                  <tr>
+                    <th></th>
+                    {this.state.requestsMonths ?
+                      this.state.requestsMonths.sort(this.compareNumeric).map((item, i) => {
+                      return(<th scope="col" className="text-info bg-dark" key={item}>{this.months[item]}</th>)
+                    }) : null}
+                  </tr>
+                </thead>
+                  <tbody>
+                    <tr className="bg-success">
+                      <td>Monthly {clas.toLowerCase()}:</td>
+                      {this.state.data.totals[clas] ?
+                        this.state.data.totals[clas].map((val, i) => {
+                        return(
+                          <td key={i}>{val}</td>
+                        )
+                      }) : null}
+                    </tr>
                   </tbody>
-                )
-              })}
-          </table>
-
-          <hr/>
-
-          <table class="table">
-            <thead>
-              <tr>
-                <th></th>
-                {this.state.requestsMonths.sort(this.compareNumeric).map((item, i) => {
-                  return(<th scope="col" key={item}>{this.months[item]}</th>)
-                })}
-              </tr>
-            </thead>
-              <tbody>
-                <tr>
-                  <td>Monthly cost:</td>
-                  {this.state.data.totals.Cost.map((val, i) => {
+                  {this.state.data[clas] ?
+                    Object.keys(this.state.data[clas]).map((type, i) => {
                     return(
-                      <td key={i}>{val}</td>
-                    )
-                  })}
-                </tr>
-              </tbody>
-              {Object.keys(this.state.data["Cost"]).map((type, i) => {
-                return(
-                  <tbody key={i}>
-                    <tr>
-                      <td>{type}</td>
-                    </tr>                 
-                    {Object.keys(this.state.data["Cost"][type]).map((counterparty, i2) => {
-                      return(
-                        <tr key={i2}>
-                          <td>{counterparty}</td>
-                          {this.state.data["Cost"][type][counterparty].map((val, i3) => {
-                            return(
-                              <td key={i3}>{val}</td>
-                            )
-                          })}
+                      <tbody key={i}>
+                        <tr onClick={()=>{console.log(':)')}} className="bg-primary">
+                          <td>{type}</td>
+                          {this.getTypesSum(type, clas)}
                         </tr>
-                      )
-                    })}
-                  </tbody>
-                )
-              })}
-          </table>
+                        {Object.keys(this.state.data[clas][type]).map((counterparty, i2) => {
+                          return(
+                            <tr key={i2} className={this.state.minimize ? "hide" : ""}>
+                              <td>{counterparty}</td>
+                              {this.state.data[clas][type][counterparty].map((val, i3) => {
+                                return(
+                                  <td key={i3}>{val}</td>
+                                )
+                              })}
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    )
+                  }) : null}
+              </table>
+            )
+          })}
 
           <table class="table">
             <thead>

@@ -108,6 +108,7 @@ export default class Reports extends React.Component {
   }
 
   render() {
+    console.log(this.state.data)
     {/*if (!this.state.isLoaded) {*/}
     if (!this.state.isLoaded) {
       return(

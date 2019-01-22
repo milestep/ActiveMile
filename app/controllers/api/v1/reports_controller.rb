@@ -28,10 +28,16 @@ class Api::V1::ReportsController < Api::V1::BaseController
 
     report.merge!( Hash[:totals, 
       @totals.each { |type, val|
-        @totals["Total"][type] = val.inject(0, :+) if val.kind_of?(Array)
-        @totals["AVG"][type] = AVG(val, months) if val.kind_of?(Array)
+        if val.kind_of?(Array)
+          @totals["Total"][type] = val.inject(0, :+)
+          @totals["AVG"][type] = AVG(val, months)
+          @totals["Total"]["Profit"] = @totals["Total"]["Profit"] + @totals["Total"][type]
+          @totals["AVG"]["Profit"] = ((@totals["AVG"]["Profit"] + @totals["AVG"][type]) * 100).to_i.to_f / 100
+        end
       }]
     )
+
+    p @totals
 
     render_api(report, :ok)
   end

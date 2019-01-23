@@ -2,31 +2,20 @@ class Api::V1::ReportsController < Api::V1::BaseController
   before_action :validator
 
   def index
-    @totals = {
-     "Total" => {
-        "Revenue" => 0,
-        "Cost" => 0,
-        "Profit" => 0
-      },
-      "AVG" => {
-        "Revenue" => 0,
-        "Cost" => 0,
-        "Profit" => 0
-      }
-    }
+    totals
     report = {}
     months = request.headers["months"]
     year = request.headers["year"]
 
     report = counterparties_by_month(months, year).group_by{ |item| item['type'] }
-    report.each { |key, val| report[key] = report[key].group_by{|item| item['title']} }
-    report.each do |key, val|
-      report[key].each do |key2, val2|
-        report[key][key2] = group_by_month report[key][key2], months
+    report.each_key { |clas| report[clas] = report[clas].group_by{|item| item['title']} }
+    report.each_key do |clas|
+      report[clas].each_key do |type|
+        report[clas][type] = group_by_month report[clas][type], months
       end
     end
 
-    report.merge!( Hash[:totals, 
+    report.merge!( Hash[:totals,
       @totals.each { |type, val|
         if val.kind_of?(Array)
           @totals["Total"][type] = val.inject(0, :+)
@@ -41,6 +30,13 @@ class Api::V1::ReportsController < Api::V1::BaseController
   end
 
   private
+
+  def totals
+    @totals = {
+     "Total" => { "Revenue" => 0, "Cost" => 0, "Profit" => 0 },
+      "AVG" => { "Revenue" => 0, "Cost" => 0, "Profit" => 0 }
+    }
+  end
 
   def add(a, b)
     a.map.with_index { |item, ind| item + b[ind] }

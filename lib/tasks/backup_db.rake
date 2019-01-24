@@ -2,6 +2,6 @@ require './services/task/backup'
 
 namespace :db do
   task :dump => :environment do
-    BackupDb.new
+    BackUp.new.perform!
   end
 end

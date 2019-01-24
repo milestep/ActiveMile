@@ -1,26 +1,34 @@
-class BackupDb
+class BackUp
+
+  attr_accessor :path, :credentials, :absolute_path
+
+  MAX_BACKUPS_COUNT = 3
 
   def initialize(path = File.join(Dir.home, "backUP"))
-    remove_oldest(path)
+    @path = path
+    @credentials = Rails.application.config.database_configuration[Rails.env]
+    @absolute_path = "#{ path }/#{ Time.now.strftime("%Y%m%d%H%M%S") }.sql"
+
   end
 
-  def remove_oldest(path)
-    Dir.mkdir(path) unless File.exists?(path)
+  def perform!
+    backup_db
+    remove_oldest
+  end
+
+  def remove_oldest
     number_of_files = Dir["#{ path }/*"].length
-    if number_of_files >= 3
-      oldest_file = Dir["#{ path }/*.sql"].sort_by {|f| File.mtime(f)}.first
-      File.delete(oldest_file)
+    count_of_oldest = number_of_files - MAX_BACKUPS_COUNT
+    arr_files = Dir["#{ path }/*.sql"].sort_by {|f| File.mtime(f)}
+    index = 0
+    while index < count_of_oldest
+      File.delete(arr_files[index])
+      index += 1
     end
-    absolute_path = "#{ path }/#{ Time.now.strftime("%Y%m%d%H%M%S") }.sql"
-    backup_db(absolute_path)
   end
 
-  def backup_db(absolute_path)
-    credentials = Rails.application.config.database_configuration[Rails.env]
-    if Rails.env == 'production'
-      system "'PGPASSWORD=\"#{ credentials['password'] }\" pg_dump #{ credentials['database'] }' > #{ absolute_path }"
-    else
-      system "pg_dump #{ credentials['database'] } > #{ absolute_path }"
-    end
+  def backup_db
+    Dir.mkdir(path) unless File.exists?(path)
+    system "PGPASSWORD='#{ credentials['password'] }' pg_dump -U '#{ credentials['username'] }' -d '#{ credentials['database'] }' > #{ absolute_path }"
   end
 end

@@ -78,10 +78,10 @@ export default class Reports extends Component {
   }
 
   componentWillReceiveProps() {
-    if (this.workspaceChanged()) {
-        this.fetchRegisters()
-      }
+  if (this.workspaceChanged()) {
+      this.fetchRegisters()
     }
+  }
 
   workspaceChanged() {
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
@@ -117,7 +117,7 @@ export default class Reports extends Component {
         registers, articles, counterparties
       })
     })
-  }
+   }
 
   updateYears() {
     var { filterYears } = this.props,

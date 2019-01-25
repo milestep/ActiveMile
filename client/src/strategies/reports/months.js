@@ -7,7 +7,7 @@ class MonthsStrategy extends ReportsStrategy {
     var date = new Date()
     var currentMonth = date.getMonth()
     var currentYear = date.getFullYear()
-    var monthsNames = moment.monthsShort()
+    var monthsNames = moment.monthsShort() //["Jan", "Feb"...][12]
 
     var year = [{ value: currentYear, applied: true }]
     var month = monthsNames.map((name, index) => ({
@@ -16,6 +16,7 @@ class MonthsStrategy extends ReportsStrategy {
       applied: index == currentMonth
     }))
 
+    console.log(month)
     return { year, month }
   }
 

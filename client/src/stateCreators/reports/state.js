@@ -8,6 +8,11 @@ export class ReportsStateCreator {
   }
 
   generateState(props) {
+
+
+    // console.log(props)
+
+
     this.props          = props
     this.state          = this.getInitialState()
     this.appliedFilters = this.strategy.getPrimaryAppliedFilters()

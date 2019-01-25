@@ -71,6 +71,8 @@ export default class ReportsStrategy {
       })
     }
 
+    // console.log(this.filter)
+
     return appliedFilters
   }
 

@@ -9,6 +9,7 @@ import { setStatePromise, pushUnique }    from '../../utils'
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
 import { index as fetchRegisters }        from '../../actions/registers'
+import { index as fetchReports }          from '../../actions/reports'
 import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
 import { ReportsStateCreator }            from '../../stateCreators/reports'
 import ArticlesList                       from './articlesList'
@@ -32,7 +33,7 @@ import                                         '../../styles/reports/checkbox.cs
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
-    fetchRegisters,
+    fetchReports,
     toaster,
   }, dispatch)
 }))
@@ -57,12 +58,13 @@ export default class Reports extends Component {
 
   setStrategy() {
     var { strategies, strategy } = this.props
-
-    return strategies[strategy]({
+    let boo = strategies[strategy]({
       events: {
         onFilterChange: this.onFilterChange.bind(this)
       }
     })
+
+    return boo
   }
 
   componentWillMount() {
@@ -70,7 +72,7 @@ export default class Reports extends Component {
   }
 
   componentDidMount() {
-    this.fetchRegisters()
+    this.fetchReports()
   }
 
   componentWillUnmount() {
@@ -79,7 +81,7 @@ export default class Reports extends Component {
 
   componentWillReceiveProps() {
   if (this.workspaceChanged()) {
-      this.fetchRegisters()
+      this.fetchReports()
     }
   }
 
@@ -88,7 +90,7 @@ export default class Reports extends Component {
   }
 
   onFilterChange() {
-    this.fetchRegisters()
+    this.fetchReports()
   }
 
   onDataReceived(res) {
@@ -96,14 +98,19 @@ export default class Reports extends Component {
     this.initializeState(res)
   }
 
-  fetchRegisters() {
+  fetchReports() {
     var { actions } = this.props
     var params = _.assign({},
       this.strategy.getAppliedFilters({ pluck: 'value' }),
       { filter_by: this.props.strategy }
     )
 
-    actions.fetchRegisters(params).then(res => {
+
+
+    // console.log(this.strategy.getAppliedFilters({ pluck: 'value' }))
+    // console.log(this.strategy)
+
+    actions.fetchReports(params).then(res => {
       this.onDataReceived(res)
     })
   }

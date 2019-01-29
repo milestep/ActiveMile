@@ -50,6 +50,7 @@ export default class HolidayItem extends Component {
   }
 
   render() {
+    const token = cookie.load('token')
     return (
       <tbody>
         { this.props.holidays.map((item, index) => {
@@ -61,7 +62,7 @@ export default class HolidayItem extends Component {
               <td className='col-xs-4'>{ moment(item.date).format("DD-MM-YYYY") }</td>
 
               <td>
-                {cookie.load('token') ?
+                {(token && token === this.props.token) ?
                   <div className="btn-group btns-hidden pull-right">
                     <Link
                       to={`/holidays/${item.id}/edit`}

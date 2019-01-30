@@ -7,7 +7,7 @@ export default class Holidays extends Component {
     return (
       <div>
         <h3>Holidays</h3>
-        <HolidayItemsList token = {this.props.authenticated} />
+        <HolidayItemsList token = {this.props.route.data.getState().auth.token} />
         { getCurrentUser() != null ? <HolidaysForm /> : null }
       </div>
     );

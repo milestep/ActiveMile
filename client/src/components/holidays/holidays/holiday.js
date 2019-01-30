@@ -6,11 +6,11 @@ import { bindActionCreators }               from 'redux';
 import { destroy as destroyHolidayItem }    from '../../../actions/holidays';
 import { toaster }                          from '../../../actions/alerts';
 import * as utils                           from '../../../utils';
-import cookie                               from "react-cookie";
+import cookie                               from 'react-cookie';
 
 @connect(
   state => ({
-    holidays: state.holidays.items
+    holidays: state.holidays.items,
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -50,7 +50,8 @@ export default class HolidayItem extends Component {
   }
 
   render() {
-    const token = cookie.load('token')
+    const authorized = cookie.load('token')
+
     return (
       <tbody>
         { this.props.holidays.map((item, index) => {
@@ -62,7 +63,7 @@ export default class HolidayItem extends Component {
               <td className='col-xs-4'>{ moment(item.date).format("DD-MM-YYYY") }</td>
 
               <td>
-                {(token && token === this.props.token) ?
+                {(authorized && authorized === this.props.token) ?
                   <div className="btn-group btns-hidden pull-right">
                     <Link
                       to={`/holidays/${item.id}/edit`}

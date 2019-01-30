@@ -13,6 +13,9 @@ export default class RegistersFilter extends Component {
   render() {
     const { filter, current, handleFilterChange } = this.props;
     const monthsNames = moment.monthsShort();
+    let activeCounterparties = filter.counterparties.filter((cp) => {
+      return cp.active
+    })
     const options = {
       years: filter.years.map((year) => {
         return { value: year, label: year };
@@ -20,9 +23,10 @@ export default class RegistersFilter extends Component {
       months: monthsNames.map((monthName, index) => {
         return { value: index + 1, label: monthName };
       }),
-      counterparties: filter.counterparties.map((cp) => {
+
+      counterparties: activeCounterparties.map((cp) => {
         return { value: cp.id, label: cp.name}
-      }) 
+      })
     }
 
     return(

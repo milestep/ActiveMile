@@ -1,7 +1,7 @@
-import React, { Component, PropTypes }    from 'react';
-import { connect }                        from 'react-redux';
-import NavItem                            from './navItem';
-import Dropdown                           from '../elements/dropdown';
+import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
+import NavItem from './navItem';
+import Dropdown from '../elements/dropdown';
 
 @connect(
   state => ({
@@ -31,30 +31,19 @@ export default class Header extends Component {
   }
 
   handleLogout = e => {
-    const { logout, router } = this.props;
+    const {logout, router} = this.props;
     e.preventDefault();
     logout(router);
   }
 
   toggleCollapse() {
     const collapsed = !this.state.collapsed;
-
     this.setState({collapsed});
   }
 
-  createNavItems(navItems) {
-    if (!navItems) return;
-
-    const { router } = this.props;
-    const isActive = router.isActive.bind(router);
-
+  createNavItems(navItems, isActive) {
     return navItems.map((props) =>
-      <NavItem
-        key={props.to}
-        to={props.to}
-        active={isActive(props.to)}
-        onClick={props.onClick}
-      >
+      <NavItem key={props.to} to={props.to} active={isActive(props.to)} onClick={props.onClick}>
         {props.title}
       </NavItem>
     );
@@ -62,7 +51,6 @@ export default class Header extends Component {
 
   renderNavBar() {
     const {
-      actions,
       loggedIn,
       workspaces,
       currentWorkspace,
@@ -105,29 +93,24 @@ export default class Header extends Component {
         to: 'reports_by_months',
         title: 'Monthly',
         onClick: this.toggleCollapse
-       }, {
+      }, {
         to: '/reports_by_years',
         title: 'By year',
         onClick: this.toggleCollapse
-       });
+      });
 
-      Array.prototype.push.apply(navAfterReports, [
+      navAfterReports.push(
         {
           to: '/inventory',
           title: 'Inventory',
           onClick: this.toggleCollapse
-        }
-      ]);
-
-      Array.prototype.push.apply(navAfterReports, [
-        {
+        }, {
           to: '/holidays',
           title: 'Holidays',
           onClick: this.toggleCollapse
-        }
-      ]);
+        });
 
-      Array.prototype.push.apply(navItemsRight, [{
+      navItemsRight.push({
         to: '/workspaces',
         title: 'Workspaces',
         onClick: this.toggleCollapse
@@ -138,85 +121,73 @@ export default class Header extends Component {
           this.handleLogout(e);
           this.toggleCollapse.call(this);
         }
-      }]);
+      })
     } else {
-      Array.prototype.push.apply(navAfterReports, [
-        {
-          to: '/holidays',
-          title: 'Holidays',
-          onClick: this.toggleCollapse
-        }
-      ]);
+      navAfterReports.push({
+        to: '/holidays',
+        title: 'Holidays',
+        onClick: this.toggleCollapse
+      });
 
-      Array.prototype.push.apply(navItemsRight, [{
+      navItemsRight.push({
         to: '/login',
         title: 'Login',
         onClick: this.toggleCollapse
-      }]);
+      })
     }
 
-    navItems = this.createNavItems(navItems);
-    reports = this.createNavItems(reports);
-    forecast = this.createNavItems(forecast);
-    navAfterReports = this.createNavItems(navAfterReports);
-    navItemsRight = this.createNavItems(navItemsRight);
+    const isActive = this.props.router.isActive.bind(this.props.router);
+    navItems = this.createNavItems(navItems, isActive);
+    reports = this.createNavItems(reports, isActive);
+    forecast = this.createNavItems(forecast, isActive);
+    navAfterReports = this.createNavItems(navAfterReports, isActive);
+    navItemsRight = this.createNavItems(navItemsRight, isActive);
+
     workspacesList = workspaces.map((workspace, i) => {
-      return(
+      return (
         <li key={i}>
           <a href="#"
-            onClick={e => {
-              e.preventDefault();
-              setupCurrentWorkspace(workspace);
-            }}
+             onClick={e => {
+               e.preventDefault();
+               setupCurrentWorkspace(workspace);
+             }}
           >
-            { workspace.title }
+            {workspace.title}
           </a>
         </li>
       );
     });
 
     if (loggedIn) {
-      if (reports)
-        navItems.push(<Dropdown key='999' title='Reports' list={reports}/>);
+      navItems.push(<Dropdown key='999' title='Reports' list={reports}/>);
 
       return (
         <nav className="site-nav">
-          { navItems ? 
-            <ul className="nav navbar-nav"> <Dropdown title='Accounting' list={navItems}/> </ul> :
-            null }
-  
-          { navAfterReports && 
-            <ul className="nav navbar-nav"> <Dropdown title='Utils' list={navAfterReports} /></ul> }
-  
-          { forecast && 
-            <ul className="nav navbar-nav"> {forecast} </ul> }
-  
-          { navItemsRight && 
-            <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul> }
-  
-          { (currentWorkspace) && 
-            <ul className="nav navbar-nav navbar-main"> <Dropdown title={currentWorkspace.title} list={workspacesList} /></ul> }
+          <ul className="nav navbar-nav"><Dropdown title='Accounting' list={navItems}/></ul>
+          <ul className="nav navbar-nav"><Dropdown title='Utils' list={navAfterReports}/></ul>
+          <ul className="nav navbar-nav"> {forecast} </ul>
+          <ul className="nav navbar-nav navbar-right"> {navItemsRight} </ul>
+
+          {(currentWorkspace) &&
+          <ul className="nav navbar-nav navbar-main"><Dropdown title={currentWorkspace.title} list={workspacesList}/>
+          </ul>}
         </nav>
       );
     } else return (
       <nav className="site-nav">
-      { navItemsRight && 
-        <ul className="nav navbar-nav navbar-right"> { navItemsRight } </ul>}
+        <ul className="nav navbar-nav navbar-right"> {navItemsRight} </ul>
       </nav>
     )
-
-    
   }
 
   render() {
-    const { collapsed } = this.state;
-    const { alertsAsync } = this.props;
-    const navClass = collapsed ? "collapse" : "";
+    const {alertsAsync} = this.props;
+    const navClass = this.state.collapsed ? "collapse" : "";
     let alertsContainer;
 
     if (alertsAsync && alertsAsync.length) {
       alertsContainer = alertsAsync.map((alert, i) => {
-        return(
+        return (
           <div className={`alert alert-${alert.kind}`} key={i}>
             {alert.message}
           </div>
@@ -224,16 +195,12 @@ export default class Header extends Component {
       });
     }
 
-    return(
+    return (
       <header className="site-header">
         <nav className="navbar navbar-inverse" role="navigation">
           <div className="container-fluid">
             <div className="navbar-header">
-              <button
-                type="button"
-                className="navbar-toggle"
-                onClick={this.toggleCollapse}
-              >
+              <button type="button" className="navbar-toggle" onClick={this.toggleCollapse}>
                 <span className="sr-only">Toggle navigation</span>
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
@@ -246,14 +213,13 @@ export default class Header extends Component {
           </div>
         </nav>
 
-        { (alertsAsync && alertsAsync.length) ?
+        {(alertsAsync && alertsAsync.length) ?
 
           <div className="container-fluid toaster">
             <div className="site-notifications">
               {alertsContainer || null}
             </div>
           </div>
-
         : null}
       </header>
     );

@@ -8,11 +8,6 @@ export class ReportsStateCreator {
   }
 
   generateState(props) {
-
-
-    // console.log(props)
-
-
     this.props          = props
     this.state          = this.getInitialState()
     this.appliedFilters = this.strategy.getPrimaryAppliedFilters()
@@ -38,6 +33,7 @@ export class ReportsStateCreator {
 
   eachRegister(callback) {
     var { registers, articles, counterparties } = this.props
+    // console.log( registers, articles, counterparties )
 
     registers.forEach(register => {
       const articleId = register.article_id,

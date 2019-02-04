@@ -19,7 +19,8 @@ export function index(params, page) {
         .catch(e => {
           console.error("error: ", e);
           reject(e)
-        })
+        }
+      )
     })
   }
 }

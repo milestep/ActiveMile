@@ -1,4 +1,3 @@
-import moment           from 'moment'
 import ReportsStrategy  from './reports'
 import MonthsFilter     from '../../components/reports/filters/months'
 
@@ -7,27 +6,23 @@ class MonthsStrategy extends ReportsStrategy {
     var date = new Date()
     var currentMonth = date.getMonth()
     var currentYear = date.getFullYear()
-    var monthsNames = moment.monthsShort() //["Jan", "Feb"...][12]
+    var monthsNames = ["Jan", "Feb", "Mar", "Apr",
+                       "May", "Jun", "Jul", "Aug",
+                       "Sep", "Oct", "Nov", "Dec"]
 
     var year = [{ value: currentYear, applied: true }]
     var month = monthsNames.map((name, index) => ({
       name,
       value: index + 1,
       applied: index == currentMonth
-    }))
-
-    console.log(month)
+    })) 
+    
     return { year, month }
   }
 
   primaryFilterName() {
     return 'month'
   }
-
-  renderComponent() {
-    return { component: MonthsFilter }
-  }
-
 
   /*
    * Helper methods
@@ -37,6 +32,12 @@ class MonthsStrategy extends ReportsStrategy {
     return this.getCurrentFilterByValue(month)
   }
 }
+
+/* props = {
+      events: {
+        onFilterChange: this.onFilterChange.bind(this)
+      }
+    } */
 
 export function monthsStrategy(props) {
   return (dispatch, getState) => (new MonthsStrategy({

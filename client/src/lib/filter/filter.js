@@ -9,9 +9,6 @@ const {
 
 export class Filter {
   constructor(props) {
-
-    // console.log(props)
-
     this.props  = props
     this.action = props.action
 

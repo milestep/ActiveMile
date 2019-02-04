@@ -7,6 +7,7 @@ export default class MonthsFilter extends Component {
     super(props)
     
     var strategy = props.strategy
+
     this.onTabClick = strategy.onTabClick.bind(strategy)
     this.onSelectChange = strategy.onSelectChange.bind(strategy)
   }

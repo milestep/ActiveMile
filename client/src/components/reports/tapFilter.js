@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 export default class TapFilter extends Component {
   onTabClick(e, index) {
-    e.preventDefault()
     this.props.onTabClick(index)
   }
 
@@ -10,7 +9,7 @@ export default class TapFilter extends Component {
     var { filters } = this.props
     return this.props.filters.map((filter, index) => (
       <li key={index} className={filter.applied ? 'active' : ''}>
-        <a href='#' onClick={(e) => { this.onTabClick(e, index) }}>
+        <a onClick={(e) => { this.onTabClick(e, index) }}>
           { filter.name }
         </a>
       </li>

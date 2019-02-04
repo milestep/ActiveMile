@@ -48,7 +48,7 @@ export default class Reports extends Component {
     this.stateCreator = new ReportsStateCreator(this.strategy)
 
     this.state = {
-      filters: this.stateCreator.getInitialState(),
+      filters: '',
       displayAvg: false,
       displayTotal: false,
       openedArticles: [],
@@ -57,14 +57,12 @@ export default class Reports extends Component {
   }
 
   setStrategy() {
-    var { strategies, strategy } = this.props
-    let boo = strategies[strategy]({
+    var { strategies, strategy } = this.props // call monthsStrategy
+    return strategies[strategy]({
       events: {
         onFilterChange: this.onFilterChange.bind(this)
       }
     })
-
-    return boo
   }
 
   componentWillMount() {
@@ -105,11 +103,6 @@ export default class Reports extends Component {
       { filter_by: this.props.strategy }
     )
 
-
-
-    // console.log(this.strategy.getAppliedFilters({ pluck: 'value' }))
-    // console.log(this.strategy)
-
     actions.fetchReports(params).then(res => {
       this.onDataReceived(res)
     })
@@ -124,7 +117,7 @@ export default class Reports extends Component {
         registers, articles, counterparties
       })
     })
-   }
+  }
 
   updateYears() {
     var { filterYears } = this.props,

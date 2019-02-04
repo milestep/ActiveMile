@@ -11,9 +11,9 @@ export function index(params, page) {
       headers['workspace-id'] = getState().workspaces.app.current.id
       params.page = page
 
-      axios.get(API_URL, { params, headers })
+      axios.get(API_URL, { params:{...params}, headers })
         .then(res => {
-          dispatch({ type: (page == 0 || !page)? 'REGISTER/FETCH' : 'REGISTER/SCROLL', payload: res.data })                
+          dispatch({ type: (page == 0 || !page)? 'REGISTER/FETCH' : 'REGISTER/SCROLL', payload: res.data })
           resolve(res)
         })
         .catch(e => {

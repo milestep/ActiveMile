@@ -91,7 +91,7 @@ export default class Registers extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { current } = this.state
     const { dispatch, actions } = this.props
     

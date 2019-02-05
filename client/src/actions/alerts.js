@@ -44,6 +44,11 @@ export class Toaster {
     setTimeout(() => {
       dispatch({ type: REMOVE_ALERT_ASYNC });
     }, delay);
+
+    window.onclick = function() {
+      if (type === 'success') dispatch({ type: REMOVE_ALERT_ASYNC })
+    }
+
   }
 }
 

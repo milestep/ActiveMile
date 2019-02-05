@@ -5,6 +5,7 @@ import { actions as counterpartyActions } from '../../resources/counterparties';
 import { actions as subscriptionActions } from '../../actions/subscriptions';
 import { toaster }                        from '../../actions/alerts';
 import InlineEditable                     from 'react-inline-editable-field';
+import { CSVLink }                        from 'react-csv';
 
 @connect(
   state => ({
@@ -41,7 +42,8 @@ export default class Forecast extends React.Component {
       editedCounterparty: null,      
       revenue: 0,
       costs: 0,
-      counterUsers: {}
+      counterUsers: {},
+      data: []
     };
     this.toaster = props.actions.toaster();
   }
@@ -91,9 +93,10 @@ export default class Forecast extends React.Component {
       return(
         <li className="list-group-item" key={i}>
           <div className="row">
-            <span className='col-md-6'>{ person.name }</span>
+            {console.log(person, type)}
+            <span className={'col-md-6 person-name-' + type}>{ person.name }</span>
             <div onFocus={this.validationInput}>
-              <InlineEditable content={ this.state.counterUsers[person.id] } nputType="input" onBlur={(value) =>
+              <InlineEditable className={'person-value-' + type} content={ this.state.counterUsers[person.id] } nputType="input" onBlur={(value) =>
               {this.countingNewData(value, person.id)}}/>
             </div>
           </div>
@@ -125,9 +128,55 @@ export default class Forecast extends React.Component {
     }
   }
 
+  getDataCsv = () => {
+    let newData = []
+
+    let arrClientHeader = [
+      ...document.getElementsByClassName('person-name-Client'),
+      ...document.getElementsByClassName('total-client')
+    ]
+    this.dataPreparationCsv(arrClientHeader, newData)
+
+    let arrClientValue = [
+      ...document.querySelectorAll("span.person-value-Client"),
+      ...document.getElementsByClassName('total-client-value')
+    ]
+    this.dataPreparationCsv(arrClientValue, newData)
+
+    let vendorOtherHeader = [
+      ...document.getElementsByClassName('person-name-Vendor'),
+      ...document.getElementsByClassName('person-name-Other'),
+      ...document.getElementsByClassName('total-other')
+    ]
+    this.dataPreparationCsv(vendorOtherHeader, newData)
+
+    let vendorOtherValue = [
+      ...document.querySelectorAll("span.person-value-Vendor"),
+      ...document.querySelectorAll("span.person-value-Other"),
+      ...document.getElementsByClassName('total-client-other')
+    ]
+    this.dataPreparationCsv(vendorOtherValue, newData)
+
+    this.dataPreparationCsv(document.getElementsByClassName('forecast-total'), newData)
+    this.dataPreparationCsv(document.getElementsByClassName('forecast-value'), newData)
+
+  }
+
+  dataPreparationCsv= (arr, newData) => {
+    let list = []
+    for (let i = 0; i < arr.length; i++) {
+      list.push(arr[i].textContent)
+    }
+    newData.push(list)
+    this.setState({data: newData})
+  }
+
   render() {
     return(
       <div>
+        <CSVLink onClick={this.getDataCsv} filename={"forecast.csv"} data={this.state.data} className="btn btn-primary csv">
+          Download CSV
+        </CSVLink>
         <h3>Forecast</h3>
         <div className="row">
           <div className="col-md-6">
@@ -139,8 +188,8 @@ export default class Forecast extends React.Component {
               )}
                 <li className="list-group-item list-group-item-success">
                   <div className="row">
-                    <span className='col-md-6 text-right'><b>Total: </b></span>
-                    <span className='col-md-6'><b>{this.state.revenue.toLocaleString()}</b></span>
+                    <span className='col-md-6 text-right'><b className='total-client'>Total: </b></span>
+                    <span className='col-md-6'><b className='total-client-value'>{this.state.revenue.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -156,8 +205,8 @@ export default class Forecast extends React.Component {
               }
                 <li className="list-group-item list-group-item-danger">
                   <div className="row">
-                    <span className='col-md-6 text-right'><b>Total: </b></span>
-                    <span className='col-md-6'><b>{this.state.costs.toLocaleString()}</b></span>
+                    <span className='col-md-6 text-right'><b className='total-other'>Total: </b></span>
+                    <span className='col-md-6'><b className='total-client-other'>{this.state.costs.toLocaleString()}</b></span>
                   </div>
                 </li>
             </ul>
@@ -165,8 +214,8 @@ export default class Forecast extends React.Component {
             <ul className="list-group">
               <li className="list-group-item list-group-item-info">
                 <div className="row">
-                  <span className='col-md-6 text-right'><b>Forecast: </b></span>
-                  <span className='col-md-6'><b>{(this.state.revenue - this.state.costs).toLocaleString()}</b></span>
+                  <span className='col-md-6 text-right'><b className='forecast-total'>Forecast: </b></span>
+                  <span className='col-md-6'><b className='forecast-value'>{(this.state.revenue - this.state.costs).toLocaleString()}</b></span>
                 </div>
               </li>
             </ul>

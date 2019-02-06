@@ -97,7 +97,9 @@ export default class Reports extends Component {
   }
 
   fetchReports() {
+    //срабатывает первым, при любых изменениях
     var { actions } = this.props
+    console.log(this.strategy.getCurMonth())
     var params = _.assign({},
       this.strategy.getAppliedFilters({ pluck: 'value' }),
       { filter_by: this.props.strategy }
@@ -109,6 +111,7 @@ export default class Reports extends Component {
   }
 
   initializeState(res) {
+    //срабатывает постоянно почему-то
     var { articles, counterparties } = this.props
     var registers = res.data.items
     this.setState({

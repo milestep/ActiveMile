@@ -17,6 +17,11 @@ export default class ReportsStrategy {
     this.emit = props.events
     this.Filter = this.createRenderFilter()
     this.primaryFilterName = this.primaryFilterName()
+    this.curMonth = ''
+  }
+
+  getCurMonth() {
+    return this.curMonth
   }
 
   createRenderFilter() {
@@ -45,11 +50,11 @@ export default class ReportsStrategy {
     this.filter.updateFilters(filters)
   }
 
-  // updatePrimaryFilter(filter) {
-  //   this.updateFilters({
-  //     [this.primaryFilterName]: filter
-  //   })
-  // }
+  updatePrimaryFilter(filter) {
+    this.updateFilters({
+      [this.primaryFilterName]: filter
+    })
+  }
 
   getPrimaryFilter() {
     return this.getFilters()[this.primaryFilterName]
@@ -71,7 +76,7 @@ export default class ReportsStrategy {
         if (!item.applied) return
         var { pluck } = options
 
-        if (pluck && _.isString(pluck) && item[pluck]) {
+        if (pluck == 'value' && _.isString(pluck) && item[pluck]) {
           item = item[pluck]
         }
 
@@ -107,8 +112,8 @@ export default class ReportsStrategy {
     var filters = this.getPrimaryFilter()
 
     filters[id].applied = !filters[id].applied
-
-    // this.updatePrimaryFilter(filters) //что это делает??
+    this.curMonth = filters[id]
+    this.updatePrimaryFilter(filters) //что это делает??
     this.emit.onFilterChange()
   }
 

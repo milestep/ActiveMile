@@ -15,7 +15,7 @@ class Api::V1::ReportsController < Api::V1::BaseController
     end
 
     items = registers.extract_by_date(props).by_page(params[:page]).order(created_at: :desc) 
-    render_api({ items: items, years: registers.years },
+    render_api({ items: items, years: registers.years, month: props[:months] },
                  :ok, each_serializer: RegistersSerializer)
   end
 

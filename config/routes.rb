@@ -16,7 +16,7 @@ Rails.application.routes.draw do
       resources :registers, except: [:new]
       resources :inventory_items
       resources :holidays
-      resources :reports
+      resources :reports, only: [:index]
     end
   end
 

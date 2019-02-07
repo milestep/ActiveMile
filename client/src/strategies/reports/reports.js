@@ -17,7 +17,7 @@ export default class ReportsStrategy {
     this.emit = props.events
     this.Filter = this.createRenderFilter()
     this.primaryFilterName = this.primaryFilterName()
-    this.curMonth = ''
+    this.curMonth = false
   }
 
   getCurMonth() {
@@ -76,13 +76,16 @@ export default class ReportsStrategy {
         if (!item.applied) return
         var { pluck } = options
 
-        if (pluck == 'value' && _.isString(pluck) && item[pluck]) {
+        if (pluck == 'value' && item[pluck]) {
           item = item[pluck]
         }
 
         appliedFilters[name].push(item)
       })
     }
+
+    //возвращаю только один месяц
+    appliedFilters['curMonth'] = this.curMonth
 
     return appliedFilters
   }

@@ -65,7 +65,7 @@ export class Filter {
 
   getFilters() {
     var store = this.getStore()
-    return store.filters[this.props.name] // this.props.name == 'reports'
+    return store.filters[this.props.name]
   }
 
   getStore() {

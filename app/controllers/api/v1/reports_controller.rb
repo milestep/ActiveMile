@@ -2,9 +2,6 @@ class Api::V1::ReportsController < Api::V1::BaseController
   expose :registers, -> { current_workspace.registers }
 
   def index
-    puts; puts; puts
-    p params[:counterparty_id]
-    puts; puts; puts
     props = {
       years: params[:year],
       months: params[:month]
@@ -26,11 +23,5 @@ class Api::V1::ReportsController < Api::V1::BaseController
     return true unless filter_by
     return false if props[filter_by.to_sym].nil?
     true
-  end
-
-  def register_params
-    params.require(:register).permit(:date, :value, :note,
-                                     :article_id, :counterparty_id,
-                                     :client_id, :sales_manager_id)
   end
 end

@@ -33,12 +33,6 @@ class MonthsStrategy extends ReportsStrategy {
   }
 }
 
-/* props = {
-      events: {
-        onFilterChange: this.onFilterChange.bind(this)
-      }
-    } */
-
 export function monthsStrategy(props) {
   return (dispatch, getState) => (new MonthsStrategy({
     ...props,

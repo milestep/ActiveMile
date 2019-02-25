@@ -6,10 +6,11 @@ import { bindActionCreators }               from 'redux';
 import { destroy as destroyHolidayItem }    from '../../../actions/holidays';
 import { toaster }                          from '../../../actions/alerts';
 import * as utils                           from '../../../utils';
+import cookie                               from 'react-cookie';
 
 @connect(
   state => ({
-    holidays: state.holidays.items
+    holidays: state.holidays.items,
   }),
   dispatch => ({
     actions: bindActionCreators({
@@ -49,6 +50,8 @@ export default class HolidayItem extends Component {
   }
 
   render() {
+    const authorized = cookie.load('token')
+
     return (
       <tbody>
         { this.props.holidays.map((item, index) => {
@@ -60,21 +63,23 @@ export default class HolidayItem extends Component {
               <td className='col-xs-4'>{ moment(item.date).format("DD-MM-YYYY") }</td>
 
               <td>
-                <div className="btn-group btns-hidden pull-right" >
-                  <Link
-                    to={`/holidays/${item.id}/edit`}
-                    className="btn btn-primary btn-sm"
-                  >
-                    <i className="glyphicon glyphicon-pencil"></i>
-                  </Link>
+                {(authorized && authorized === this.props.token) ?
+                  <div className="btn-group btns-hidden pull-right">
+                    <Link
+                      to={`/holidays/${item.id}/edit`}
+                      className="btn btn-primary btn-sm"
+                    >
+                      <i className="glyphicon glyphicon-pencil"></i>
+                    </Link>
 
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={ this.handleDestroy.bind(this, item.id) }
-                  >
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                  </button>
-                </div>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={this.handleDestroy.bind(this, item.id)}
+                    >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                : false}
               </td>
             </tr>
           );

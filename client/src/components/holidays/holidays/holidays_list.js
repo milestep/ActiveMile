@@ -42,7 +42,7 @@ export default class HolidayItemsList extends Component {
             </tr>
           </thead>
 
-          <HolidayItem />
+          <HolidayItem token = {this.props.token} />
         </table>
       </div>
     );

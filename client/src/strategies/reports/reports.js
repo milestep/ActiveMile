@@ -1,6 +1,8 @@
-import { Filter, InjectProps } from '../../lib/filter'
+import { Filter }              from '../../lib/filter'
 import moment                  from 'moment'
 import _                       from 'lodash'
+import React, { Component }    from 'react'
+import MonthsFilter            from '../../components/reports/filters/months'
 
 export default class ReportsStrategy {
   constructor(props) {
@@ -9,20 +11,31 @@ export default class ReportsStrategy {
     this.filter = new Filter({
       name: 'reports',
       action: props.action,
-      filters: this.componentFilters()
+      filters: this.componentFilters() // ./month.js MonthsStrategy extends ReportsStrategy
     })
 
     this.emit = props.events
     this.Filter = this.createRenderFilter()
     this.primaryFilterName = this.primaryFilterName()
+    this.curMonth = false
+  }
+
+  getCurMonth() {
+    return this.curMonth
   }
 
   createRenderFilter() {
-    var { component, props } = this.renderComponent(),
-        defaults = { strategy: this },
-        newProps = _.merge({}, defaults, props)
+    var defaults = { strategy: this },
+        newProps = _.merge({}, defaults, this.props),
+        ComposedComponent = MonthsFilter
 
-    return InjectProps(component, newProps)
+    return class extends Component {
+      render() {
+        return(
+          <ComposedComponent {...this.props} {...newProps} />
+        )
+      }
+    }
   }
 
   injectStrategy(component) {
@@ -63,13 +76,16 @@ export default class ReportsStrategy {
         if (!item.applied) return
         var { pluck } = options
 
-        if (pluck && _.isString(pluck) && item[pluck]) {
+        if (pluck == 'value' && item[pluck]) {
           item = item[pluck]
         }
 
         appliedFilters[name].push(item)
       })
     }
+
+    //возвращаю только один месяц
+    appliedFilters['curMonth'] = this.curMonth
 
     return appliedFilters
   }
@@ -97,22 +113,20 @@ export default class ReportsStrategy {
    */
   onTabClick(id) {
     var filters = this.getPrimaryFilter()
-    var newFilters = _.assign([], filters)
 
-    newFilters[id].applied = !filters[id].applied
-
-    this.updatePrimaryFilter(newFilters)
+    filters[id].applied = !filters[id].applied
+    this.curMonth = filters[id]
+    this.updatePrimaryFilter(filters) //что это делает??
     this.emit.onFilterChange()
   }
 
   onSelectChange(e) {
     var year = e.value
     var filters = this.getFilters()['year']
-    var newFilters = _.assign([], filters)
 
     for (var i = 0; i < filters.length; i++) {
       var item = filters[i]
-      var newItem = newFilters[i]
+      var newItem = filters[i]
 
       if (item.value == year) {
         newItem.applied = true
@@ -121,7 +135,7 @@ export default class ReportsStrategy {
       }
     }
 
-    this.updateFilters({ year: newFilters })
+    this.updateFilters({ year: filters })
     this.emit.onFilterChange()
   }
 

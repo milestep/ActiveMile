@@ -8,7 +8,8 @@ import { toaster }                        from '../../actions/alerts'
 import { setStatePromise, pushUnique }    from '../../utils'
 import { actions as subscriptionActions } from '../../actions/subscriptions'
 import { actions as workspaceActions }    from '../../actions/workspaces'
-import { index as fetchRegisters }        from '../../actions/registers'
+// import { index as fetchRegisters }        from '../../actions/registers'
+import { index as fetchReports }          from '../../actions/reports'
 import { monthsStrategy, yearsStrategy }  from '../../strategies/reports'
 import { ReportsStateCreator }            from '../../stateCreators/reports'
 import ArticlesList                       from './articlesList'
@@ -32,7 +33,7 @@ import                                         '../../styles/reports/checkbox.cs
   actions: bindActionCreators({
     ...subscriptionActions,
     ...workspaceActions,
-    fetchRegisters,
+    fetchReports,
     toaster,
   }, dispatch)
 }))
@@ -47,7 +48,7 @@ export default class Reports extends Component {
     this.stateCreator = new ReportsStateCreator(this.strategy)
 
     this.state = {
-      filters: this.stateCreator.getInitialState(),
+      filters: '',
       displayAvg: false,
       displayTotal: false,
       openedArticles: [],
@@ -56,8 +57,7 @@ export default class Reports extends Component {
   }
 
   setStrategy() {
-    var { strategies, strategy } = this.props
-
+    var { strategies, strategy } = this.props // call monthsStrategy
     return strategies[strategy]({
       events: {
         onFilterChange: this.onFilterChange.bind(this)
@@ -70,7 +70,7 @@ export default class Reports extends Component {
   }
 
   componentDidMount() {
-    this.fetchRegisters()
+    this.fetchReports()
   }
 
   componentWillUnmount() {
@@ -78,17 +78,17 @@ export default class Reports extends Component {
   }
 
   componentWillReceiveProps() {
-    if (this.workspaceChanged()) {
-        this.fetchRegisters()
-      }
+  if (this.workspaceChanged()) {
+      this.fetchReports()
     }
+  }
 
   workspaceChanged() {
     return this.props.actions.isNextWorkspaceChanged(this.props.nextWorkspace.id)
   }
 
   onFilterChange() {
-    this.fetchRegisters()
+    this.fetchReports()
   }
 
   onDataReceived(res) {
@@ -96,21 +96,57 @@ export default class Reports extends Component {
     this.initializeState(res)
   }
 
-  fetchRegisters() {
+  fetchReports() {
     var { actions } = this.props
     var params = _.assign({},
-      this.strategy.getAppliedFilters({ pluck: 'value' }),
+      this.paramsForReports(),
       { filter_by: this.props.strategy }
     )
 
-    actions.fetchRegisters(params).then(res => {
-      this.onDataReceived(res)
+    actions.fetchReports(params).then(res => {
+      this.onDataReceived(this.changeQuantityRegistersFromMonth(
+        res,
+        this.strategy.getAppliedFilters({ pluck: 'value' }).curMonth
+      ))
     })
   }
 
-  initializeState(res) {
+  paramsForReports() {
+    return !this.strategy.getAppliedFilters({ pluck: 'value' }).curMonth.value ?
+              this.strategy.getAppliedFilters({ pluck: 'value' }) :
+              {
+                year: this.strategy.getAppliedFilters({ pluck: 'value' }).year,
+                month: [this.strategy.getAppliedFilters({ pluck: 'value' }).curMonth.value]
+              }
+  }
+
+  changeQuantityRegistersFromMonth(respRegisters, curMonth) {
+    let resp = respRegisters.data.items
+
+    if (!resp) return undefined
+    if (!curMonth) return resp
+
+    if (curMonth.applied) {
+      return this.state.registers_list.concat(resp)
+    } else {
+      return this.responceFilter(this.state.registers_list, resp)
+    }
+  }
+
+  responceFilter(stateReg, resp) {
+    let newRegisters = []
+    for (let x = 0; x < stateReg.length; x++) {
+      let key = true
+      for (let y = 0; y < resp.length; y++) {
+        if (stateReg[x].id == resp[y].id) { key = false }
+      }
+      if (key) newRegisters.push(stateReg[x])
+    }
+    return newRegisters
+  }
+
+  initializeState(registers) {
     var { articles, counterparties } = this.props
-    var registers = res.data.items
     this.setState({
       registers_list: registers,
       filters: this.stateCreator.generateState({
@@ -177,6 +213,7 @@ export default class Reports extends Component {
   }
 
   render() {
+    // console.log(this.state.registers_list)
     const { Filter } = this.strategy
     const { filters } = this.state
     const appliedFilters = this.strategy.getPrimaryAppliedFilters()

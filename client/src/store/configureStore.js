@@ -21,12 +21,12 @@ export default function configureStore(initialState, middleware) {
   const reducer = combineReducers(reducers)
   const store = createStore(reducer, applyMiddleware(...middlewares))
 
-  if (module.hot) {
-    module.hot.accept('../reducers', () => {
-      const nextRootReducer = require('../reducers')
-      store.replaceReducer(nextRootReducer)
-    });
-  }
+  // if (module.hot) {
+  //   module.hot.accept('../reducers', () => {
+  //     const nextRootReducer = require('../reducers')
+  //     store.replaceReducer(nextRootReducer)
+  //   });
+  // }
 
   return store;
 }
